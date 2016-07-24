@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Buildings>
+
+	<ThingDef Name="BuildingBase" Abstract="True">
+    <category>Building</category>
+    <thingClass>Building</thingClass>
+    <soundImpactDefault>BulletImpactMetal</soundImpactDefault>
+    <selectable>true</selectable>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+    <repairEffect>Repair</repairEffect>
+    <leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+    <filthLeaving>BuildingRubble</filthLeaving>
+  </ThingDef>
+
+
+
+	<ThingDef Name="QuarryBase" ParentName="BuildingBase" Abstract="True">
+		<label>quarry</label>
+		<Description>A large pit for digging up long buried resources. Up to four colonists can work here.</Description>
+		<graphicData>
+			<graphicClass>Graphic_Single</graphicClass>
+		</graphicData>
+		<drawOffscreen>true</drawOffscreen>
+		<constructEffect>ConstructDirt</constructEffect>
+		<altitudeLayer>FloorEmplacement</altitudeLayer>
+		<useHitPoints>false</useHitPoints>
+		<fillPercent>0</fillPercent>
+		<statBases>
+			<Flammability>0</Flammability>
+		</statBases>
+		<Passability>PassThroughOnly</Passability>
+		<holdsRoof>false</holdsRoof>
+		<surfaceType>Item</surfaceType>
+		<rotatable>false</rotatable>
+		<neverMultiSelect>true</neverMultiSelect>
+		<building>
+			<isInert>true</isInert>
+			<deconstructible>false</deconstructible>
+		</building>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+	</ThingDef>
+
+	<ThingDef Name="QuarryWorkspaceBase" ParentName="QuarryBase" Abstract="True">
+		<ThingClass>Quarry.Building_Quarry</ThingClass>
+		<graphicData>
+			<texPath>Cupro/Null</texPath>
+			<drawSize>(0,0)</drawSize>
+		</graphicData>
+		<Size>(6,6)</Size>
+		<hasInteractionCell>True</hasInteractionCell>
+		<recipes>
+			<li>QRY_Mine</li>
+		</recipes>
+		<inspectorTabs>
+			<li>ITab_Bills</li>
+		</inspectorTabs>
+		<comps>
+			<li Class="CompProperties_Forbiddable" />
+		</comps>
+		<building>
+			<spawnedConceptLearnOpportunity>BillsTab</spawnedConceptLearnOpportunity>
+		</building>
+	</ThingDef>
+
+
+
+
+
+	<ThingDef ParentName="QuarryBase">
+		<DefName>QRY_QuarrySpawner</DefName>
+		<ThingClass>Quarry.Building_QuarrySpawner</ThingClass>
+		<graphicData>
+			<texPath>Cupro/Object/Quarry</texPath>
+			<drawSize>(12,12)</drawSize>
+		</graphicData>
+		<destroyable>true</destroyable>
+		<statBases>
+			<WorkToMake>15000</WorkToMake>
+		</statBases>
+		<Size>(12,12)</Size>
+		<DesignationCategory>Production</DesignationCategory>
+		<costList>
+			<WoodLog>80</WoodLog>
+		</costList>
+		<placeWorkers>
+			<li>Quarry.PlaceWorker_SingleQuarry</li>
+		</placeWorkers>
+	</ThingDef>
+
+
+	<ThingDef ParentName="QuarryBase">
+		<DefName>QRY_Quarry</DefName>
+		<ThingClass>Quarry.Building_QuarryBase</ThingClass>
+		<graphicData>
+			<texPath>Cupro/Object/Quarry</texPath>
+			<drawSize>(12,12)</drawSize>
+		</graphicData>
+		<statBases>
+			<!-- To prevent instant deconstruction -->
+			<WorkToMake>15000</WorkToMake>
+		</statBases>
+		<drawerType>MapMeshOnly</drawerType>
+		<pathCost>20</pathCost>
+		<Size>(12,12)</Size>
+		<building>
+			<!-- The quadrants are edifices, this is so the base still spawns -->
+			<isEdifice>false</isEdifice>
+			<!-- The base can be deconstructed, and it will handle the rest -->
+			<deconstructible>true</deconstructible>
+		</building>
+	</ThingDef>
+
+
+	<ThingDef ParentName="QuarryWorkspaceBase">
+		<DefName>QRY_QuarryUL</DefName>
+		<interactionCellOffset>(1, 0, 0)</interactionCellOffset>
+	</ThingDef>
+
+	<ThingDef ParentName="QuarryWorkspaceBase">
+		<DefName>QRY_QuarryUR</DefName>
+		<interactionCellOffset>(0, 0, 0)</interactionCellOffset>
+	</ThingDef>
+
+	<ThingDef ParentName="QuarryWorkspaceBase">
+		<DefName>QRY_QuarryLL</DefName>
+		<interactionCellOffset>(1, 0, 1)</interactionCellOffset>
+	</ThingDef>
+
+	<ThingDef ParentName="QuarryWorkspaceBase">
+		<DefName>QRY_QuarryLR</DefName>
+		<interactionCellOffset>(0, 0, 1)</interactionCellOffset>
+	</ThingDef>
+
+</Buildings>
