@@ -4,6 +4,12 @@ TODO:
 
 -->
 
+14.12:
+Fixed the issues with base saving/loading and placeworker
+
+14.11:
+Fixed the issue with quadrant saving/loading
+
 14.10:
 Slight speed optimizations
 Quarry can be deconstructed (click twice to select entire quarry)
