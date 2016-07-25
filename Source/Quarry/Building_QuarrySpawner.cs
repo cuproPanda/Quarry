@@ -2,7 +2,7 @@ using RimWorld;
 using Verse;
 
 namespace Quarry {
-
+  // TODO: A15 - Add rotations, spawning platform, etc.
   public class Building_QuarrySpawner : Building {
 
     public override void SpawnSetup() {

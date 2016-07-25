@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
+using System.Linq;
 using Verse;
 
 namespace Quarry {
@@ -15,10 +14,10 @@ namespace Quarry {
 
     // Resolve issues with prior versions
     private delegate IntVec3 Del_Offset(IntVec3 newLoc);
-    private static IntVec3 offsetUL(IntVec3 basePos) { return basePos + new IntVec3(-3, 0, 3); }
-    private static IntVec3 offsetUR(IntVec3 basePos) { return basePos + new IntVec3(3, 0, 3); }
-    private static IntVec3 offsetLL(IntVec3 basePos) { return basePos + new IntVec3(-3, 0, -3); }
-    private static IntVec3 offsetLR(IntVec3 basePos) { return basePos + new IntVec3(3, 0, -3); }
+    private static   IntVec3 offsetUL  (IntVec3 basePos) { return basePos + new IntVec3(-3, 0,  3); }
+    private static   IntVec3 offsetUR  (IntVec3 basePos) { return basePos + new IntVec3( 3, 0,  3); }
+    private static   IntVec3 offsetLL  (IntVec3 basePos) { return basePos + new IntVec3(-3, 0, -3); }
+    private static   IntVec3 offsetLR  (IntVec3 basePos) { return basePos + new IntVec3( 3, 0, -3); }
 
 
     public override void ExposeData() {
@@ -30,7 +29,25 @@ namespace Quarry {
       // TODO: In A15, replace this with:
       //Scribe_Collections.LookList(ref Quads, "QRY_QuarryManager_Quads", LookMode.MapReference);
       // For now, each load has to regenerate the list of quadrants
-      if (Scribe.mode == LoadSaveMode.LoadingVars && Quads == null) {
+      // Additional checks must be done to rectify past version issues
+      if (Scribe.mode == LoadSaveMode.LoadingVars) {
+
+        // If the player is loading a save from a version without QuarryManager,
+        // there won't be a quarry base cached. Manually find it.
+        if (Base == null) {
+          Base = Find.ListerThings.ThingsOfDef(ThingDef.Named("QRY_Quarry")).First() as Building_QuarryBase;
+          // Now that a base was found, the quarry is known to be spawned
+          if (Base != null) {
+            Spawned = true; 
+          }
+        }
+
+        // To fix issue with PlaceWroker_SingleQuarry
+        // Make sure Spawned is set to the correct value
+        if ((!Spawned && Base != null) || (Spawned && Base == null)) {
+          Spawned = !Spawned;
+        }
+
         // Setup offsets
         Del_Offset Del_UL = new Del_Offset(offsetUL);
         Del_Offset Del_UR = new Del_Offset(offsetUR);
