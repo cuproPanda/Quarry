@@ -30,13 +30,19 @@ namespace Quarry {
       //Scribe_Collections.LookList(ref Quads, "QRY_QuarryManager_Quads", LookMode.MapReference);
       // For now, each load has to regenerate the list of quadrants
       // Additional checks must be done to rectify past version issues
-      if (Scribe.mode == LoadSaveMode.LoadingVars) {
+      if (Scribe.mode == LoadSaveMode.LoadingVars && Quads == null) {
 
         // If the player is loading a save from a version without QuarryManager,
         // there won't be a quarry base cached. Manually find it.
         if (Base == null) {
-          Base = Find.ListerThings.ThingsOfDef(ThingDef.Named("QRY_Quarry")).First() as Building_QuarryBase;
-          // Now that a base was found, the quarry is known to be spawned
+          List<Thing> allThings = Find.ListerThings.AllThings;
+          for (int i = 0; i < allThings.Count; i++) {
+            if (allThings[i] is Building_QuarryBase) {
+              Base = allThings[i] as Building_QuarryBase;
+              break;
+            }
+          }
+          // If base was found, the quarry is known to be spawned
           if (Base != null) {
             Spawned = true; 
           }
