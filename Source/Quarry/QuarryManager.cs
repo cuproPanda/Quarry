@@ -121,11 +121,7 @@ namespace Quarry {
     public void DeconstructQuarry() {
       // Destroy all the quadrants
       foreach (Quarry_Quadrant quad in quadsInt) {
-        // In the event the player dev-deleted a quadrant,
-        // this will save a potentially confusing error
-        if (quad != null) {
-          quad.Destroy(); 
-        }
+        quad.Destroy(); 
       }
       // Deregister all pieces of the quarry
       Deregister();

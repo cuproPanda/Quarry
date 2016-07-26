@@ -21,7 +21,7 @@ namespace Quarry {
         return "QuarryAlreadyBuilt".Translate();
       }
 
-      // Don't allow placing on steam geysers - obviously
+      // Don't allow placing on steam geysers - in dev mode
       occupiedCellsTemp.Clear();
       foreach (IntVec3 current in GenAdj.CellsOccupiedBy(loc, rot, checkingDef.Size)) {
         occupiedCellsTemp.Add(current);
