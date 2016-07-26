@@ -15,8 +15,8 @@ namespace Quarry {
     // Reference to the quarry this was spawned at
     private Building_QuarryBase quarry = Find.Map.GetComponent<QuarryManager>().Base;
 
-    // Is this a chunk? For auto-hauling
-    private bool isChunk;
+    // Reference to the resources file
+    private QuarryResourceDef resourceDef = DefDatabase<QuarryResourceDef>.GetNamed("Resources");
 
     // What type of item is this? For quarry tracking
     private QuarryItemType type;
@@ -40,11 +40,16 @@ namespace Quarry {
       List<QuarryResource> resources = Find.Map.GetComponent<QuarryManager>().Resources;
 
       Random rand = new Random();
+      int junkChance = rand.Next(100);
       int chunkChance = rand.Next(100);
 
-      if (chunkChance < DefDatabase<QuarryResourceDef>.GetNamed("Resources").ChunkChance) {
-        isChunk = true;
-        SpawnProduct(chunk, 1);
+      if (junkChance < resourceDef.JunkChance) {
+        if (chunkChance < resourceDef.ChunkChance) {
+          SpawnProduct(chunk, 1); 
+        }
+        else {
+          SpawnProduct(ThingDefOf.RockRubble, 1);
+        }
       }
       else { 
         int maxProb = resources.Sum(c => c.Probability);
@@ -76,18 +81,23 @@ namespace Quarry {
       GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
 
       if (quarry != null) {
-        // If a chunk was spawned, mark it as haulable (if the player allows it)
-        if (isChunk) {
+        // If a haulable (chunk or slag) was spawned, mark it as haulable (if the player allows it)
+        if (product.designateHaulable) {
           if (quarry.AutoHaul) {
             Find.DesignationManager.AddDesignation(new Designation(placedProduct, DesignationDefOf.Haul));
           }
+
           // Mark this as a chunk
-          type = QuarryItemType.Chunk;
+          if (product != ThingDefOf.ChunkSlagSteel) {
+            type = QuarryItemType.Chunk; 
+          }
         }
-        if (!isChunk) {
-          // Mark this as a resource
+
+        // Mark this as a resource
+        if (!product.designateHaulable || product == ThingDefOf.ChunkSlagSteel) {
           type = QuarryItemType.Resource;
         }
+
         // Tell the quarry what type of item was mined
         quarry.ResourceMined(type);
       }

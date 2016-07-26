@@ -81,8 +81,8 @@ namespace Quarry {
 
       foreach (SimpleQuarryResource resource in DefDatabase<QuarryResourceDef>.GetNamed("Resources")) {
         if (DefDatabase<ThingDef>.GetNamed(resource.thingDef, false) != null) {
-          Resources.Add(new QuarryResource(ThingDef.Named(
-            resource.thingDef),
+          Resources.Add(new QuarryResource(
+            ThingDef.Named(resource.thingDef),
             resource.probability,
             resource.stackCount));
         }
