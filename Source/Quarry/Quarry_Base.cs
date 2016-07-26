@@ -76,6 +76,13 @@ namespace Quarry {
 
     public override void DeSpawn() {
       base.DeSpawn();
+
+      // Give back the materials used for making the steps,
+      // this doesn't support xml alteration
+      Thing placedProduct = ThingMaker.MakeThing(ThingDefOf.WoodLog);
+      placedProduct.stackCount = Random.Range(60, 81);
+      GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
+
       // Tell the quarry manager to deconstruct the quarry
       mgr.DeconstructQuarry();
     }
