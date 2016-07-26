@@ -19,7 +19,7 @@ namespace Quarry {
     private QuarryResourceDef resourceDef = DefDatabase<QuarryResourceDef>.GetNamed("Resources");
 
     // What type of item is this? For quarry tracking
-    private QuarryItemType type;
+    private QuarryItemType type = QuarryItemType.None;
 
 
     public override void SpawnSetup() {
@@ -94,12 +94,14 @@ namespace Quarry {
         }
 
         // Mark this as a resource
-        if (!product.designateHaulable || product == ThingDefOf.ChunkSlagSteel) {
+        if ((!product.designateHaulable || product == ThingDefOf.ChunkSlagSteel) && product != ThingDefOf.RockRubble) {
           type = QuarryItemType.Resource;
         }
 
         // Tell the quarry what type of item was mined
-        quarry.ResourceMined(type);
+        if (type != QuarryItemType.None) {
+          quarry.ResourceMined(type); 
+        }
       }
     }
   }
