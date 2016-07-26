@@ -42,7 +42,7 @@
 	</ThingDef>
 
 	<ThingDef Name="QuarryWorkspaceBase" ParentName="QuarryBase" Abstract="True">
-		<ThingClass>Quarry.Building_Quarry</ThingClass>
+		<ThingClass>Quarry.Quarry_Quadrant</ThingClass>
 		<graphicData>
 			<texPath>Cupro/Null</texPath>
 			<drawSize>(0,0)</drawSize>
@@ -91,14 +91,14 @@
 
 	<ThingDef ParentName="QuarryBase">
 		<DefName>QRY_Quarry</DefName>
-		<ThingClass>Quarry.Building_QuarryBase</ThingClass>
+		<ThingClass>Quarry.Quarry_Base</ThingClass>
 		<graphicData>
 			<texPath>Cupro/Object/Quarry</texPath>
 			<drawSize>(12,12)</drawSize>
 		</graphicData>
 		<statBases>
 			<!-- To prevent instant deconstruction -->
-			<WorkToMake>15000</WorkToMake>
+			<WorkToMake>150000</WorkToMake>
 		</statBases>
 		<drawerType>MapMeshOnly</drawerType>
 		<pathCost>20</pathCost>

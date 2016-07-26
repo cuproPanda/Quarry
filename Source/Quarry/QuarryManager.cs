@@ -29,7 +29,7 @@ namespace Quarry {
     public List<Quarry_Quadrant> Quads {
       get {
         if (quadsInt == null) {
-          FindQuarryQuads();
+          quadsInt = FindQuarryQuads();
         }
         return quadsInt;
       }
@@ -65,10 +65,10 @@ namespace Quarry {
       Del_Offset Del_LR = new Del_Offset(offsetLR);
 
       // Manually add the quadrants
-      quadsInt.Add(Del_UL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
-      quadsInt.Add(Del_UR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
-      quadsInt.Add(Del_LL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
-      quadsInt.Add(Del_LR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      foundQuads.Add(Del_UL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      foundQuads.Add(Del_UR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      foundQuads.Add(Del_LL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      foundQuads.Add(Del_LR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
 
       if (foundQuads == null) {
         return null;

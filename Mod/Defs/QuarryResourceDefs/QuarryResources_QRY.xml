@@ -9,7 +9,7 @@
 		<PctJunk>60</PctJunk>
 		<!-- Percent chance to get a chunk, out of 100 -->
 		<!-- If junk is mined, this is the chance to get chunks instead of rubble -->
-		<PctChunks>40</PctChunks>
+		<PctChunks>50</PctChunks>
 		<!-- If junk is not mined, a random resource is mined instead, -->
 		<!-- based on the recource's probability and amount of entries in Resources -->
 		<Resources>
