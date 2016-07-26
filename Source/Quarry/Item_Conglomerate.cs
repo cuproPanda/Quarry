@@ -42,7 +42,7 @@ namespace Quarry {
       Random rand = new Random();
       int chunkChance = rand.Next(100);
 
-      if (chunkChance > 50) {
+      if (chunkChance < DefDatabase<QuarryResourceDef>.GetNamed("Resources").ChunkChance) {
         isChunk = true;
         SpawnProduct(chunk, 1);
       }

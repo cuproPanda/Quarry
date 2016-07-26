@@ -4,6 +4,8 @@
 	<Quarry.QuarryResourceDef>
 		<defName>Resources</defName>
 		<label>Desired quarry resources</label>
+		<!-- Percent chance to get a chunk, out of 100 -->
+		<ChunkChance>60</ChunkChance>
 		<Resources>
 			<li>
 				<ThingDef>Steel</ThingDef>
