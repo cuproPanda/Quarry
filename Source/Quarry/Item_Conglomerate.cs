@@ -15,8 +15,6 @@ namespace Quarry {
     // Reference to the quarry this was spawned at
     private Building_QuarryBase quarry = Find.Map.GetComponent<QuarryManager>().Base;
 
-    private QuarryResources quarryResources;
-
     // Is this a chunk? For auto-hauling
     private bool isChunk;
 
@@ -36,10 +34,10 @@ namespace Quarry {
     // SpawnProduct() what to spawn and how much
     public void GenProduct() {
 
-      if (Find.Map.GetComponent<QuarryManager>().quarryResources == null) {
+      if (Find.Map.GetComponent<QuarryManager>().Resources == null) {
         Log.Warning("Trying to spawn resources with no resource list! Is the quarry missing?");
       }
-      QuarryDictionary resources = Find.Map.GetComponent<QuarryManager>().quarryResources.Resources;
+      List<QuarryResource> resources = Find.Map.GetComponent<QuarryManager>().Resources;
 
       Random rand = new Random();
       int chunkChance = rand.Next(100);
@@ -49,22 +47,22 @@ namespace Quarry {
         SpawnProduct(chunk, 1);
       }
       else { 
-        int maxProb = resources.Sum(c => c.Value.Probability);
+        int maxProb = resources.Sum(c => c.Probability);
         int choice = rand.Next(maxProb);
         int sum = 0;
 
-        foreach (KeyValuePair<ThingDef, QResource> resource in resources) {
-          for (int i = sum; i < resource.Value.Probability + sum; i++) {
+        foreach (QuarryResource resource in resources) {
+          for (int i = sum; i < resource.Probability + sum; i++) {
             if (i >= choice) {
-              SpawnProduct(resource.Key, resource.Value.StackCount);
+              SpawnProduct(resource.ThingDef, resource.StackCount);
               goto Done;
             }
           }
-          sum += resource.Value.Probability;
+          sum += resource.Probability;
         }
 
-        KeyValuePair<ThingDef, QResource> first = resources.First();
-        SpawnProduct(first.Key, first.Value.StackCount); 
+        QuarryResource first = resources.First();
+        SpawnProduct(first.ThingDef, first.StackCount); 
       }
       Done:;
     }

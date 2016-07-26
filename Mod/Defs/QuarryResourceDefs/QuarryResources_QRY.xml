@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+
+	<Quarry.QuarryResourceDef>
+		<defName>Resources</defName>
+		<label>Desired quarry resources</label>
+		<Resources>
+			<li>
+				<ThingDef>Steel</ThingDef>
+				<Probability>12</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			<li>
+				<ThingDef>Silver</ThingDef>
+				<Probability>6</Probability>
+				<StackCount>15</StackCount>
+			</li>
+			<li>
+				<ThingDef>Jade</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			<li>
+				<ThingDef>Gold</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>8</StackCount>
+			</li>
+			<li>
+				<ThingDef>Component</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>2</StackCount>
+			</li>
+			<li>
+				<ThingDef>ChunkSlagSteel</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>1</StackCount>
+			</li>
+			<li>
+				<ThingDef>Uranium</ThingDef>
+				<Probability>2</Probability>
+				<StackCount>5</StackCount>
+			</li>
+			<li>
+				<ThingDef>Plasteel</ThingDef>
+				<Probability>1</Probability>
+				<StackCount>5</StackCount>
+			</li>
+
+
+<!-- ======================================================================= -->
+<!-- Modded resources only get loaded if the mod they come from is installed -->
+<!-- ======================================================================= -->
+
+
+			<li>
+				<ThingDef>CP_Copper</ThingDef>
+				<Probability>6</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			<li>
+				<ThingDef>CP_Quartz</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			<li>
+				<ThingDef>CAL_RoseGold</ThingDef>
+				<Probability>1</Probability>
+				<StackCount>5</StackCount>
+			</li>
+			<li>
+				<ThingDef>POW_Glowstone</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>1</StackCount>
+			</li>
+			<li>
+				<ThingDef>POW_Coldstone</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>1</StackCount>
+			</li>
+			<li>
+				<ThingDef>Aluminium</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			<li>
+				<ThingDef>Copper</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			<li>
+				<ThingDef>MD2Coal</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>5</StackCount>
+			</li>
+		</Resources>
+	</Quarry.QuarryResourceDef>
+
+</GameData>
