@@ -13,7 +13,7 @@ namespace Quarry {
     private ThingDef chunk = Find.World.NaturalRockTypesIn(Find.Map.WorldCoords).RandomElement().building.mineableThing;
 
     // Reference to the quarry this was spawned at
-    private Building_QuarryBase quarry = Find.Map.GetComponent<QuarryManager>().Base;
+    private Quarry_Base quarry = Find.Map.GetComponent<QuarryManager>().Base;
 
     // Reference to the resources file
     private QuarryResourceDef resourceDef = DefDatabase<QuarryResourceDef>.GetNamed("Resources");

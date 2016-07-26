@@ -2,7 +2,7 @@ using Verse;
 
 namespace Quarry {
   // TODO: Change graphic based on resources mined, simulating digging deeper
-  public class Building_QuarryBase : Building {
+  public class Quarry_Base : Building {
 
     private static QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
 

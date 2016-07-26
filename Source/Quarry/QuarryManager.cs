@@ -15,32 +15,21 @@ namespace Quarry {
     public List<QuarryResource> Resources;
     public bool Spawned = false;
 
-    private Building_QuarryBase baseInt;
-    public Building_QuarryBase Base {
+    private Quarry_Base baseInt;
+    public Quarry_Base Base {
       get {
         if (baseInt == null) {
-          baseInt = FindQuarryBase() as Building_QuarryBase;
+          baseInt = FindQuarryBase();
         }
         return baseInt;
       }
     }
 
-    private List<Building_Quarry> quadsInt;
-    public List<Building_Quarry> Quads {
+    private List<Quarry_Quadrant> quadsInt;
+    public List<Quarry_Quadrant> Quads {
       get {
         if (quadsInt == null) {
-          quadsInt = new List<Building_Quarry>();
-          // Setup offsets
-          Del_Offset Del_UL = new Del_Offset(offsetUL);
-          Del_Offset Del_UR = new Del_Offset(offsetUR);
-          Del_Offset Del_LL = new Del_Offset(offsetLL);
-          Del_Offset Del_LR = new Del_Offset(offsetLR);
-
-          // Manually add the quadrants
-          quadsInt.Add(Del_UL(Base.Position).GetEdifice() as Building_Quarry);
-          quadsInt.Add(Del_UR(Base.Position).GetEdifice() as Building_Quarry);
-          quadsInt.Add(Del_LL(Base.Position).GetEdifice() as Building_Quarry);
-          quadsInt.Add(Del_LR(Base.Position).GetEdifice() as Building_Quarry);
+          FindQuarryQuads();
         }
         return quadsInt;
       }
@@ -56,14 +45,35 @@ namespace Quarry {
     }
 
 
-    private Thing FindQuarryBase () {
+    private Quarry_Base FindQuarryBase () {
       List<Thing> allThings = Find.ListerThings.AllThings;
       for (int i = 0; i < allThings.Count; i++) {
-        if (allThings[i] is Building_QuarryBase) {
-          return allThings[i];
+        if (allThings[i] is Quarry_Base) {
+          return allThings[i] as Quarry_Base;
         }
       }
       return null;
+    }
+
+
+    private List<Quarry_Quadrant> FindQuarryQuads() {
+      List<Quarry_Quadrant> foundQuads = new List<Quarry_Quadrant>();
+      // Setup offsets
+      Del_Offset Del_UL = new Del_Offset(offsetUL);
+      Del_Offset Del_UR = new Del_Offset(offsetUR);
+      Del_Offset Del_LL = new Del_Offset(offsetLL);
+      Del_Offset Del_LR = new Del_Offset(offsetLR);
+
+      // Manually add the quadrants
+      quadsInt.Add(Del_UL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      quadsInt.Add(Del_UR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      quadsInt.Add(Del_LL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      quadsInt.Add(Del_LR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+
+      if (foundQuads == null) {
+        return null;
+      }
+      return foundQuads;
     }
 
 
@@ -90,8 +100,9 @@ namespace Quarry {
     }
 
 
-    public void Register(Building_QuarryBase quarryBase, Building_Quarry ul, Building_Quarry ur, Building_Quarry ll, Building_Quarry lr) {
-      if (Base != null) {
+    public void Register(Quarry_Base quarryBase) {
+
+      if (baseInt != null) {
         if (FindQuarryBase() != null) {
           Log.Warning("Trying to register a quarry when one already exists!");
           return; 
@@ -100,18 +111,16 @@ namespace Quarry {
         baseInt = null;
         DeconstructQuarry();
       }
+
       baseInt = quarryBase;
-      quadsInt.Add(ul);
-      quadsInt.Add(ur);
-      quadsInt.Add(ll);
-      quadsInt.Add(lr);
+      quadsInt = FindQuarryQuads();
       Spawned = true;
     }
 
 
     public void DeconstructQuarry() {
       // Destroy all the quadrants
-      foreach (Building_Quarry quad in quadsInt) {
+      foreach (Quarry_Quadrant quad in quadsInt) {
         // In the event the player dev-deleted a quadrant,
         // this will save a potentially confusing error
         if (quad != null) {

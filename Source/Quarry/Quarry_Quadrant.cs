@@ -14,11 +14,11 @@ namespace Quarry {
   }
 
 
-  public class Building_Quarry : Building_WorkTable {
+  public class Quarry_Quadrant : Building_WorkTable {
 
     // Only one quarry is allowed, so this will always return the correct quarry
-    Building_QuarryBase ParentInt;
-    Building_QuarryBase Parent {
+    Quarry_Base ParentInt;
+    Quarry_Base Parent {
       get {
         if (ParentInt == null) {
           ParentInt = Find.Map.GetComponent<QuarryManager>().Base;
