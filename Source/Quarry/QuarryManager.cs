@@ -12,6 +12,8 @@ namespace Quarry {
     private static   IntVec3 offsetLL(IntVec3 basePos) { return basePos + new IntVec3(-3, 0, -3); }
     private static   IntVec3 offsetLR(IntVec3 basePos) { return basePos + new IntVec3( 3, 0, -3); }
 
+    public QuarryResources quarryResources;
+
     public bool Spawned = false;
 
     private Building_QuarryBase baseInt;
@@ -52,15 +54,49 @@ namespace Quarry {
     }
 
 
-    
-
-
     public override void ExposeData() {
       base.ExposeData();
 
       Scribe_References.LookReference(ref baseInt, "QRY_QuarryManager_Base");
       Scribe_Values.LookValue(ref Spawned, "QRY_QuarryManager_Spawned", false);
       Scribe_Collections.LookList(ref quadsInt, "QRY_QuarryManager_Quads", LookMode.MapReference);
+    }
+
+
+    // This gets called from Building_QuarryBase on every SpawnSetup()
+    // (every time a new one is built or the game is loaded)
+    public void FindResources() {
+      // Create a new instance of QuarryResources and start
+      // building the dictionary with vanilla resources
+      quarryResources = new QuarryResources();
+      quarryResources.BuildBaseDictionary();
+
+      // If these resources are present, add them to the
+      // available resources that can be mined
+      if (DefDatabase<ThingDef>.GetNamed("CP_Copper", false) != null) {
+        quarryResources.Add(ThingDef.Named("CP_Copper"), 5, 10);
+      }
+      if (DefDatabase<ThingDef>.GetNamed("CP_Quartz", false) != null) {
+        quarryResources.Add(ThingDef.Named("CP_Quartz"), 5, 10);
+      }
+      if (DefDatabase<ThingDef>.GetNamed("CAL_RoseGold", false) != null) {
+        quarryResources.Add(ThingDef.Named("CAL_RoseGold"), 1, 5);
+      }
+      if (DefDatabase<ThingDef>.GetNamed("POW_Coldstone", false) != null) {
+        quarryResources.Add(ThingDef.Named("POW_Coldstone"), 4, 1);
+      }
+      if (DefDatabase<ThingDef>.GetNamed("Aluminium", false) != null) {
+        quarryResources.Add(ThingDef.Named("Aluminium"), 5, 10);
+      }
+      if (DefDatabase<ThingDef>.GetNamed("Copper", false) != null) {
+        quarryResources.Add(ThingDef.Named("Copper"), 5, 10);
+      }
+      if (DefDatabase<ThingDef>.GetNamed("MD2Coal", false) != null) {
+        quarryResources.Add(ThingDef.Named("MD2Coal"), 5, 5);
+      }
+      if (DefDatabase<ThingDef>.GetNamed("POW_Glowstone", false) != null) {
+        quarryResources.Add(ThingDef.Named("POW_Glowstone"), 4, 1);
+      }
     }
 
 

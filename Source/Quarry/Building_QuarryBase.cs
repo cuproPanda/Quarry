@@ -4,6 +4,8 @@ namespace Quarry {
   // TODO: Change graphic based on resources mined, simulating digging deeper
   public class Building_QuarryBase : Building {
 
+    private static QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
+
     // autoHaul defaults to true
     public bool AutoHaul = true;
     // Trackers for the resources gathered here
@@ -20,6 +22,15 @@ namespace Quarry {
     }
 
 
+    public override void SpawnSetup() {
+      base.SpawnSetup();
+
+      // Tell the quarry manager to find the available resources
+      // This is called when a quarry is built, or on game load
+      mgr.FindResources();
+    }
+
+
     public void ResourceMined(QuarryItemType item) {
       if (item == QuarryItemType.Chunk) {
         ChunkTracker++;
@@ -33,7 +44,7 @@ namespace Quarry {
     public override void DeSpawn() {
       base.DeSpawn();
       // Tell the quarry manager to deconstruct the quarry
-      Find.Map.GetComponent<QuarryManager>().DeconstructQuarry();
+      mgr.DeconstructQuarry();
     }
   }
 }
