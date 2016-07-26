@@ -7,5 +7,6 @@
   <QRY_NotHaul>Drop and ignore chunks - affects entire quarry</QRY_NotHaul>
   <QRY_ChunksMined>Chunks mined</QRY_ChunksMined>
   <QRY_ResourcesMined>Resources mined</QRY_ResourcesMined>
+	<QRY_SwitchToParent>Show Hauling or Deconstruct options</QRY_SwitchToParent>
 
 </LanguageData>

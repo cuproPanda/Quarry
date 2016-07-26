@@ -27,15 +27,6 @@ namespace Quarry {
       }
     }
 
-    private string description {
-      get {
-        if (Parent.AutoHaul) {
-          return "QRY_Haul".Translate();
-        }
-        return "QRY_NotHaul".Translate();
-      }
-    }
-
 
     // Handle loading
     public override void ExposeData() {
@@ -45,16 +36,17 @@ namespace Quarry {
 
 
     public override IEnumerable<Gizmo> GetGizmos() {
-      Command_Toggle haul = new Command_Toggle() {
+      Command_Action parent = new Command_Action() {
 
-        icon = ContentFinder<Texture2D>.Get("UI/Designators/Haul", false),
-        defaultDesc = description,
-        hotKey = KeyBindingDefOf.Misc12,
+        icon = ContentFinder<Texture2D>.Get("Cupro/Object/Quarry", false),
+        defaultDesc = "QRY_SwitchToParent".Translate(),
         activateSound = SoundDef.Named("Click"),
-        isActive = () => Parent.AutoHaul,
-        toggleAction = () => { Parent.AutoHaul = !Parent.AutoHaul; },
+        action = () => {
+          Find.Selector.Deselect(this);
+          Find.Selector.Select(Parent);
+        },
       };
-      yield return haul;
+      yield return parent;
 
       if (base.GetGizmos() != null) {
         foreach (Command c in base.GetGizmos()) {

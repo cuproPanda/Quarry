@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+
+using UnityEngine;
+using RimWorld;
 using Verse;
 
 namespace Quarry {
@@ -12,6 +16,15 @@ namespace Quarry {
     public int ChunkTracker;
     public int ResourceTracker;
 
+    private string description {
+      get {
+        if (AutoHaul) {
+          return "QRY_Haul".Translate();
+        }
+        return "QRY_NotHaul".Translate();
+      }
+    }
+
 
     // Handle loading
     public override void ExposeData() {
@@ -19,6 +32,26 @@ namespace Quarry {
       Scribe_Values.LookValue(ref AutoHaul, "QRY_autoHaul");
       Scribe_Values.LookValue(ref ChunkTracker, "QRY_Chunks", 0);
       Scribe_Values.LookValue(ref ResourceTracker, "QRY_Resources", 0);
+    }
+
+
+    public override IEnumerable<Gizmo> GetGizmos() {
+      Command_Toggle haul = new Command_Toggle() {
+
+        icon = ContentFinder<Texture2D>.Get("UI/Designators/Haul", false),
+        defaultDesc = description,
+        hotKey = KeyBindingDefOf.Misc12,
+        activateSound = SoundDef.Named("Click"),
+        isActive = () => AutoHaul,
+        toggleAction = () => { AutoHaul = !AutoHaul; },
+      };
+      yield return haul;
+
+      if (base.GetGizmos() != null) {
+        foreach (Command c in base.GetGizmos()) {
+          yield return c;
+        }
+      }
     }
 
 
