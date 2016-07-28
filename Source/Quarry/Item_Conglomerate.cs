@@ -11,8 +11,8 @@ namespace Quarry {
     // Rock types allowed to spawn in the current map
     private ThingDef chunk = Find.World.NaturalRockTypesIn(Find.Map.WorldCoords).RandomElement().building.mineableThing;
 
-    // Reference to the quarry this was spawned at
-    private Quarry_Base quarry = Find.Map.GetComponent<QuarryManager>().Base;
+    // Reference to the quarry manager
+    private QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
 
     // Reference to the resources file
     private QuarryResourceDef resourceDef = DefDatabase<QuarryResourceDef>.GetNamed("Resources");
@@ -33,10 +33,15 @@ namespace Quarry {
     // SpawnProduct() what to spawn and how much
     public void GenProduct() {
 
-      if (Find.Map.GetComponent<QuarryManager>().Resources == null) {
+      if (mgr.Resources == null) {
         Log.Warning("Trying to spawn resources with no resource list! Is the quarry missing?");
+        mgr.FindResources();
+        if (mgr.Resources == null) {
+          Log.Warning("Unable to find a resources list. Destroying output.");
+          Destroy();
+        }
       }
-      List<QuarryResource> resources = Find.Map.GetComponent<QuarryManager>().Resources;
+      List<QuarryResource> resources = mgr.Resources;
 
       Random rand = new Random();
       int junkChance = rand.Next(100);
@@ -79,10 +84,10 @@ namespace Quarry {
 
       GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
 
-      if (quarry != null) {
+      if (mgr.Base != null) {
         // If a haulable (chunk or slag) was spawned, mark it as haulable (if the player allows it)
         if (product.designateHaulable) {
-          if (quarry.AutoHaul) {
+          if (mgr.Base.AutoHaul) {
             Find.DesignationManager.AddDesignation(new Designation(placedProduct, DesignationDefOf.Haul));
           }
 
@@ -99,7 +104,7 @@ namespace Quarry {
 
         // Tell the quarry what type of item was mined
         if (type != QuarryItemType.None) {
-          quarry.ResourceMined(type); 
+          mgr.Base.ResourceMined(type); 
         }
       }
     }

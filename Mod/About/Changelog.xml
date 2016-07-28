@@ -12,6 +12,8 @@ Added gizmo to quadrants for switching to base quarry - double clicking isn't ob
 Moved hauling gizmo to base quarry since it affects the entire quarry
 Deconstructing the quarry now returns most if not all wood used to build it
 placing a quarry in dev mode no longer allows covering a steam geyser
+Quarry output is defined in xml
+Quarry output has multiple values for each resource - able to get a large amount, but more rare
 
 14.12:
 Fixed the issues with base saving/loading and placeworker

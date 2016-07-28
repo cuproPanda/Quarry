@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 using Verse;
 
@@ -13,7 +14,11 @@ namespace Quarry {
     private static   IntVec3 offsetLR(IntVec3 basePos) { return basePos + new IntVec3( 3, 0, -3); }
 
     public List<QuarryResource> Resources;
-    public bool Spawned = false;
+    public bool Spawned {
+      get {
+        return (FindQuarryBase() != null);
+      }
+    }
 
     private Quarry_Base baseInt;
     public Quarry_Base Base {
@@ -38,10 +43,7 @@ namespace Quarry {
 
     public override void ExposeData() {
       base.ExposeData();
-
       Scribe_References.LookReference(ref baseInt, "QRY_QuarryManager_Base");
-      Scribe_Values.LookValue(ref Spawned, "QRY_QuarryManager_Spawned", false);
-      Scribe_Collections.LookList(ref quadsInt, "QRY_QuarryManager_Quads", LookMode.MapReference);
     }
 
 
@@ -57,7 +59,23 @@ namespace Quarry {
 
 
     private List<Quarry_Quadrant> FindQuarryQuads() {
+
+      // In order to find quads, a base is needed
+      if (baseInt == null) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.Append("No quarry was found while trying to get a list of quadrants. Trying to find one. - ");
+        baseInt = FindQuarryBase();
+        if (baseInt == null) {
+          stringBuilder.Append("Unable to find a quarry.");
+          Log.Error(stringBuilder.ToString());
+          return null;
+        }
+        stringBuilder.Append("Quarry found.");
+        Log.Warning(stringBuilder.ToString());
+      }
+
       List<Quarry_Quadrant> foundQuads = new List<Quarry_Quadrant>();
+
       // Setup offsets
       Del_Offset Del_UL = new Del_Offset(offsetUL);
       Del_Offset Del_UR = new Del_Offset(offsetUR);
@@ -77,8 +95,21 @@ namespace Quarry {
     }
 
 
+    private List<Quarry_Quadrant> FindAllQuads() {
+      List<Thing> allThings = Find.ListerThings.AllThings;
+      List<Quarry_Quadrant> allQuads = new List<Quarry_Quadrant>();
+      for (int i = 0; i < allThings.Count; i++) {
+        if (allThings[i] is Quarry_Quadrant) {
+          allQuads.Add(allThings[i] as Quarry_Quadrant);
+        }
+      }
+      return allQuads;
+    }
+
+
     // This gets called from Building_QuarryBase on every SpawnSetup()
     // (every time a new one is built or the game is loaded)
+    // or by Item_Conglomerate if there's no list present
     public void FindResources() {
       // Create a new list of QuarryResources and start
       // populating the list
@@ -88,7 +119,6 @@ namespace Quarry {
 
 
     public void BuildResourceList() {
-
       foreach (SimpleQuarryResource resource in DefDatabase<QuarryResourceDef>.GetNamed("Resources")) {
         if (DefDatabase<ThingDef>.GetNamed(resource.thingDef, false) != null) {
           Resources.Add(new QuarryResource(
@@ -101,25 +131,16 @@ namespace Quarry {
 
 
     public void Register(Quarry_Base quarryBase) {
-
-      if (baseInt != null) {
-        if (FindQuarryBase() != null) {
-          Log.Warning("Trying to register a quarry when one already exists!");
-          return; 
-        }
-        Log.Warning("A quarry base was saved, but there isn't one present on the map. Cleaning up any remaining traces.");
-        baseInt = null;
-        DeconstructQuarry();
-      }
-
       baseInt = quarryBase;
       quadsInt = FindQuarryQuads();
-      Spawned = true;
     }
 
 
+    // Destroy all the quadrants then deregister
     public void DeconstructQuarry() {
-      // Destroy all the quadrants
+      // Rebuild the internal list, to prevent an error when a
+      // quadrant is deleted in dev mode
+      quadsInt = FindAllQuads();
       foreach (Quarry_Quadrant quad in quadsInt) {
         quad.Destroy(); 
       }
@@ -131,7 +152,6 @@ namespace Quarry {
     public void Deregister() {
       baseInt = null;
       quadsInt.Clear();
-      Spawned = false;
     }
   }
 }
