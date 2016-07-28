@@ -4,6 +4,23 @@ TODO:
 
 -->
 
+14.20:
+Fixed previous issues
+Added QuarryResourceDef - allows for changing resource spawning
+Quarry spawns rubble sometimes instead of chunks
+Added gizmo to quadrants for switching to base quarry - double clicking isn't obvious
+Moved hauling gizmo to base quarry since it affects the entire quarry
+Deconstructing the quarry now returns most if not all wood used to build it
+placing a quarry in dev mode no longer allows covering a steam geyser
+Quarry output is defined in xml
+Quarry output has multiple values for each resource - able to get a large amount, but more rare
+
+14.12:
+Fixed the issues with base saving/loading and placeworker
+
+14.11:
+Fixed the issue with quadrant saving/loading
+
 14.10:
 Slight speed optimizations
 Quarry can be deconstructed (click twice to select entire quarry)

@@ -14,25 +14,16 @@ namespace Quarry {
   }
 
 
-  public class Building_Quarry : Building_WorkTable {
+  public class Quarry_Quadrant : Building_WorkTable {
 
     // Only one quarry is allowed, so this will always return the correct quarry
-    Building_QuarryBase ParentInt;
-    Building_QuarryBase Parent {
+    Quarry_Base ParentInt;
+    Quarry_Base Parent {
       get {
         if (ParentInt == null) {
           ParentInt = Find.Map.GetComponent<QuarryManager>().Base;
         }
         return ParentInt;
-      }
-    }
-
-    private string description {
-      get {
-        if (Parent.AutoHaul) {
-          return "QRY_Haul".Translate();
-        }
-        return "QRY_NotHaul".Translate();
       }
     }
 
@@ -45,16 +36,17 @@ namespace Quarry {
 
 
     public override IEnumerable<Gizmo> GetGizmos() {
-      Command_Toggle haul = new Command_Toggle() {
+      Command_Action parent = new Command_Action() {
 
-        icon = ContentFinder<Texture2D>.Get("UI/Designators/Haul", false),
-        defaultDesc = description,
-        hotKey = KeyBindingDefOf.Misc12,
+        icon = ContentFinder<Texture2D>.Get("Cupro/Object/Quarry", false),
+        defaultDesc = "QRY_SwitchToParent".Translate(),
         activateSound = SoundDef.Named("Click"),
-        isActive = () => Parent.AutoHaul,
-        toggleAction = () => { Parent.AutoHaul = !Parent.AutoHaul; },
+        action = () => {
+          Find.Selector.Deselect(this);
+          Find.Selector.Select(Parent);
+        },
       };
-      yield return haul;
+      yield return parent;
 
       if (base.GetGizmos() != null) {
         foreach (Command c in base.GetGizmos()) {

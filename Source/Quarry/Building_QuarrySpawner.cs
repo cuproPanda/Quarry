@@ -15,26 +15,26 @@ namespace Quarry {
 
       // Handles the graphic, preventing the graphic from tearing while zooming
       // Also handles autohauling and resource statistics (can no longer be handled by quadrants without overriding a few core classes)
-      Building_QuarryBase quarry = ThingMaker.MakeThing(ThingDef.Named("QRY_Quarry"), null) as Building_QuarryBase;
+      Quarry_Base quarry = ThingMaker.MakeThing(ThingDef.Named("QRY_Quarry"), null) as Quarry_Base;
       quarry.SetFactionDirect(Faction.OfPlayer);
 
       // Upper-left work area
-      Building_Quarry quarryUL = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryUL"), null) as Building_Quarry;
+      Quarry_Quadrant quarryUL = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryUL"), null) as Quarry_Quadrant;
       IntVec3 vec = Position + new IntVec3(-3, 0, 3);
       quarryUL.SetFactionDirect(Faction.OfPlayer);
       
       // Upper-right work area
-      Building_Quarry quarryUR = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryUR"), null) as Building_Quarry;
+      Quarry_Quadrant quarryUR = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryUR"), null) as Quarry_Quadrant;
       IntVec3 vec2 = Position + new IntVec3(3, 0, 3);
       quarryUR.SetFactionDirect(Faction.OfPlayer);
 
       // Lower-left work area
-      Building_Quarry quarryLL = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryLL"), null) as Building_Quarry;
+      Quarry_Quadrant quarryLL = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryLL"), null) as Quarry_Quadrant;
       IntVec3 vec3 = Position + new IntVec3(-3, 0, -3);
       quarryLL.SetFactionDirect(Faction.OfPlayer);
 
       // Lower-right work area
-      Building_Quarry quarryLR = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryLR"), null) as Building_Quarry;
+      Quarry_Quadrant quarryLR = ThingMaker.MakeThing(ThingDef.Named("QRY_QuarryLR"), null) as Quarry_Quadrant;
       IntVec3 vec4 = Position + new IntVec3(3, 0, -3);
       quarryLR.SetFactionDirect(Faction.OfPlayer);
 
@@ -46,9 +46,9 @@ namespace Quarry {
       GenSpawn.Spawn(quarryLL, vec3);
       GenSpawn.Spawn(quarryLR, vec4);
 
-      // Register all the quarry pieces
+      // Register the quarry
 
-      Find.Map.GetComponent<QuarryManager>().Register(quarry, quarryUL, quarryUR, quarryLL, quarryLR);
+      Find.Map.GetComponent<QuarryManager>().Register(quarry);
     }
   }
 }

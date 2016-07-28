@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+
+	<Quarry.QuarryResourceDef>
+		<defName>Resources</defName>
+		<label>Desired quarry resources</label>
+		<!-- Percent chance to get junk, out of 100 -->
+		<!-- If junk is not mined, a random resource will be mined -->
+		<PctJunk>70</PctJunk>
+		<!-- Percent chance to get a chunk, out of 100 -->
+		<!-- If junk is mined, this is the chance to get chunks instead of rubble -->
+		<PctChunks>50</PctChunks>
+		<!-- If junk is not mined, a random resource is mined instead, -->
+		<!-- based on the recource's probability and amount of entries in Resources -->
+		<Resources>
+			
+			<!--========== Steel ==========-->
+			
+			<!-- Mountain sized vein -->
+			<li>
+				<ThingDef>Steel</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			
+			<!-- Small vein -->
+			<li>
+				<ThingDef>Steel</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			
+			<!-- Traces -->
+			<li>
+				<ThingDef>Steel</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Silver ==========-->
+			
+			<li>
+				<ThingDef>Silver</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>Silver</ThingDef>
+				<Probability>8</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>Silver</ThingDef>
+				<Probability>16</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Jade ==========-->
+			
+			<li>
+				<ThingDef>Jade</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>Jade</ThingDef>
+				<Probability>6</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>Jade</ThingDef>
+				<Probability>12</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Gold ==========-->
+			
+			<li>
+				<ThingDef>Gold</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>Gold</ThingDef>
+				<Probability>6</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>Gold</ThingDef>
+				<Probability>12</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Component ==========-->
+			
+			<li>
+				<ThingDef>Component</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>4</StackCount>
+			</li>
+			<li>
+				<ThingDef>Component</ThingDef>
+				<Probability>6</Probability>
+				<StackCount>3</StackCount>
+			</li>
+			<li>
+				<ThingDef>Component</ThingDef>
+				<Probability>9</Probability>
+				<StackCount>2</StackCount>
+			</li>
+			
+			<!--========== Steel Slag ==========-->
+			
+			<li>
+				<ThingDef>ChunkSlagSteel</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>1</StackCount>
+			</li>
+			
+			<!--========== Uranium ==========-->
+			
+			<li>
+				<ThingDef>Uranium</ThingDef>
+				<Probability>2</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>Uranium</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>Uranium</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Plasteel ==========-->
+			
+			<li>
+				<ThingDef>Plasteel</ThingDef>
+				<Probability>1</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>Plasteel</ThingDef>
+				<Probability>2</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>Plasteel</ThingDef>
+				<Probability>3</Probability>
+				<StackCount>10</StackCount>
+			</li>
+
+
+<!-- ======================================================================= -->
+<!-- Modded resources only get loaded if the mod they come from is installed -->
+<!-- ======================================================================= -->
+
+
+			<!--========== CorePanda, Copper ==========-->
+			
+			<li>
+				<ThingDef>CP_Copper</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>CP_Copper</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>CP_Copper</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== CorePanda, Quartz ==========-->
+			
+			<li>
+				<ThingDef>CP_Quartz</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>CP_Quartz</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>18</StackCount>
+			</li>
+			<li>
+				<ThingDef>CP_Quartz</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>8</StackCount>
+			</li>
+			
+			<!--========== Cupro's Alloys, Rose Gold ==========-->
+			
+			<li>
+				<ThingDef>CAL_RoseGold</ThingDef>
+				<Probability>1</Probability>
+				<StackCount>15</StackCount>
+			</li>
+			<li>
+				<ThingDef>CAL_RoseGold</ThingDef>
+				<Probability>2</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			<li>
+				<ThingDef>CAL_RoseGold</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>5</StackCount>
+			</li>
+			
+			<!--========== Powerless!, Glowstone ==========-->
+			
+			<li>
+				<ThingDef>POW_Glowstone</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>3</StackCount>
+			</li>
+			<li>
+				<ThingDef>POW_Glowstone</ThingDef>
+				<Probability>8</Probability>
+				<StackCount>1</StackCount>
+			</li>
+			
+			<!--========== Powerless!, Coldstone ==========-->
+			
+			<li>
+				<ThingDef>POW_Coldstone</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>3</StackCount>
+			</li>
+			<li>
+				<ThingDef>POW_Coldstone</ThingDef>
+				<Probability>8</Probability>
+				<StackCount>1</StackCount>
+			</li>
+			
+			<!--========== Industrialisation, Aluminium ==========-->
+			
+			<li>
+				<ThingDef>Aluminium</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>Aluminium</ThingDef>
+				<Probability>8</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>Aluminium</ThingDef>
+				<Probability>16</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Industrialisation, Copper ==========-->
+			
+			<li>
+				<ThingDef>Copper</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>Copper</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>Copper</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Mechanical Defense 2, Coal ==========-->
+			
+			<li>
+				<ThingDef>MD2Coal</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
+			</li>
+			<li>
+				<ThingDef>MD2Coal</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>MD2Coal</ThingDef>
+				<Probability>15</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== GlitterTech, Silicon ==========-->
+			
+			<li>
+				<ThingDef>Silicon</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>12</StackCount>
+			</li>
+			<li>
+				<ThingDef>Silicon</ThingDef>
+				<Probability>8</Probability>
+				<StackCount>8</StackCount>
+			</li>
+			<li>
+				<ThingDef>Silicon</ThingDef>
+				<Probability>12</Probability>
+				<StackCount>4</StackCount>
+			</li>
+			
+			<!--========== GlitterTech, Titanium ==========-->
+			
+			<li>
+				<ThingDef>Titanium</ThingDef>
+				<Probability>2</Probability>
+				<StackCount>12</StackCount>
+			</li>
+			<li>
+				<ThingDef>Titanium</ThingDef>
+				<Probability>4</Probability>
+				<StackCount>8</StackCount>
+			</li>
+			<li>
+				<ThingDef>Titanium</ThingDef>
+				<Probability>6</Probability>
+				<StackCount>4</StackCount>
+			</li>
+		</Resources>
+	</Quarry.QuarryResourceDef>
+
+</GameData>
