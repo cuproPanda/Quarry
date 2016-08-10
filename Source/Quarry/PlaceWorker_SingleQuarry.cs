@@ -48,7 +48,7 @@ namespace Quarry {
       }
 
       // Require at least 60% rocky terrain
-      if ((float)(occCells - rockCells) / occCells > 0.4f) {
+      if ((float)(occCells - rockCells) / occCells > 0.6f) {
         return false;
       }
 
