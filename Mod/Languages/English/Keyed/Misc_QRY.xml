@@ -8,5 +8,6 @@
   <QRY_ChunksMined>Chunks mined</QRY_ChunksMined>
   <QRY_ResourcesMined>Resources mined</QRY_ResourcesMined>
 	<QRY_SwitchToParent>Show Hauling or Deconstruct options</QRY_SwitchToParent>
+	<QRY_NotEnoughStone>The quarry needs to be built in an area with more stone</QRY_NotEnoughStone>
 
 </LanguageData>

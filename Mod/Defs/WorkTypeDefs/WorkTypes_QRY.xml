@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<WorkTypeDefs>
+
+  <WorkTypeDef>
+    <defName>QRY_Mining</defName>
+    <labelShort>Quarry</labelShort>
+    <pawnLabel>Quarry Miner</pawnLabel>
+    <gerundLabel>Mining at quarry</gerundLabel>
+    <description>Mine in a quarry to get chunks or resources.</description>
+    <verb>Mine</verb>
+    <naturalPriority>590</naturalPriority>
+    <requireCapableColonist>true</requireCapableColonist>
+    <relevantSkills>
+      <li>Mining</li>
+    </relevantSkills>
+    <workTags>
+      <li>ManualSkilled</li>
+      <li>Mining</li>
+    </workTags>
+  </WorkTypeDef>
+
+</WorkTypeDefs>
