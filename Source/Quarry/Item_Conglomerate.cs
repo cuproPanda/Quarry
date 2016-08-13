@@ -49,10 +49,10 @@ namespace Quarry {
 
       if (junkChance < resourceDef.JunkChance) {
         if (chunkChance < resourceDef.ChunkChance) {
-          SpawnProduct(chunk, 1); 
+          SpawnProduct(chunk, 1, false); 
         }
         else {
-          SpawnProduct(ThingDefOf.RockRubble, 1);
+          SpawnProduct(ThingDefOf.RockRubble, 1, false);
         }
       }
       else { 
@@ -63,7 +63,7 @@ namespace Quarry {
         foreach (QuarryResource resource in resources) {
           for (int i = sum; i < resource.Probability + sum; i++) {
             if (i >= choice) {
-              SpawnProduct(resource.ThingDef, resource.StackCount);
+              SpawnProduct(resource.ThingDef, resource.StackCount, resource.LargeVein);
               goto Done;
             }
           }
@@ -71,18 +71,22 @@ namespace Quarry {
         }
 
         QuarryResource first = resources.First();
-        SpawnProduct(first.ThingDef, first.StackCount); 
+        SpawnProduct(first.ThingDef, first.StackCount, first.LargeVein); 
       }
       Done:;
     }
 
 
     // Spawn the resource
-    public void SpawnProduct(ThingDef product, int stack) {
+    public void SpawnProduct(ThingDef product, int stack, bool largeVein) {
       Thing placedProduct = ThingMaker.MakeThing(product);
       placedProduct.stackCount = stack;
 
       GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
+
+      if (largeVein) {
+        MoteThrower.ThrowText(placedProduct.DrawPos, "QRY_TextMote_LargeVein".Translate(), 180);
+      }
 
       if (mgr.Base != null) {
         // If a haulable (chunk or slag) was spawned, mark it as haulable (if the player allows it)

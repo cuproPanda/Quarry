@@ -21,6 +21,8 @@
 				<ThingDef>Steel</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
+				<!-- LargeVein throws a mote signifying a large quantity was mined -->
+				<LargeVein>True</LargeVein>
 			</li>
 			
 			<!-- Small vein -->
@@ -43,6 +45,7 @@
 				<ThingDef>Silver</ThingDef>
 				<Probability>4</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Silver</ThingDef>
@@ -61,6 +64,7 @@
 				<ThingDef>Jade</ThingDef>
 				<Probability>3</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Jade</ThingDef>
@@ -79,6 +83,7 @@
 				<ThingDef>Gold</ThingDef>
 				<Probability>3</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Gold</ThingDef>
@@ -97,6 +102,7 @@
 				<ThingDef>Component</ThingDef>
 				<Probability>3</Probability>
 				<StackCount>4</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Component</ThingDef>
@@ -123,6 +129,7 @@
 				<ThingDef>Uranium</ThingDef>
 				<Probability>2</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Uranium</ThingDef>
@@ -141,6 +148,7 @@
 				<ThingDef>Plasteel</ThingDef>
 				<Probability>1</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Plasteel</ThingDef>
@@ -165,6 +173,7 @@
 				<ThingDef>CP_Copper</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>CP_Copper</ThingDef>
@@ -183,6 +192,7 @@
 				<ThingDef>CP_Quartz</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>CP_Quartz</ThingDef>
@@ -201,6 +211,7 @@
 				<ThingDef>CAL_RoseGold</ThingDef>
 				<Probability>1</Probability>
 				<StackCount>15</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>CAL_RoseGold</ThingDef>
@@ -245,6 +256,7 @@
 				<ThingDef>Aluminium</ThingDef>
 				<Probability>4</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Aluminium</ThingDef>
@@ -263,6 +275,7 @@
 				<ThingDef>Copper</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Copper</ThingDef>
@@ -281,6 +294,7 @@
 				<ThingDef>MD2Coal</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>MD2Coal</ThingDef>
@@ -299,6 +313,7 @@
 				<ThingDef>Silicon</ThingDef>
 				<Probability>4</Probability>
 				<StackCount>12</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Silicon</ThingDef>
@@ -317,6 +332,7 @@
 				<ThingDef>Titanium</ThingDef>
 				<Probability>2</Probability>
 				<StackCount>12</StackCount>
+				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Titanium</ThingDef>

@@ -6,8 +6,7 @@
 		<defName>QRY_DoBillsQuarry</defName>
 		<label>mine for resources</label>
 		<giverClass>WorkGiver_DoBill</giverClass>
-		<workType>Mining</workType>
-		<priorityInType>96</priorityInType>
+		<workType>QRY_Mining</workType>
 		<fixedBillGiverDefs>
 			<li>QRY_QuarryUL</li>
 			<li>QRY_QuarryUR</li>

@@ -3,10 +3,10 @@
 
 	<RecipeDef>
 		<defName>QRY_Mine</defName>
-		<label>mine</label>
+		<label>mine for resources</label>
 		<description>Mine for buried resources.</description>
 		<jobString>Mining.</jobString>
-		<workAmount>2500</workAmount>
+		<workAmount>3250</workAmount>
 		<workSpeedStat>MiningSpeed</workSpeedStat>
 		<effectWorking>CutStone</effectWorking>
 		<soundWorking>Recipe_MakeStoneBlocks</soundWorking>

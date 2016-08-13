@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+
 using RimWorld;
 using Verse;
 
@@ -39,7 +42,6 @@ namespace Quarry {
       quarryLR.SetFactionDirect(Faction.OfPlayer);
 
       // Spawn all the quarry pieces
-
       GenSpawn.Spawn(quarry, Position);
       GenSpawn.Spawn(quarryUL, vec);
       GenSpawn.Spawn(quarryUR, vec2);
@@ -47,8 +49,37 @@ namespace Quarry {
       GenSpawn.Spawn(quarryLR, vec4);
 
       // Register the quarry
-
       Find.Map.GetComponent<QuarryManager>().Register(quarry);
+
+      // Create filth from digging the quarry
+      Random rand = new Random();
+      foreach (IntVec3 c in GenAdj.CellsOccupiedBy(quarry)) {
+
+        int junkChance = rand.Next(100);
+
+        // Check for dirt filth before checking for chunks,
+        // since chunks can skip the current iteration
+        if (junkChance < 60) {
+          GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c);
+        }
+
+        // Check for chunks
+        if (junkChance < 20) {
+          // What type of rock are we over?
+          string rockType = c.GetTerrain().label.Split(' ').Last().CapitalizeFirst();
+          // If rockType doesn't return a known value, skip to the next tile
+          // This could be from a modded rock type, or from a terrain that isn't rock
+          if (rockType != "Sandstone" && rockType != "Granite" && rockType != "Limestone" && rockType != "Slate" && rockType != "Marble") {
+            continue;
+          }
+          GenSpawn.Spawn(ThingMaker.MakeThing(ThingDef.Named("Chunk" + rockType)), c);
+        }
+
+        // Check for rock rubble
+        if (junkChance > 60) {
+          GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c); 
+        }
+      }
     }
   }
 }
