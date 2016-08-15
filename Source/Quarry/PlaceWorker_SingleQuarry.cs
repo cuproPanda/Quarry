@@ -49,7 +49,7 @@ namespace Quarry {
 
       // Require at least 60% rocky terrain
       if ((float)(occCells - rockCells) / occCells > 0.4f) {
-        return false;
+        return "QRY_NotEnoughStone".Translate();
       }
 
       return true;

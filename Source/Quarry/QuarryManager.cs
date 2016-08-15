@@ -124,7 +124,8 @@ namespace Quarry {
           Resources.Add(new QuarryResource(
             ThingDef.Named(resource.thingDef),
             resource.probability,
-            resource.stackCount));
+            resource.stackCount,
+            resource.largeVein));
         }
       }
     }

@@ -55,16 +55,16 @@ namespace Quarry {
       Random rand = new Random();
       foreach (IntVec3 c in GenAdj.CellsOccupiedBy(quarry)) {
 
-        int junkChance = rand.Next(100);
+        int filthChance = rand.Next(100);
 
         // Check for dirt filth before checking for chunks,
         // since chunks can skip the current iteration
-        if (junkChance < 60) {
+        if (filthChance < 60) {
           GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c);
         }
 
         // Check for chunks
-        if (junkChance < 20) {
+        if (filthChance < 20) {
           // What type of rock are we over?
           string rockType = c.GetTerrain().label.Split(' ').Last().CapitalizeFirst();
           // If rockType doesn't return a known value, skip to the next tile
@@ -76,7 +76,7 @@ namespace Quarry {
         }
 
         // Check for rock rubble
-        if (junkChance > 60) {
+        if (filthChance > 60) {
           GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c); 
         }
       }

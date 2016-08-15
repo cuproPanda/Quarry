@@ -11,10 +11,27 @@
 		<effectWorking>CutStone</effectWorking>
 		<soundWorking>Recipe_MakeStoneBlocks</soundWorking>
 		<workSkill>Mining</workSkill>
-		<workSkillLearnFactor>0.10</workSkillLearnFactor>
+		<workSkillLearnFactor>0.20</workSkillLearnFactor>
 		<products>
 			<QRY_Conglomerate>1</QRY_Conglomerate> 
 		</products>
+	</RecipeDef>
+	
+	<RecipeDef>
+		<defName>QRY_CutStone</defName>
+		<label>cut stone into blocks</label>
+		<description>Focus on cutting rock into usable stone blocks.</description>
+		<jobString>Stonecutting.</jobString>
+		<workAmount>2500</workAmount>
+		<workSpeedStat>StonecuttingSpeed</workSpeedStat>
+		<effectWorking>CutStone</effectWorking>
+		<soundWorking>Recipe_MakeStoneBlocks</soundWorking>
+		<workSkill>Mining</workSkill>
+		<workSkillLearnFactor>0.10</workSkillLearnFactor>
+		<products>
+			<QRY_BlockSpawner>1</QRY_BlockSpawner>
+		</products>
+		<researchPrerequisite>Stonecutting</researchPrerequisite>
 	</RecipeDef>
 
 </RecipeDefs>

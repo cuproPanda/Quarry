@@ -7,13 +7,6 @@ using Verse;
 
 namespace Quarry {
 
-  public enum QuarryItemType { 
-    None,
-    Chunk,
-    Resource
-  }
-
-
   public class Quarry_Quadrant : Building_WorkTable {
 
     // Only one quarry is allowed, so this will always return the correct quarry
@@ -62,6 +55,7 @@ namespace Quarry {
       // Display the chunks and resources mined here
       stringBuilder.AppendLine("QRY_ChunksMined".Translate() + ": " + Parent.ChunkTracker.ToString("N0"));
       stringBuilder.AppendLine("QRY_ResourcesMined".Translate() + ": " + Parent.ResourceTracker.ToString("N0"));
+      stringBuilder.AppendLine("QRY_BlocksMined".Translate() + ": " + Parent.BlockTracker.ToString("N0"));
 
       return stringBuilder.ToString();
     }

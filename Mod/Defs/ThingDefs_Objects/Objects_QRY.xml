@@ -51,6 +51,7 @@
 		<hasInteractionCell>True</hasInteractionCell>
 		<recipes>
 			<li>QRY_Mine</li>
+			<li>QRY_CutStone</li>
 		</recipes>
 		<inspectorTabs>
 			<li>ITab_Bills</li>

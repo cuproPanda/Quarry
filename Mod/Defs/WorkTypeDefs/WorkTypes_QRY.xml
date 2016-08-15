@@ -5,7 +5,7 @@
     <defName>QRY_Mining</defName>
     <labelShort>Quarry</labelShort>
     <pawnLabel>Quarry Miner</pawnLabel>
-    <gerundLabel>Mining at quarry</gerundLabel>
+    <gerundLabel>Quarry mining</gerundLabel>
     <description>Mine in a quarry to get chunks or resources.</description>
     <verb>Mine</verb>
     <naturalPriority>590</naturalPriority>

@@ -7,6 +7,7 @@
   <QRY_NotHaul>Drop and ignore chunks - affects entire quarry</QRY_NotHaul>
   <QRY_ChunksMined>Chunks mined</QRY_ChunksMined>
   <QRY_ResourcesMined>Resources mined</QRY_ResourcesMined>
+	<QRY_BlocksMined>Blocks mined</QRY_BlocksMined>
 	<QRY_SwitchToParent>Show Hauling or Deconstruct options</QRY_SwitchToParent>
 	<QRY_NotEnoughStone>The quarry needs to be built in an area with more stone</QRY_NotEnoughStone>
 	<QRY_TextMote_LargeVein>Large vein!</QRY_TextMote_LargeVein>

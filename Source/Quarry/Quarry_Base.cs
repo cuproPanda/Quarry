@@ -5,7 +5,16 @@ using RimWorld;
 using Verse;
 
 namespace Quarry {
-  // TODO: Change graphic based on resources mined, simulating digging deeper
+
+  public enum QuarryItemType {
+    None = 0,
+    Chunk = 1,
+    Resource = 2,
+    Block = 4
+  }
+
+
+
   public class Quarry_Base : Building {
 
     private static QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
@@ -15,6 +24,7 @@ namespace Quarry {
     // Trackers for the resources gathered here
     public int ChunkTracker;
     public int ResourceTracker;
+    public int BlockTracker;
 
     private string description {
       get {
@@ -70,6 +80,9 @@ namespace Quarry {
       }
       if (item == QuarryItemType.Resource) {
         ResourceTracker++;
+      }
+      if (item == QuarryItemType.Block) {
+        BlockTracker++;
       }
     }
 
