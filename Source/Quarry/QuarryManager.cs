@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
+using UnityEngine;
 using Verse;
 
 namespace Quarry {
@@ -126,7 +127,7 @@ namespace Quarry {
 
           resources.Add(new QuarryResource(
             resourceDef,
-            resource.probability + OverResource(resourceDef),
+            resource.probability + OverResource(resourceDef, resource.probability),
             resource.stackCount,
             resource.largeVein));
         }
@@ -135,10 +136,10 @@ namespace Quarry {
 
 
     // If there is a deep resource located under the quarry, increase the odds it will be mined
-    private int OverResource(ThingDef checkingDef) {
+    private int OverResource(ThingDef checkingDef, int currProbability) {
       foreach (IntVec3 c in GenAdj.CellsOccupiedBy(Base)) {
         if (checkingDef == Find.DeepResourceGrid.ThingDefAt(c)) {
-          return Rand.RangeInclusive(1,10);
+          return Rand.RangeInclusive(1, Mathf.Max(2, Mathf.FloorToInt(currProbability / 4)));
         }
       }
       return 0;
