@@ -121,13 +121,27 @@ namespace Quarry {
     public void BuildResourceList() {
       foreach (SimpleQuarryResource resource in DefDatabase<QuarryResourceDef>.GetNamed("Resources")) {
         if (DefDatabase<ThingDef>.GetNamed(resource.thingDef, false) != null) {
+
+          ThingDef resourceDef = ThingDef.Named(resource.thingDef);
+
           resources.Add(new QuarryResource(
-            ThingDef.Named(resource.thingDef),
-            resource.probability,
+            resourceDef,
+            resource.probability + OverResource(resourceDef),
             resource.stackCount,
             resource.largeVein));
         }
       }
+    }
+
+
+    // If there is a deep resource located under the quarry, increase the odds it will be mined
+    private int OverResource(ThingDef checkingDef) {
+      foreach (IntVec3 c in GenAdj.CellsOccupiedBy(Base)) {
+        if (checkingDef == Find.DeepResourceGrid.ThingDefAt(c)) {
+          return Rand.RangeInclusive(1,10);
+        }
+      }
+      return 0;
     }
 
 
