@@ -1,9 +1,14 @@
 <!-- 
 TODO:
 
-FutureVersion:
-Added quarry mining WorkType
+
 -->
+
+15.00:
+Added Quarry Mining WorkType
+Quarry must be built near stone (~60% stone/gravel)
+Quarry can be used to produce blocks instead of mining
+Quarry spawns random filth when first built
 
 14.20:
 Fixed previous issues - requires new save/world

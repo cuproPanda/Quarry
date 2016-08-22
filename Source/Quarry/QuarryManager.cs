@@ -13,7 +13,7 @@ namespace Quarry {
     private static   IntVec3 offsetLL(IntVec3 basePos) { return basePos + new IntVec3(-3, 0, -3); }
     private static   IntVec3 offsetLR(IntVec3 basePos) { return basePos + new IntVec3( 3, 0, -3); }
 
-    public List<QuarryResource> Resources;
+    public List<QuarryResource> resources;
     public bool Spawned {
       get {
         return (FindQuarryBase() != null);
@@ -113,7 +113,7 @@ namespace Quarry {
     public void FindResources() {
       // Create a new list of QuarryResources and start
       // populating the list
-      Resources = new List<QuarryResource>();
+      resources = new List<QuarryResource>();
       BuildResourceList();
     }
 
@@ -121,7 +121,7 @@ namespace Quarry {
     public void BuildResourceList() {
       foreach (SimpleQuarryResource resource in DefDatabase<QuarryResourceDef>.GetNamed("Resources")) {
         if (DefDatabase<ThingDef>.GetNamed(resource.thingDef, false) != null) {
-          Resources.Add(new QuarryResource(
+          resources.Add(new QuarryResource(
             ThingDef.Named(resource.thingDef),
             resource.probability,
             resource.stackCount,

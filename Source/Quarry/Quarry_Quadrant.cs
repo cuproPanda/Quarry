@@ -10,13 +10,13 @@ namespace Quarry {
   public class Quarry_Quadrant : Building_WorkTable {
 
     // Only one quarry is allowed, so this will always return the correct quarry
-    Quarry_Base ParentInt;
+    Quarry_Base parentInt;
     Quarry_Base Parent {
       get {
-        if (ParentInt == null) {
-          ParentInt = Find.Map.GetComponent<QuarryManager>().Base;
+        if (parentInt == null) {
+          parentInt = Find.Map.GetComponent<QuarryManager>().Base;
         }
-        return ParentInt;
+        return parentInt;
       }
     }
 
@@ -24,7 +24,7 @@ namespace Quarry {
     // Handle loading
     public override void ExposeData() {
       base.ExposeData();
-      Scribe_References.LookReference(ref ParentInt, "parent");
+      Scribe_References.LookReference(ref parentInt, "parent");
     }
 
 
@@ -53,9 +53,9 @@ namespace Quarry {
       StringBuilder stringBuilder = new StringBuilder();
 
       // Display the chunks and resources mined here
-      stringBuilder.AppendLine("QRY_ChunksMined".Translate() + ": " + Parent.ChunkTracker.ToString("N0"));
-      stringBuilder.AppendLine("QRY_ResourcesMined".Translate() + ": " + Parent.ResourceTracker.ToString("N0"));
-      stringBuilder.AppendLine("QRY_BlocksMined".Translate() + ": " + Parent.BlockTracker.ToString("N0"));
+      stringBuilder.AppendLine("QRY_ChunksMined".Translate() + ": " + Parent.chunkTracker.ToString("N0"));
+      stringBuilder.AppendLine("QRY_ResourcesMined".Translate() + ": " + Parent.resourceTracker.ToString("N0"));
+      stringBuilder.AppendLine("QRY_BlocksMined".Translate() + ": " + Parent.blockTracker.ToString("N0"));
 
       return stringBuilder.ToString();
     }

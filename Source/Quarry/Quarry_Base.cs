@@ -20,15 +20,15 @@ namespace Quarry {
     private static QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
 
     // autoHaul defaults to true
-    public bool AutoHaul = true;
+    public bool autoHaul = true;
     // Trackers for the resources gathered here
-    public int ChunkTracker;
-    public int ResourceTracker;
-    public int BlockTracker;
+    public int chunkTracker;
+    public int resourceTracker;
+    public int blockTracker;
 
-    private string description {
+    private string Description {
       get {
-        if (AutoHaul) {
+        if (autoHaul) {
           return "QRY_Haul".Translate();
         }
         return "QRY_NotHaul".Translate();
@@ -39,9 +39,9 @@ namespace Quarry {
     // Handle loading
     public override void ExposeData() {
       base.ExposeData();
-      Scribe_Values.LookValue(ref AutoHaul, "QRY_autoHaul");
-      Scribe_Values.LookValue(ref ChunkTracker, "QRY_Chunks", 0);
-      Scribe_Values.LookValue(ref ResourceTracker, "QRY_Resources", 0);
+      Scribe_Values.LookValue(ref autoHaul, "QRY_autoHaul");
+      Scribe_Values.LookValue(ref chunkTracker, "QRY_Chunks", 0);
+      Scribe_Values.LookValue(ref resourceTracker, "QRY_Resources", 0);
     }
 
 
@@ -49,11 +49,11 @@ namespace Quarry {
       Command_Toggle haul = new Command_Toggle() {
 
         icon = ContentFinder<Texture2D>.Get("UI/Designators/Haul", false),
-        defaultDesc = description,
+        defaultDesc = Description,
         hotKey = KeyBindingDefOf.Misc12,
         activateSound = SoundDef.Named("Click"),
-        isActive = () => AutoHaul,
-        toggleAction = () => { AutoHaul = !AutoHaul; },
+        isActive = () => autoHaul,
+        toggleAction = () => { autoHaul = !autoHaul; },
       };
       yield return haul;
 
@@ -76,13 +76,13 @@ namespace Quarry {
 
     public void ResourceMined(QuarryItemType item) {
       if (item == QuarryItemType.Chunk) {
-        ChunkTracker++;
+        chunkTracker++;
       }
       if (item == QuarryItemType.Resource) {
-        ResourceTracker++;
+        resourceTracker++;
       }
       if (item == QuarryItemType.Block) {
-        BlockTracker++;
+        blockTracker++;
       }
     }
 

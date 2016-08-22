@@ -33,15 +33,15 @@ namespace Quarry {
     // SpawnProduct() what to spawn and how much
     public void GenProduct() {
 
-      if (mgr.Resources == null) {
+      if (mgr.resources == null) {
         Log.Warning("Trying to spawn resources with no resource list! Is the quarry missing?");
         mgr.FindResources();
-        if (mgr.Resources == null) {
+        if (mgr.resources == null) {
           Log.Warning("Unable to find a resources list. Destroying output.");
           Destroy();
         }
       }
-      List<QuarryResource> resources = mgr.Resources;
+      List<QuarryResource> resources = mgr.resources;
 
       Random rand = new Random();
       int junkChance = rand.Next(100);
@@ -85,13 +85,13 @@ namespace Quarry {
       GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
 
       if (largeVein) {
-        MoteThrower.ThrowText(placedProduct.DrawPos, "QRY_TextMote_LargeVein".Translate(), 180);
+        MoteMaker.ThrowText(placedProduct.DrawPos, "QRY_TextMote_LargeVein".Translate(), 2f);
       }
 
       if (mgr.Base != null) {
         // If a haulable (chunk or slag) was spawned, mark it as haulable (if the player allows it)
         if (product.designateHaulable) {
-          if (mgr.Base.AutoHaul) {
+          if (mgr.Base.autoHaul) {
             Find.DesignationManager.AddDesignation(new Designation(placedProduct, DesignationDefOf.Haul));
           }
 

@@ -8,8 +8,7 @@ namespace Quarry {
   public class Item_BlockSpawner : ThingWithComps {
 
     // Rock types allowed to spawn in the current map
-    private string rockType = Find.World.NaturalRockTypesIn(Find.Map.WorldCoords)
-      .RandomElement().building.mineableThing.ToString().Replace("Chunk", "");
+    private string rockType = Find.World.NaturalRockTypesIn(Find.Map.WorldCoords).RandomElement().building.mineableThing.ToString().Replace("Chunk", "");
 
     // Reference to the quarry manager
     private QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
