@@ -6,9 +6,11 @@
 		<label>Desired quarry resources</label>
 		<!-- Percent chance to get junk, out of 100 -->
 		<!-- If junk is not mined, a random resource will be mined -->
-		<PctJunk>70</PctJunk>
+		<PctJunk>80</PctJunk>
 		<!-- Percent chance to get a chunk, out of 100 -->
 		<!-- If junk is mined, this is the chance to get chunks instead of rubble -->
+		<!-- Blocks use chunk chance to determine whether a -->
+		<!-- sufficient amount of stone was mined to make blocks -->
 		<PctChunks>50</PctChunks>
 		<!-- If junk is not mined, a random resource is mined instead, -->
 		<!-- based on the recource's probability and amount of entries in Resources -->

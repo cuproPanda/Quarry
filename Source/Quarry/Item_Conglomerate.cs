@@ -52,7 +52,7 @@ namespace Quarry {
           SpawnProduct(chunk, 1, false); 
         }
         else {
-          SpawnProduct(ThingDefOf.RockRubble, 1, false);
+          SpawnProduct(ThingDefOf.RockRubble, 1, false, true);
         }
       }
       else { 
@@ -78,14 +78,18 @@ namespace Quarry {
 
 
     // Spawn the resource
-    public void SpawnProduct(ThingDef product, int stack, bool largeVein) {
+    public void SpawnProduct(ThingDef product, int stack, bool largeVein, bool failed = false) {
       Thing placedProduct = ThingMaker.MakeThing(product);
       placedProduct.stackCount = stack;
 
       GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
 
+      // Handle text motes
       if (largeVein) {
-        MoteMaker.ThrowText(placedProduct.DrawPos, "QRY_TextMote_LargeVein".Translate(), 2f);
+        MoteMaker.ThrowText(placedProduct.DrawPos, "QRY_TextMote_LargeVein".Translate(), 3f);
+      }
+      if (failed) {
+        MoteMaker.ThrowText(placedProduct.DrawPos, "QRY_TextMote_MiningFailed".Translate(), 3f);
       }
 
       if (mgr.Base != null) {
