@@ -41,7 +41,7 @@ namespace Quarry {
 
 
     public void ExposeData() {
-      Scribe_Defs.LookDef(ref def, "QRY_QuarryResourceDef");
+      Scribe_Defs.Look(ref def, "QRY_QuarryResourceDef");
     }
   }
 

@@ -10,15 +10,19 @@ namespace Quarry {
 
     List<IntVec3> occupiedCellsTemp = new List<IntVec3>();
 
+    private Map ThisMap {
+      get { return Find.VisibleMap; }
+    }
 
-    public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot) {
 
-      if (Find.Map.GetComponent<QuarryManager>().Spawned) {
+    public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot, Thing thingToIgnore = null) {
+
+      if (ThisMap.GetComponent<QuarryManager>().Spawned) {
         return "QuarryAlreadyBuilt".Translate();
       }
 
       // This prevents placing multiple blueprints to get around the check
-      if (Find.ListerThings.ThingsOfDef(ThingDef.Named("QRY_QuarrySpawner").blueprintDef).Count > 0){
+      if (ThisMap.listerThings.ThingsOfDef(ThingDef.Named("QRY_QuarrySpawner").blueprintDef).Count > 0){
         return "QuarryAlreadyBuilt".Translate();
       }
 
@@ -35,14 +39,14 @@ namespace Quarry {
         IntVec3 c = occupiedCellsTemp[i];
 
         // Try to find a geyser
-        Thing geyser = Find.ThingGrid.ThingAt(c, ThingDefOf.SteamGeyser);
+        Thing geyser = ThisMap.thingGrid.ThingAt(c, ThingDefOf.SteamGeyser);
         if (geyser != null) {
           return false;
         }
 
         // Make sure the quarry is over sufficient rock
         Predicate<TerrainDef> validator = ((TerrainDef t) => t.defName.EndsWith("_Rough") || t.defName.EndsWith("_RoughHewn") || t.defName.EndsWith("_Smooth") || t == TerrainDefOf.Gravel);
-        if (validator(c.GetTerrain())) {
+        if (validator(ThisMap.terrainGrid.TerrainAt(c))) {
           rockCells++;
         }
       }

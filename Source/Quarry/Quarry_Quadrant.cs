@@ -14,7 +14,7 @@ namespace Quarry {
     Quarry_Base Parent {
       get {
         if (parentInt == null) {
-          parentInt = Find.Map.GetComponent<QuarryManager>().Base;
+          parentInt = Map.GetComponent<QuarryManager>().Base;
         }
         return parentInt;
       }
@@ -24,7 +24,7 @@ namespace Quarry {
     // Handle loading
     public override void ExposeData() {
       base.ExposeData();
-      Scribe_References.LookReference(ref parentInt, "parent");
+      Scribe_References.Look(ref parentInt, "parent");
     }
 
 
@@ -57,7 +57,7 @@ namespace Quarry {
       stringBuilder.AppendLine("QRY_ResourcesMined".Translate() + ": " + Parent.resourceTracker.ToString("N0"));
       stringBuilder.AppendLine("QRY_BlocksMined".Translate() + ": " + Parent.blockTracker.ToString("N0"));
 
-      return stringBuilder.ToString();
+      return stringBuilder.ToString().TrimEndNewlines();
     }
   }
 }

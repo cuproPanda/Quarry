@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using RimWorld;
@@ -8,8 +9,11 @@ namespace Quarry {
   // TODO: A15 - Add rotations, spawning platform, etc.
   public class Building_QuarrySpawner : Building {
 
-    public override void SpawnSetup() {
-      base.SpawnSetup();
+    private bool usableCell;
+    private List<Thing> thingsInCell;
+
+    public override void SpawnSetup(Map map, bool respawningAfterLoad) {
+      base.SpawnSetup(map, respawningAfterLoad);
 
       // Destroy the spawner, otherwise every load generates a new set of quarries
       Destroy();
@@ -42,42 +46,56 @@ namespace Quarry {
       quarryLR.SetFactionDirect(Faction.OfPlayer);
 
       // Spawn all the quarry pieces
-      GenSpawn.Spawn(quarry, Position);
-      GenSpawn.Spawn(quarryUL, vec);
-      GenSpawn.Spawn(quarryUR, vec2);
-      GenSpawn.Spawn(quarryLL, vec3);
-      GenSpawn.Spawn(quarryLR, vec4);
+      GenSpawn.Spawn(quarry, Position, map);
+      GenSpawn.Spawn(quarryUL, vec, map);
+      GenSpawn.Spawn(quarryUR, vec2, map);
+      GenSpawn.Spawn(quarryLL, vec3, map);
+      GenSpawn.Spawn(quarryLR, vec4, map);
 
       // Register the quarry
-      Find.Map.GetComponent<QuarryManager>().Register(quarry);
+      map.GetComponent<QuarryManager>().Register(quarry);
 
       // Create filth from digging the quarry
       Random rand = new Random();
       foreach (IntVec3 c in GenAdj.CellsOccupiedBy(quarry)) {
 
-        int filthChance = rand.Next(100);
+        usableCell = true;
 
-        // Check for dirt filth before checking for chunks,
-        // since chunks can skip the current iteration
-        if (filthChance < 60) {
-          GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c);
-        }
-
-        // Check for chunks
-        if (filthChance < 20) {
-          // What type of rock are we over?
-          string rockType = c.GetTerrain().label.Split(' ').Last().CapitalizeFirst();
-          // If rockType doesn't return a known value, skip to the next tile
-          // This could be from a modded rock type, or from a terrain that isn't rock
-          if (rockType != "Sandstone" && rockType != "Granite" && rockType != "Limestone" && rockType != "Slate" && rockType != "Marble") {
-            continue;
+        // Skip this cell if it is occupied by a placed object
+        // This is to avoid save compression errors
+        thingsInCell = map.thingGrid.ThingsListAt(c);
+        for (int t = 0; t < thingsInCell.Count; t++) {
+          if (thingsInCell[t].def.saveCompressible) {
+            usableCell = false;
+            break;
           }
-          GenSpawn.Spawn(ThingMaker.MakeThing(ThingDef.Named("Chunk" + rockType)), c);
         }
 
-        // Check for rock rubble
-        if (filthChance > 60) {
-          GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c); 
+        if (usableCell) {
+          int filthChance = rand.Next(100);
+
+          // Check for dirt filth before checking for chunks,
+          // since chunks can skip the current iteration
+          if (filthChance < 60) {
+            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c, map);
+          }
+
+          // Check for chunks
+          if (filthChance < 20) {
+            // What type of rock are we over?
+            string rockType = c.GetTerrain(map).label.Split(' ').Last().CapitalizeFirst();
+            // If rockType doesn't return a known value, skip to the next tile
+            // This could be from a modded rock type, or from a terrain that isn't rock
+            if (rockType != "Sandstone" && rockType != "Granite" && rockType != "Limestone" && rockType != "Slate" && rockType != "Marble") {
+              continue;
+            }
+            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDef.Named("Chunk" + rockType)), c, map);
+          }
+
+          // Check for rock rubble
+          if (filthChance > 60) {
+            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, map);
+          } 
         }
       }
     }

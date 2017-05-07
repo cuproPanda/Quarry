@@ -16,7 +16,7 @@
 			<QRY_Conglomerate>1</QRY_Conglomerate> 
 		</products>
 	</RecipeDef>
-	
+
 	<RecipeDef>
 		<defName>QRY_CutStone</defName>
 		<label>cut stone into blocks</label>
@@ -28,6 +28,7 @@
 		<soundWorking>Recipe_MakeStoneBlocks</soundWorking>
 		<workSkill>Mining</workSkill>
 		<workSkillLearnFactor>0.10</workSkillLearnFactor>
+		<workerCounterClass>RecipeWorkerCounter_MakeStoneBlocks</workerCounterClass>
 		<products>
 			<QRY_BlockSpawner>1</QRY_BlockSpawner>
 		</products>

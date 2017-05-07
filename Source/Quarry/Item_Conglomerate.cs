@@ -9,10 +9,10 @@ namespace Quarry {
   public class Item_Conglomerate : ThingWithComps {
 
     // Rock types allowed to spawn in the current map
-    private ThingDef chunk = Find.World.NaturalRockTypesIn(Find.Map.WorldCoords).RandomElement().building.mineableThing;
+    private ThingDef chunk;
 
     // Reference to the quarry manager
-    private QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
+    private QuarryManager mgr;
 
     // Reference to the resources file
     private QuarryResourceDef resourceDef = DefDatabase<QuarryResourceDef>.GetNamed("Resources");
@@ -20,9 +20,15 @@ namespace Quarry {
     // What type of item is this? For quarry tracking
     private QuarryItemType type = QuarryItemType.None;
 
+    private Map mapRef = null;
 
-    public override void SpawnSetup() {
-      base.SpawnSetup();
+
+    public override void SpawnSetup(Map map, bool respawningAfterLoad) {
+      base.SpawnSetup(map, respawningAfterLoad);
+
+      mapRef = map;
+      chunk = Find.World.NaturalRockTypesIn(map.Tile).RandomElement().building.mineableThing;
+      mgr = map.GetComponent<QuarryManager>();
 
       GenProduct();
       Destroy(DestroyMode.Vanish);
@@ -82,21 +88,21 @@ namespace Quarry {
       Thing placedProduct = ThingMaker.MakeThing(product);
       placedProduct.stackCount = stack;
 
-      GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
+      GenPlace.TryPlaceThing(placedProduct, Position, mapRef, ThingPlaceMode.Direct);
 
       // Handle text motes
       if (largeVein) {
-        MoteMaker.ThrowText(placedProduct.DrawPos, "QRY_TextMote_LargeVein".Translate(), 3f);
+        MoteMaker.ThrowText(placedProduct.DrawPos, mapRef, "QRY_TextMote_LargeVein".Translate(), 3f);
       }
       if (failed) {
-        MoteMaker.ThrowText(placedProduct.DrawPos, "QRY_TextMote_MiningFailed".Translate(), 3f);
+        MoteMaker.ThrowText(placedProduct.DrawPos, mapRef, "QRY_TextMote_MiningFailed".Translate(), 3f);
       }
 
       if (mgr.Base != null) {
         // If a haulable (chunk or slag) was spawned, mark it as haulable (if the player allows it)
         if (product.designateHaulable) {
           if (mgr.Base.autoHaul) {
-            Find.DesignationManager.AddDesignation(new Designation(placedProduct, DesignationDefOf.Haul));
+            mapRef.designationManager.AddDesignation(new Designation(placedProduct, DesignationDefOf.Haul));
           }
 
           // Mark this as a chunk

@@ -77,7 +77,7 @@
 		</graphicData>
 		<destroyable>true</destroyable>
 		<statBases>
-			<WorkToMake>15000</WorkToMake>
+			<WorkToBuild>15000</WorkToBuild>
 		</statBases>
 		<Size>(12,12)</Size>
 		<DesignationCategory>Production</DesignationCategory>

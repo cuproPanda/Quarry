@@ -17,7 +17,8 @@ namespace Quarry {
 
   public class Quarry_Base : Building {
 
-    private static QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
+    //private static QuarryManager mgr = Find.VisibleMap.GetComponent<QuarryManager>();
+    private static QuarryManager mgr;
 
     // autoHaul defaults to true
     public bool autoHaul = true;
@@ -25,6 +26,7 @@ namespace Quarry {
     public int chunkTracker;
     public int resourceTracker;
     public int blockTracker;
+    private Map map;
 
     private string Description {
       get {
@@ -39,9 +41,10 @@ namespace Quarry {
     // Handle loading
     public override void ExposeData() {
       base.ExposeData();
-      Scribe_Values.LookValue(ref autoHaul, "QRY_autoHaul");
-      Scribe_Values.LookValue(ref chunkTracker, "QRY_Chunks", 0);
-      Scribe_Values.LookValue(ref resourceTracker, "QRY_Resources", 0);
+      Scribe_Values.Look(ref autoHaul, "QRY_autoHaul");
+      Scribe_Values.Look(ref chunkTracker, "QRY_Chunks", 0);
+      Scribe_Values.Look(ref resourceTracker, "QRY_Resources", 0);
+      Scribe_Values.Look(ref blockTracker, "QRY_Blocks", 0);
     }
 
 
@@ -65,8 +68,11 @@ namespace Quarry {
     }
 
 
-    public override void SpawnSetup() {
-      base.SpawnSetup();
+    public override void SpawnSetup(Map map, bool respawningAfterLoad) {
+      base.SpawnSetup(map, respawningAfterLoad);
+
+      this.map = map;
+      mgr = map.GetComponent<QuarryManager>();
 
       // Tell the quarry manager to find the available resources
       // This is called when a quarry is built, or on game load
@@ -94,7 +100,7 @@ namespace Quarry {
       // this doesn't support xml alteration
       Thing placedProduct = ThingMaker.MakeThing(ThingDefOf.WoodLog);
       placedProduct.stackCount = Random.Range(60, 81);
-      GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
+      GenPlace.TryPlaceThing(placedProduct, Position, map, ThingPlaceMode.Direct);
 
       // Tell the quarry manager to deconstruct the quarry
       mgr.DeconstructQuarry();

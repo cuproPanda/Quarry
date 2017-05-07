@@ -14,6 +14,9 @@ namespace Quarry {
     private static   IntVec3 offsetLL(IntVec3 basePos) { return basePos + new IntVec3(-3, 0, -3); }
     private static   IntVec3 offsetLR(IntVec3 basePos) { return basePos + new IntVec3( 3, 0, -3); }
 
+    public QuarryManager(Map map) : base(map) {
+    }
+
     public List<QuarryResource> resources;
     public bool Spawned {
       get {
@@ -44,12 +47,12 @@ namespace Quarry {
 
     public override void ExposeData() {
       base.ExposeData();
-      Scribe_References.LookReference(ref baseInt, "QRY_QuarryManager_Base");
+      Scribe_References.Look(ref baseInt, "QRY_QuarryManager_Base");
     }
 
 
     private Quarry_Base FindQuarryBase () {
-      List<Thing> allThings = Find.ListerThings.AllThings;
+      List<Thing> allThings = map.listerThings.AllThings;
       for (int i = 0; i < allThings.Count; i++) {
         if (allThings[i] is Quarry_Base) {
           return allThings[i] as Quarry_Base;
@@ -84,10 +87,10 @@ namespace Quarry {
       Del_Offset Del_LR = new Del_Offset(offsetLR);
 
       // Manually add the quadrants
-      foundQuads.Add(Del_UL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
-      foundQuads.Add(Del_UR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
-      foundQuads.Add(Del_LL(baseInt.Position).GetEdifice() as Quarry_Quadrant);
-      foundQuads.Add(Del_LR(baseInt.Position).GetEdifice() as Quarry_Quadrant);
+      foundQuads.Add(Del_UL(baseInt.Position).GetEdifice(map) as Quarry_Quadrant);
+      foundQuads.Add(Del_UR(baseInt.Position).GetEdifice(map) as Quarry_Quadrant);
+      foundQuads.Add(Del_LL(baseInt.Position).GetEdifice(map) as Quarry_Quadrant);
+      foundQuads.Add(Del_LR(baseInt.Position).GetEdifice(map) as Quarry_Quadrant);
 
       if (foundQuads == null) {
         return null;
@@ -97,7 +100,7 @@ namespace Quarry {
 
 
     private List<Quarry_Quadrant> FindAllQuads() {
-      List<Thing> allThings = Find.ListerThings.AllThings;
+      List<Thing> allThings = Find.VisibleMap.listerThings.AllThings;
       List<Quarry_Quadrant> allQuads = new List<Quarry_Quadrant>();
       for (int i = 0; i < allThings.Count; i++) {
         if (allThings[i] is Quarry_Quadrant) {
@@ -138,7 +141,7 @@ namespace Quarry {
     // If there is a deep resource located under the quarry, increase the odds it will be mined
     private int OverResource(ThingDef checkingDef, int currProbability) {
       foreach (IntVec3 c in GenAdj.CellsOccupiedBy(Base)) {
-        if (checkingDef == Find.DeepResourceGrid.ThingDefAt(c)) {
+        if (checkingDef == Find.VisibleMap.deepResourceGrid.ThingDefAt(c)) {
           return Rand.RangeInclusive(1, Mathf.Max(2, Mathf.FloorToInt(currProbability / 4)));
         }
       }

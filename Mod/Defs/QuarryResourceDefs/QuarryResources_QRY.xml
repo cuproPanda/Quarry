@@ -239,19 +239,6 @@
 				<StackCount>1</StackCount>
 			</li>
 			
-			<!--========== Powerless!, Coldstone ==========-->
-			
-			<li>
-				<ThingDef>POW_Coldstone</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>3</StackCount>
-			</li>
-			<li>
-				<ThingDef>POW_Coldstone</ThingDef>
-				<Probability>8</Probability>
-				<StackCount>1</StackCount>
-			</li>
-			
 			<!--========== Industrialisation, Aluminium ==========-->
 			
 			<li>

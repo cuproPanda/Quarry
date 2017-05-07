@@ -8,17 +8,23 @@ namespace Quarry {
   public class Item_BlockSpawner : ThingWithComps {
 
     // Rock types allowed to spawn in the current map
-    private string rockType = Find.World.NaturalRockTypesIn(Find.Map.WorldCoords).RandomElement().building.mineableThing.ToString().Replace("Chunk", "");
+    private string rockType;
 
     // Reference to the quarry manager
-    private QuarryManager mgr = Find.Map.GetComponent<QuarryManager>();
+    private QuarryManager mgr;
 
     // Reference to the resources file
     private QuarryResourceDef resourceDef = DefDatabase<QuarryResourceDef>.GetNamed("Resources");
 
+    private Map mapRef = null;
 
-    public override void SpawnSetup() {
-      base.SpawnSetup();
+
+    public override void SpawnSetup(Map map, bool respawningAfterLoad) {
+      base.SpawnSetup(map, respawningAfterLoad);
+
+      mapRef = map;
+      rockType = Find.World.NaturalRockTypesIn(map.Tile).RandomElement().building.mineableThing.ToString().Replace("Chunk", "");
+      mgr = map.GetComponent<QuarryManager>();
 
       GenProduct();
       Destroy(DestroyMode.Vanish);
@@ -53,10 +59,10 @@ namespace Quarry {
       Thing placedProduct = ThingMaker.MakeThing(product);
       placedProduct.stackCount = stack;
 
-      GenPlace.TryPlaceThing(placedProduct, Position, ThingPlaceMode.Direct);
+      GenPlace.TryPlaceThing(placedProduct, Position, mapRef, ThingPlaceMode.Direct);
 
       if (!blocksSpawned) {
-        MoteMaker.ThrowText(placedProduct.DrawPos, "QRY_TextMote_MiningFailed".Translate(), 3f);
+        MoteMaker.ThrowText(placedProduct.DrawPos, mapRef, "QRY_TextMote_MiningFailed".Translate(), 3f);
       }
 
       if (mgr.Base != null && blocksSpawned) {
