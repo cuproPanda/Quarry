@@ -169,40 +169,59 @@
 <!-- ======================================================================= -->
 
 
-			<!--========== CorePanda, Copper ==========-->
+			<!--========== Expanded Power, Copper ==========-->
 			
 			<li>
-				<ThingDef>CP_Copper</ThingDef>
+				<ThingDef>EXP_Copper</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
 				<LargeVein>True</LargeVein>
 			</li>
 			<li>
-				<ThingDef>CP_Copper</ThingDef>
+				<ThingDef>EXP_Copper</ThingDef>
 				<Probability>10</Probability>
 				<StackCount>20</StackCount>
 			</li>
 			<li>
-				<ThingDef>CP_Copper</ThingDef>
+				<ThingDef>EXP_Copper</ThingDef>
 				<Probability>20</Probability>
 				<StackCount>10</StackCount>
 			</li>
 			
-			<!--========== CorePanda, Quartz ==========-->
+			<!--========== Expanded Power, Lead ==========-->
 			
 			<li>
-				<ThingDef>CP_Quartz</ThingDef>
+				<ThingDef>EXP_Lead</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
 				<LargeVein>True</LargeVein>
 			</li>
 			<li>
-				<ThingDef>CP_Quartz</ThingDef>
+				<ThingDef>EXP_Lead</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>EXP_Lead</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Expanded Power, Quartz ==========-->
+			
+			<li>
+				<ThingDef>EXP_Quartz</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
+			</li>
+			<li>
+				<ThingDef>EXP_Quartz</ThingDef>
 				<Probability>10</Probability>
 				<StackCount>18</StackCount>
 			</li>
 			<li>
-				<ThingDef>CP_Quartz</ThingDef>
+				<ThingDef>EXP_Quartz</ThingDef>
 				<Probability>20</Probability>
 				<StackCount>8</StackCount>
 			</li>
