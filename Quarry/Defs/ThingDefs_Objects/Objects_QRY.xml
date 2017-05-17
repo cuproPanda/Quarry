@@ -30,6 +30,7 @@
 			<Flammability>0</Flammability>
 		</statBases>
 		<Passability>PassThroughOnly</Passability>
+		<canOverlapZones>false</canOverlapZones>
 		<holdsRoof>false</holdsRoof>
 		<surfaceType>Item</surfaceType>
 		<rotatable>false</rotatable>
@@ -99,7 +100,7 @@
 		</graphicData>
 		<statBases>
 			<!-- To prevent instant deconstruction -->
-			<WorkToMake>150000</WorkToMake>
+			<WorkToBuild>150000</WorkToBuild>
 		</statBases>
 		<drawerType>MapMeshOnly</drawerType>
 		<pathCost>20</pathCost>
