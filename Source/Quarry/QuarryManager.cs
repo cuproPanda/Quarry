@@ -100,11 +100,14 @@ namespace Quarry {
 
 
     private List<Quarry_Quadrant> FindAllQuads() {
-      List<Thing> allThings = Find.VisibleMap.listerThings.AllThings;
+      List<Building> buildings = Find.VisibleMap.listerBuildings.allBuildingsColonist;
       List<Quarry_Quadrant> allQuads = new List<Quarry_Quadrant>();
-      for (int i = 0; i < allThings.Count; i++) {
-        if (allThings[i] is Quarry_Quadrant) {
-          allQuads.Add(allThings[i] as Quarry_Quadrant);
+      for (int i = 0; i < buildings.Count; i++) {
+        if (buildings[i] is Quarry_Quadrant) {
+          allQuads.Add(buildings[i] as Quarry_Quadrant);
+        }
+        if (allQuads.Count == 4) {
+          break;
         }
       }
       return allQuads;
