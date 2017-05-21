@@ -9,11 +9,11 @@
 		<PctJunk>80</PctJunk>
 		<!-- Percent chance to get a chunk, out of 100 -->
 		<!-- If junk is mined, this is the chance to get chunks instead of rubble -->
-		<!-- Blocks use chunk chance to determine whether a -->
+		<!-- Mining for blocks uses chunk chance to determine whether a -->
 		<!-- sufficient amount of stone was mined to make blocks -->
 		<PctChunks>50</PctChunks>
 		<!-- If junk is not mined, a random resource is mined instead, -->
-		<!-- based on the recource's probability and amount of entries in Resources -->
+		<!-- based on the resource's probability and amount of entries in Resources -->
 		<Resources>
 			
 			<!--========== Steel ==========-->
@@ -21,7 +21,7 @@
 			<!-- Mountain sized vein -->
 			<li>
 				<ThingDef>Steel</ThingDef>
-				<Probability>5</Probability>
+				<Probability>10</Probability>
 				<StackCount>35</StackCount>
 				<!-- LargeVein throws a mote signifying a large quantity was mined -->
 				<LargeVein>True</LargeVein>
@@ -30,14 +30,14 @@
 			<!-- Small vein -->
 			<li>
 				<ThingDef>Steel</ThingDef>
-				<Probability>10</Probability>
+				<Probability>20</Probability>
 				<StackCount>20</StackCount>
 			</li>
 			
 			<!-- Traces -->
 			<li>
 				<ThingDef>Steel</ThingDef>
-				<Probability>20</Probability>
+				<Probability>40</Probability>
 				<StackCount>10</StackCount>
 			</li>
 			
@@ -165,7 +165,7 @@
 
 
 <!-- ======================================================================= -->
-<!-- Modded resources only get loaded if the mod they come from is installed -->
+<!-- Modded resources only get loaded if the mod they come from is installed - there is no risk of adding entries here -->
 <!-- ======================================================================= -->
 
 
@@ -226,21 +226,54 @@
 				<StackCount>8</StackCount>
 			</li>
 			
-			<!--========== Cupro's Alloys, Rose Gold ==========-->
+			<!--========== Expanded Power, Tin ==========-->
 			
 			<li>
-				<ThingDef>CAL_RoseGold</ThingDef>
-				<Probability>1</Probability>
-				<StackCount>15</StackCount>
+				<ThingDef>EXP_Tin</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
 				<LargeVein>True</LargeVein>
 			</li>
 			<li>
-				<ThingDef>CAL_RoseGold</ThingDef>
-				<Probability>2</Probability>
-				<StackCount>10</StackCount>
+				<ThingDef>EXP_Tin</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>20</StackCount>
 			</li>
 			<li>
-				<ThingDef>CAL_RoseGold</ThingDef>
+				<ThingDef>EXP_Tin</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Cupro's Alloys, Aluminum ==========-->
+			
+			<li>
+				<ThingDef>CAL_Aluminum</ThingDef>
+				<Probability>5</Probability>
+				<StackCount>35</StackCount>
+				<LargeVein>True</LargeVein>
+			</li>
+			<li>
+				<ThingDef>CAL_Aluminum</ThingDef>
+				<Probability>10</Probability>
+				<StackCount>20</StackCount>
+			</li>
+			<li>
+				<ThingDef>CAL_Aluminum</ThingDef>
+				<Probability>20</Probability>
+				<StackCount>10</StackCount>
+			</li>
+			
+			<!--========== Cupro's Alloys, Electrum ==========-->
+			
+			<li>
+				<ThingDef>CAL_Electrum</ThingDef>
+				<Probability>1</Probability>
+				<StackCount>10</StackCount>
+				<LargeVein>True</LargeVein>
+			</li>
+			<li>
+				<ThingDef>CAL_Electrum</ThingDef>
 				<Probability>4</Probability>
 				<StackCount>5</StackCount>
 			</li>
