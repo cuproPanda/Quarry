@@ -80,7 +80,7 @@ namespace Quarry {
     }
 
 
-    public void ResourceMined(QuarryItemType item) {
+    public void ResourceMined(QuarryItemType item, int quantity = 1) {
       if (item == QuarryItemType.Chunk) {
         chunkTracker++;
       }
@@ -88,7 +88,7 @@ namespace Quarry {
         resourceTracker++;
       }
       if (item == QuarryItemType.Block) {
-        blockTracker++;
+        blockTracker += quantity;
       }
     }
 

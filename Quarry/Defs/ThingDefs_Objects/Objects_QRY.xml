@@ -101,6 +101,7 @@
 		<statBases>
 			<!-- To prevent instant deconstruction -->
 			<WorkToBuild>150000</WorkToBuild>
+			<Beauty>-50</Beauty>
 		</statBases>
 		<drawerType>MapMeshOnly</drawerType>
 		<pathCost>20</pathCost>

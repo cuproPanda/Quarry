@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using UnityEngine;
@@ -21,6 +22,25 @@ namespace Quarry {
     public bool Spawned {
       get {
         return (FindQuarryBase() != null);
+      }
+    }
+
+    private List<ThingDef> rockTypes;
+    public List<ThingDef> RockTypes {
+      get {
+        // If the list is empty for some reason, generate a new one
+        if (rockTypes == null) {
+          foreach (IntVec3 c in GenAdj.CellsOccupiedBy(Base)) {
+            string rockType = c.GetTerrain(map).label.Split(' ').Last().CapitalizeFirst();
+            if (DefDatabase<ThingDef>.GetNamed("Chunk" + rockType, false) != null) {
+              rockTypes.Add(DefDatabase<ThingDef>.GetNamed("Chunk" + rockType));
+            }
+          }
+        }
+        return rockTypes;
+      }
+      set {
+        rockTypes = value;
       }
     }
 
@@ -48,6 +68,7 @@ namespace Quarry {
     public override void ExposeData() {
       base.ExposeData();
       Scribe_References.Look(ref baseInt, "QRY_QuarryManager_Base");
+      Scribe_Collections.Look(ref rockTypes, "QRY_QuarryManager_RockTypes");
     }
 
 

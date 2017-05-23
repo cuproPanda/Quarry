@@ -57,9 +57,24 @@ namespace Quarry {
 
       // Create filth from digging the quarry
       Random rand = new Random();
+
+      // Create a list of mineable rocks to pass to the manager
+      // This allows for a weighted list, so if the quarry is only built on 1
+      // tile of sandstone, mining sandstone will be very rare
+      List<ThingDef> rockTypes = new List<ThingDef>();
+
       foreach (IntVec3 c in GenAdj.CellsOccupiedBy(quarry)) {
 
         usableCell = true;
+        ThingDef rock = null;
+
+        // What type of rock are we over?
+        string rockType = c.GetTerrain(map).label.Split(' ').Last().CapitalizeFirst();
+        // If there isn't a known chunk for this, it probably isn't a rock type
+        // This allows Cupro's Stones to work, and any other mod that uses standard naming conventions for stones
+        if (DefDatabase<ThingDef>.GetNamed("Chunk" + rockType, false) != null) {
+          rock = DefDatabase<ThingDef>.GetNamed("Chunk" + rockType);
+        }
 
         // Skip this cell if it is occupied by a placed object
         // This is to avoid save compression errors
@@ -81,15 +96,8 @@ namespace Quarry {
           }
 
           // Check for chunks
-          if (filthChance < 20) {
-            // What type of rock are we over?
-            string rockType = c.GetTerrain(map).label.Split(' ').Last().CapitalizeFirst();
-            // If rockType doesn't return a known value, skip to the next tile
-            // This could be from a modded rock type, or from a terrain that isn't rock
-            if (rockType != "Sandstone" && rockType != "Granite" && rockType != "Limestone" && rockType != "Slate" && rockType != "Marble") {
-              continue;
-            }
-            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDef.Named("Chunk" + rockType)), c, map);
+          if (filthChance < 20 && rock != null) {
+            GenSpawn.Spawn(ThingMaker.MakeThing(rock), c, map);
           }
 
           // Check for rock rubble
@@ -97,7 +105,15 @@ namespace Quarry {
             GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, map);
           } 
         }
+
+        // if there was a rock, add it to the list
+        if (rock != null) {
+          rockTypes.Add(rock);
+        }
       }
+
+      // After the foreach loop, send the list off to the manager
+      map.GetComponent<QuarryManager>().RockTypes = rockTypes;
     }
   }
 }

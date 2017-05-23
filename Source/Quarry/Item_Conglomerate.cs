@@ -27,8 +27,8 @@ namespace Quarry {
       base.SpawnSetup(map, respawningAfterLoad);
 
       mapRef = map;
-      chunk = Find.World.NaturalRockTypesIn(map.Tile).RandomElement().building.mineableThing;
       mgr = map.GetComponent<QuarryManager>();
+      chunk = mgr.RockTypes.RandomElement();
 
       GenProduct();
       Destroy(DestroyMode.Vanish);

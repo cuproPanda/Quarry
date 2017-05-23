@@ -23,8 +23,8 @@ namespace Quarry {
       base.SpawnSetup(map, respawningAfterLoad);
 
       mapRef = map;
-      rockType = Find.World.NaturalRockTypesIn(map.Tile).RandomElement().building.mineableThing.ToString().Replace("Chunk", "");
       mgr = map.GetComponent<QuarryManager>();
+      rockType = mgr.RockTypes.RandomElement().ToString().Replace("Chunk", "");
 
       GenProduct();
       Destroy(DestroyMode.Vanish);
@@ -66,7 +66,7 @@ namespace Quarry {
       }
 
       if (mgr.Base != null && blocksSpawned) {
-        mgr.Base.ResourceMined(QuarryItemType.Block);
+        mgr.Base.ResourceMined(QuarryItemType.Block, stack);
       }
     }
   }
