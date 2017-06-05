@@ -174,23 +174,17 @@ namespace Quarry {
     public Thing GiveResources(ResourceRequest req) {
       // Try to give junk first
       if (Rand.Chance(QuarryDefOf.Resources.JunkChance)) {
-        Log.Message("JunkChance");
         if (Rand.Chance(QuarryDefOf.Resources.ChunkChance)) {
-          Log.Message("chunkChance");
-          return new QuarryResource() {
-            thingDef = database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement())
-          }.ToThing();
+          return new QuarryResource(database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
         }
         else {
-          Log.Message("rubble");
-          return ThingMaker.MakeThing(ThingDefOf.RockRubble);
+          return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
         }
       }
 
       System.Random rand = new System.Random();
 
       if (req == ResourceRequest.Resources || (req == ResourceRequest.Random && Rand.Chance(0.6f))) {
-        Log.Message("resources/random");
         int maxProb = QuarryMod.Resources.Sum(c => c.probability);
         int choice = rand.Next(maxProb);
         int sum = 0;
@@ -206,18 +200,12 @@ namespace Quarry {
         return QuarryMod.Resources.First().ToThing();
       }
       else if (req == ResourceRequest.Blocks) {
-        Log.Message("blocks");
         string blockType = RockTypesUnder.RandomElement();
-        return new QuarryResource() {
-          thingDef = database.Find(t => t.defName == "Blocks" + blockType),
-          // Reduce the numbers of blocks given; this shouldn't be as efficient as the table
-          stackCount = Rand.RangeInclusive(5, 10)
-        }.ToThing();
+        return new QuarryResource(database.Find(t => t.defName == "Blocks" + blockType), Rand.RangeInclusive(5, 10)).ToThing();
       }
       // The quarry was most likely toggled off while a pawn was still working. Give junk
       else {
-        Log.Message("error");
-        return ThingMaker.MakeThing(ThingDefOf.RockRubble);
+        return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
       }
     }
   }

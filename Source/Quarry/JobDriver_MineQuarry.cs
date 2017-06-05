@@ -99,10 +99,6 @@ namespace Quarry {
           haulableResult = Quarry.GiveResources(ResourceRequest.None);
         }
 
-        if (haulableResult == null) {
-          EndJobWith(JobCondition.Errored);
-        }
-
         GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
 
         if (haulableResult.def.designateHaulable && Quarry.autoHaul) {

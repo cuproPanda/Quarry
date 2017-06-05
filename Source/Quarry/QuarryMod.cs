@@ -3,15 +3,20 @@
 using Verse;
 
 namespace Quarry {
+
   public sealed class QuarryMod : Mod {
 
     private List<ThingDef> database;
     private List<QuarryResource> resources;
     public static List<QuarryResource> Resources {
-      get { return Resources; }
+      get { return Instance.resources; }
     }
 
+    private static QuarryMod Instance { get; set; }
+
+
     public QuarryMod(ModContentPack mcp) : base(mcp) {
+      Instance = this;
       LongEventHandler.ExecuteWhenFinished(BuildResourceList);
       LongEventHandler.ExecuteWhenFinished(Echo);
     }
@@ -20,15 +25,12 @@ namespace Quarry {
     private void BuildResourceList() {
       database = DefDatabase<ThingDef>.AllDefsListForReading;
       resources = new List<QuarryResource>();
-      ThingDef tmpThing;
 
       foreach (SimpleQuarryResource resource in QuarryDefOf.Resources.resources) {
-        tmpThing = database.Find(t => t.defName == resource.thingDef);
+        ThingDef tmpThing = database.Find(t => t.defName == resource.thingDef);
         if (tmpThing != null) {
-          ThingDef resourceDef = tmpThing;
-
           resources.Add(new QuarryResource(
-            resourceDef,
+            tmpThing,
             resource.probability,
             resource.stackCount));
         }
@@ -37,7 +39,7 @@ namespace Quarry {
 
 
     private void Echo() {
-      Log.Message("Quarry:: Loaded " + resources.Count + " defs into list.");
+      Log.Message("Quarry:: Loaded " + Resources.Count + " defs into list.");
     }
   }
 }

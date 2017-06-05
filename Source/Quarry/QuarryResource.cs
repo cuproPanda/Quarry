@@ -6,11 +6,17 @@ namespace Quarry {
 
     public ThingDef thingDef;
     public int probability;
-    public int stackCount = 1;
+    public int stackCount;
 
 
     public QuarryResource() {
 
+    }
+
+
+    public QuarryResource(ThingDef thingDef, int stackCount) {
+      this.thingDef = thingDef;
+      this.stackCount = stackCount;
     }
 
 

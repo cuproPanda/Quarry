@@ -6,12 +6,12 @@
 		<label>Desired quarry resources</label>
 		<!-- Percent chance to get junk -->
 		<!-- If junk is not mined, a random resource will be mined -->
-		<PctJunk>0.80</PctJunk>
+		<pctJunk>0.80</pctJunk>
 		<!-- Percent chance to get a chunk -->
 		<!-- If junk is mined, this is the chance to get chunks instead of rubble -->
 		<!-- Mining for blocks uses chunk chance to determine whether a -->
 		<!-- sufficient amount of stone was mined to make blocks -->
-		<PctChunks>0.50</PctChunks>
+		<pctChunks>0.50</pctChunks>
 		<!-- If junk is not mined, a random resource is mined instead, -->
 		<!-- based on the resource's probability and amount of entries in Resources -->
 		<Resources>
@@ -20,139 +20,139 @@
 			
 			<!-- Mountain sized vein -->
 			<li>
-				<ThingDef>Steel</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Steel</thingDef>
+				<probability>10</probability>
+				<stackCount>35</stackCount>
 			</li>
 			
 			<!-- Small vein -->
 			<li>
-				<ThingDef>Steel</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Steel</thingDef>
+				<probability>20</probability>
+				<stackCount>20</stackCount>
 			</li>
 			
 			<!-- Traces -->
 			<li>
-				<ThingDef>Steel</ThingDef>
-				<Probability>40</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Steel</thingDef>
+				<probability>40</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Silver ==========-->
 			
 			<li>
-				<ThingDef>Silver</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Silver</thingDef>
+				<probability>4</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>Silver</ThingDef>
-				<Probability>8</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Silver</thingDef>
+				<probability>8</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>Silver</ThingDef>
-				<Probability>16</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Silver</thingDef>
+				<probability>16</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Jade ==========-->
 			
 			<li>
-				<ThingDef>Jade</ThingDef>
-				<Probability>3</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Jade</thingDef>
+				<probability>3</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>Jade</ThingDef>
-				<Probability>6</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Jade</thingDef>
+				<probability>6</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>Jade</ThingDef>
-				<Probability>12</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Jade</thingDef>
+				<probability>12</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Gold ==========-->
 			
 			<li>
-				<ThingDef>Gold</ThingDef>
-				<Probability>3</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Gold</thingDef>
+				<probability>3</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>Gold</ThingDef>
-				<Probability>6</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Gold</thingDef>
+				<probability>6</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>Gold</ThingDef>
-				<Probability>12</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Gold</thingDef>
+				<probability>12</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Component ==========-->
 			
 			<li>
-				<ThingDef>Component</ThingDef>
-				<Probability>3</Probability>
-				<StackCount>4</StackCount>
+				<thingDef>Component</thingDef>
+				<probability>3</probability>
+				<stackCount>4</stackCount>
 			</li>
 			<li>
-				<ThingDef>Component</ThingDef>
-				<Probability>6</Probability>
-				<StackCount>3</StackCount>
+				<thingDef>Component</thingDef>
+				<probability>6</probability>
+				<stackCount>3</stackCount>
 			</li>
 			<li>
-				<ThingDef>Component</ThingDef>
-				<Probability>9</Probability>
-				<StackCount>2</StackCount>
+				<thingDef>Component</thingDef>
+				<probability>9</probability>
+				<stackCount>2</stackCount>
 			</li>
 			
 			<!--========== Steel Slag ==========-->
 			
 			<li>
-				<ThingDef>ChunkSlagSteel</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>1</StackCount>
+				<thingDef>ChunkSlagSteel</thingDef>
+				<probability>20</probability>
+				<stackCount>1</stackCount>
 			</li>
 			
 			<!--========== Uranium ==========-->
 			
 			<li>
-				<ThingDef>Uranium</ThingDef>
-				<Probability>2</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Uranium</thingDef>
+				<probability>2</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>Uranium</ThingDef>
-				<Probability>3</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Uranium</thingDef>
+				<probability>3</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>Uranium</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Uranium</thingDef>
+				<probability>4</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Plasteel ==========-->
 			
 			<li>
-				<ThingDef>Plasteel</ThingDef>
-				<Probability>1</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Plasteel</thingDef>
+				<probability>1</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>Plasteel</ThingDef>
-				<Probability>2</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Plasteel</thingDef>
+				<probability>2</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>Plasteel</ThingDef>
-				<Probability>3</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Plasteel</thingDef>
+				<probability>3</probability>
+				<stackCount>10</stackCount>
 			</li>
 
 
@@ -164,189 +164,189 @@
 			<!--========== Expanded Power, Copper ==========-->
 			
 			<li>
-				<ThingDef>EXP_Copper</ThingDef>
-				<Probability>5</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>EXP_Copper</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Copper</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>EXP_Copper</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Copper</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>EXP_Copper</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Expanded Power, Lead ==========-->
 			
 			<li>
-				<ThingDef>EXP_Lead</ThingDef>
-				<Probability>5</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>EXP_Lead</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Lead</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>EXP_Lead</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Lead</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>EXP_Lead</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Expanded Power, Quartz ==========-->
 			
 			<li>
-				<ThingDef>EXP_Quartz</ThingDef>
-				<Probability>5</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>EXP_Quartz</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Quartz</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>18</StackCount>
+				<thingDef>EXP_Quartz</thingDef>
+				<probability>10</probability>
+				<stackCount>18</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Quartz</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>8</StackCount>
+				<thingDef>EXP_Quartz</thingDef>
+				<probability>20</probability>
+				<stackCount>8</stackCount>
 			</li>
 			
 			<!--========== Expanded Power, Tin ==========-->
 			
 			<li>
-				<ThingDef>EXP_Tin</ThingDef>
-				<Probability>5</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>EXP_Tin</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Tin</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>EXP_Tin</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>EXP_Tin</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>EXP_Tin</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Cupro's Alloys, Aluminum ==========-->
 			
 			<li>
-				<ThingDef>CAL_Aluminum</ThingDef>
-				<Probability>5</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>CAL_Aluminum</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>CAL_Aluminum</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>CAL_Aluminum</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>CAL_Aluminum</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>CAL_Aluminum</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Cupro's Alloys, Electrum ==========-->
 			
 			<li>
-				<ThingDef>CAL_Electrum</ThingDef>
-				<Probability>1</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>CAL_Electrum</thingDef>
+				<probability>1</probability>
+				<stackCount>10</stackCount>
 			</li>
 			<li>
-				<ThingDef>CAL_Electrum</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>5</StackCount>
+				<thingDef>CAL_Electrum</thingDef>
+				<probability>4</probability>
+				<stackCount>5</stackCount>
 			</li>
 			
 			<!--========== Powerless!, Glowstone ==========-->
 			
 			<li>
-				<ThingDef>POW_Glowstone</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>3</StackCount>
+				<thingDef>POW_Glowstone</thingDef>
+				<probability>4</probability>
+				<stackCount>3</stackCount>
 			</li>
 			<li>
-				<ThingDef>POW_Glowstone</ThingDef>
-				<Probability>8</Probability>
-				<StackCount>1</StackCount>
+				<thingDef>POW_Glowstone</thingDef>
+				<probability>8</probability>
+				<stackCount>1</stackCount>
 			</li>
 			
 			<!--========== Industrialisation, Aluminium ==========-->
 			
 			<li>
-				<ThingDef>Aluminium</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Aluminium</thingDef>
+				<probability>4</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>Aluminium</ThingDef>
-				<Probability>8</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Aluminium</thingDef>
+				<probability>8</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>Aluminium</ThingDef>
-				<Probability>16</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Aluminium</thingDef>
+				<probability>16</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== Industrialisation, Copper ==========-->
 			
 			<li>
-				<ThingDef>Copper</ThingDef>
-				<Probability>5</Probability>
-				<StackCount>35</StackCount>
+				<thingDef>Copper</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
 			</li>
 			<li>
-				<ThingDef>Copper</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>20</StackCount>
+				<thingDef>Copper</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
 			</li>
 			<li>
-				<ThingDef>Copper</ThingDef>
-				<Probability>20</Probability>
-				<StackCount>10</StackCount>
+				<thingDef>Copper</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
 			</li>
 			
 			<!--========== GlitterTech, Silicon ==========-->
 			
 			<li>
-				<ThingDef>Silicon</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>12</StackCount>
+				<thingDef>Silicon</thingDef>
+				<probability>4</probability>
+				<stackCount>12</stackCount>
 			</li>
 			<li>
-				<ThingDef>Silicon</ThingDef>
-				<Probability>8</Probability>
-				<StackCount>8</StackCount>
+				<thingDef>Silicon</thingDef>
+				<probability>8</probability>
+				<stackCount>8</stackCount>
 			</li>
 			<li>
-				<ThingDef>Silicon</ThingDef>
-				<Probability>12</Probability>
-				<StackCount>4</StackCount>
+				<thingDef>Silicon</thingDef>
+				<probability>12</probability>
+				<stackCount>4</stackCount>
 			</li>
 			
 			<!--========== GlitterTech, Titanium ==========-->
 			
 			<li>
-				<ThingDef>Titanium</ThingDef>
-				<Probability>2</Probability>
-				<StackCount>12</StackCount>
+				<thingDef>Titanium</thingDef>
+				<probability>2</probability>
+				<stackCount>12</stackCount>
 			</li>
 			<li>
-				<ThingDef>Titanium</ThingDef>
-				<Probability>4</Probability>
-				<StackCount>8</StackCount>
+				<thingDef>Titanium</thingDef>
+				<probability>4</probability>
+				<stackCount>8</stackCount>
 			</li>
 			<li>
-				<ThingDef>Titanium</ThingDef>
-				<Probability>6</Probability>
-				<StackCount>4</StackCount>
+				<thingDef>Titanium</thingDef>
+				<probability>6</probability>
+				<stackCount>4</stackCount>
 			</li>
 		</Resources>
 	</Quarry.QuarryResourceDef>
