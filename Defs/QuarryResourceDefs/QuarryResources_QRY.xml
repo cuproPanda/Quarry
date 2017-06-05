@@ -23,8 +23,6 @@
 				<ThingDef>Steel</ThingDef>
 				<Probability>10</Probability>
 				<StackCount>35</StackCount>
-				<!-- LargeVein throws a mote signifying a large quantity was mined -->
-				<LargeVein>True</LargeVein>
 			</li>
 			
 			<!-- Small vein -->
@@ -47,7 +45,6 @@
 				<ThingDef>Silver</ThingDef>
 				<Probability>4</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Silver</ThingDef>
@@ -66,7 +63,6 @@
 				<ThingDef>Jade</ThingDef>
 				<Probability>3</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Jade</ThingDef>
@@ -85,7 +81,6 @@
 				<ThingDef>Gold</ThingDef>
 				<Probability>3</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Gold</ThingDef>
@@ -104,7 +99,6 @@
 				<ThingDef>Component</ThingDef>
 				<Probability>3</Probability>
 				<StackCount>4</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Component</ThingDef>
@@ -131,7 +125,6 @@
 				<ThingDef>Uranium</ThingDef>
 				<Probability>2</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Uranium</ThingDef>
@@ -150,7 +143,6 @@
 				<ThingDef>Plasteel</ThingDef>
 				<Probability>1</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Plasteel</ThingDef>
@@ -175,7 +167,6 @@
 				<ThingDef>EXP_Copper</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>EXP_Copper</ThingDef>
@@ -194,7 +185,6 @@
 				<ThingDef>EXP_Lead</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>EXP_Lead</ThingDef>
@@ -213,7 +203,6 @@
 				<ThingDef>EXP_Quartz</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>EXP_Quartz</ThingDef>
@@ -232,7 +221,6 @@
 				<ThingDef>EXP_Tin</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>EXP_Tin</ThingDef>
@@ -251,7 +239,6 @@
 				<ThingDef>CAL_Aluminum</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>CAL_Aluminum</ThingDef>
@@ -270,7 +257,6 @@
 				<ThingDef>CAL_Electrum</ThingDef>
 				<Probability>1</Probability>
 				<StackCount>10</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>CAL_Electrum</ThingDef>
@@ -297,7 +283,6 @@
 				<ThingDef>Aluminium</ThingDef>
 				<Probability>4</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Aluminium</ThingDef>
@@ -316,7 +301,6 @@
 				<ThingDef>Copper</ThingDef>
 				<Probability>5</Probability>
 				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Copper</ThingDef>
@@ -329,32 +313,12 @@
 				<StackCount>10</StackCount>
 			</li>
 			
-			<!--========== Mechanical Defense 2, Coal ==========-->
-			
-			<li>
-				<ThingDef>MD2Coal</ThingDef>
-				<Probability>5</Probability>
-				<StackCount>35</StackCount>
-				<LargeVein>True</LargeVein>
-			</li>
-			<li>
-				<ThingDef>MD2Coal</ThingDef>
-				<Probability>10</Probability>
-				<StackCount>20</StackCount>
-			</li>
-			<li>
-				<ThingDef>MD2Coal</ThingDef>
-				<Probability>15</Probability>
-				<StackCount>10</StackCount>
-			</li>
-			
 			<!--========== GlitterTech, Silicon ==========-->
 			
 			<li>
 				<ThingDef>Silicon</ThingDef>
 				<Probability>4</Probability>
 				<StackCount>12</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Silicon</ThingDef>
@@ -373,7 +337,6 @@
 				<ThingDef>Titanium</ThingDef>
 				<Probability>2</Probability>
 				<StackCount>12</StackCount>
-				<LargeVein>True</LargeVein>
 			</li>
 			<li>
 				<ThingDef>Titanium</ThingDef>

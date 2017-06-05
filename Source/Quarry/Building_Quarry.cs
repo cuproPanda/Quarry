@@ -171,26 +171,26 @@ namespace Quarry {
     }
 
 
-    public QuarryResource GiveResources(ResourceRequest req) {
+    public Thing GiveResources(ResourceRequest req) {
       // Try to give junk first
       if (Rand.Chance(QuarryDefOf.Resources.JunkChance)) {
+        Log.Message("JunkChance");
         if (Rand.Chance(QuarryDefOf.Resources.ChunkChance)) {
+          Log.Message("chunkChance");
           return new QuarryResource() {
-            thingDef = database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()),
-            stackCount = 1
-          };
+            thingDef = database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement())
+          }.ToThing();
         }
         else {
-          return new QuarryResource() {
-            thingDef = ThingDefOf.RockRubble,
-            stackCount = 1
-          };
+          Log.Message("rubble");
+          return ThingMaker.MakeThing(ThingDefOf.RockRubble);
         }
       }
 
       System.Random rand = new System.Random();
 
       if (req == ResourceRequest.Resources || (req == ResourceRequest.Random && Rand.Chance(0.6f))) {
+        Log.Message("resources/random");
         int maxProb = QuarryMod.Resources.Sum(c => c.probability);
         int choice = rand.Next(maxProb);
         int sum = 0;
@@ -198,27 +198,26 @@ namespace Quarry {
         foreach (QuarryResource resource in QuarryMod.Resources) {
           for (int i = sum; i < resource.probability + sum; i++) {
             if (i >= choice) {
-              return resource;
+              return resource.ToThing();
             }
           }
           sum += resource.probability;
         }
-        return QuarryMod.Resources.First();
+        return QuarryMod.Resources.First().ToThing();
       }
       else if (req == ResourceRequest.Blocks) {
+        Log.Message("blocks");
         string blockType = RockTypesUnder.RandomElement();
         return new QuarryResource() {
           thingDef = database.Find(t => t.defName == "Blocks" + blockType),
           // Reduce the numbers of blocks given; this shouldn't be as efficient as the table
           stackCount = Rand.RangeInclusive(5, 10)
-        };
+        }.ToThing();
       }
       // The quarry was most likely toggled off while a pawn was still working. Give junk
       else {
-        return new QuarryResource() {
-          thingDef = ThingDefOf.RockRubble,
-          stackCount = 1
-        };
+        Log.Message("error");
+        return ThingMaker.MakeThing(ThingDefOf.RockRubble);
       }
     }
   }

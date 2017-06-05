@@ -13,6 +13,7 @@ namespace Quarry {
 
     public QuarryMod(ModContentPack mcp) : base(mcp) {
       LongEventHandler.ExecuteWhenFinished(BuildResourceList);
+      LongEventHandler.ExecuteWhenFinished(Echo);
     }
 
 
@@ -29,10 +30,14 @@ namespace Quarry {
           resources.Add(new QuarryResource(
             resourceDef,
             resource.probability,
-            resource.stackCount,
-            resource.largeVein));
+            resource.stackCount));
         }
       }
+    }
+
+
+    private void Echo() {
+      Log.Message("Quarry:: Loaded " + resources.Count + " defs into list.");
     }
   }
 }

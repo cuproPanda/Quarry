@@ -52,7 +52,7 @@ namespace Quarry {
       // Mine at the quarry. This is only for the delay
       Toil quarryToil = new Toil();
       quarryToil.tickAction = delegate {
-
+        
         if (ticksToPickHit < -100) {
           ResetTicksToPickHit();
         }
@@ -74,42 +74,46 @@ namespace Quarry {
       float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
       quarryToil.defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor));
       yield return quarryToil;
+      
 
       // Collect resources from the quarry
       Toil collect = new Toil();
       collect.initAction = delegate {
-
+        
         pawn.records.Increment(RecordDefOf.CellsMined);
-        QuarryResource product;
+        Thing haulableResult = null;
         // If both options are allowed, give one of the two
         if (Quarry.quarryResources && Quarry.quarryBlocks) {
-          product = Quarry.GiveResources(ResourceRequest.Random);
+          haulableResult = Quarry.GiveResources(ResourceRequest.Random);
         }
         // If only resources are allowed, try to get resources
         else if (Quarry.quarryResources) {
-          product = Quarry.GiveResources(ResourceRequest.Resources);
+          haulableResult = Quarry.GiveResources(ResourceRequest.Resources);
         }
         // If only blocks are allowed, try to get blocks
         else if (Quarry.quarryBlocks) {
-          product = Quarry.GiveResources(ResourceRequest.Blocks);
+          haulableResult = Quarry.GiveResources(ResourceRequest.Blocks);
         }
         // The quarry was most likely toggled off while a pawn was still working. Give junk
         else {
-          product = Quarry.GiveResources(ResourceRequest.None);
+          haulableResult = Quarry.GiveResources(ResourceRequest.None);
         }
 
-        Thing haulableResult = ThingMaker.MakeThing(product.thingDef);
-        haulableResult.stackCount = product.stackCount;
+        if (haulableResult == null) {
+          EndJobWith(JobCondition.Errored);
+        }
+
         GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
 
-        if (product.largeVein) {
-          MoteMaker.ThrowText(haulableResult.DrawPos, Map, "QRY_TextMote_LargeVein".Translate(), 180);
+        if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
+          Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
         }
 
         StoragePriority storagePriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
         IntVec3 c;
 
         // Try to find a suitable storage spot for the resource
+        // TODO: Prioritize the quarry platforms
         if (Quarry.autoHaul && StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, storagePriority, pawn.Faction, out c)) {
           CurJob.SetTarget(TargetIndex.B, haulableResult);
           CurJob.count = haulableResult.stackCount;
@@ -121,62 +125,6 @@ namespace Quarry {
         }
       };
       collect.defaultCompleteMode = ToilCompleteMode.Instant;
-
-
-
-
-
-
-
-
-      /// =================================================================================
-      /// Fragments of this code are still needed to start the hauling portion of the job
-      /// =================================================================================
-      //
-      //Toil blocksToil = new Toil();
-      //blocksToil.initAction = delegate {
-      //  pawn.records.Increment(RecordDefOf.CellsMined);
-      //  QuarryResource product = new QuarryResource();
-
-      //  if (Rand.Chance(QuarryDefOf.Resources.JunkChance)) {
-      //    if (Rand.Chance(QuarryDefOf.Resources.ChunkChance)) {
-      //      string rockType = Quarry.RockTypesUnder.RandomElement();
-      //      if (DefDatabase<ThingDef>.GetNamed("Blocks" + rockType, false) == null) {
-
-      //        product.thingDef = ThingDefOf.BlocksGranite;
-      //        product.stackCount = Rand.RangeInclusive(10, 20);
-      //      }
-      //      else {
-      //        product.thingDef = DefDatabase<ThingDef>.GetNamed("Blocks" + rockType, false);
-      //        product.stackCount = Rand.RangeInclusive(10, 20);
-      //      }
-      //    }
-      //    else {
-      //      product.thingDef = ThingDefOf.RockRubble;
-      //      product.stackCount = 1;
-      //    }
-      //  }
-
-      //  Thing haulableResult = ThingMaker.MakeThing(product.thingDef);
-      //  haulableResult.stackCount = product.stackCount;
-      //  GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
-
-      //  StoragePriority storagePriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
-      //  IntVec3 c;
-
-      //  // Try to find a suitable storage spot for the resource
-      //  if (quarry.autoHaul && StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, storagePriority, pawn.Faction, out c)) {
-      //    CurJob.SetTarget(TargetIndex.B, haulableResult);
-      //    CurJob.count = haulableResult.stackCount;
-      //    CurJob.SetTarget(TargetIndex.C, c);
-      //  }
-      //  // If there is no spot to store the resource, end this job
-      //  else {
-      //    EndJobWith(JobCondition.Succeeded);
-      //  }
-      //};
-      //blocksToil.defaultCompleteMode = ToilCompleteMode.Instant;
-      //yield return blocksToil;
 
       // Reserve the resource
       yield return Toils_Reserve.Reserve(TargetIndex.B);
