@@ -99,7 +99,6 @@ namespace Quarry {
       // Collect resources from the quarry
       Toil collect = new Toil();
       collect.initAction = delegate {
-        
         pawn.records.Increment(RecordDefOf.CellsMined);
 
         ResourceRequest req = ResourceRequest.None;
@@ -119,7 +118,7 @@ namespace Quarry {
 
         Thing haulableResult = Quarry.GiveResources(req);
         
-        GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Direct);
+        GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
 
         if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
           Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));

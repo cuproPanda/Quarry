@@ -11,6 +11,9 @@ namespace Quarry {
     public static List<QuarryResource> Resources {
       get { return Instance.resources; }
     }
+    public static List<ThingDef> Database {
+      get { return Instance.database; }
+    }
 
     private static QuarryMod Instance { get; set; }
 

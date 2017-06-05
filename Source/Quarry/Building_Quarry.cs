@@ -33,7 +33,6 @@ namespace Quarry {
     private static float percentDamagedWhenQuarried = 0.2f;
 
     private float quarryPercent = 100f;
-    private List<ThingDef> database;
     private bool firstSpawn = false;
 
     // Create a list of mineable rock types
@@ -118,8 +117,6 @@ namespace Quarry {
     public override void SpawnSetup(Map map, bool respawningAfterLoad) {
       base.SpawnSetup(map, respawningAfterLoad);
 
-      database = DefDatabase<ThingDef>.AllDefsListForReading;
-
       if (firstSpawn) {
 
         // First pass to populate rockTypesUnder
@@ -128,7 +125,7 @@ namespace Quarry {
           string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
           // If there isn't a known chunk for this, it probably isn't a rock type and wouldn't work for spawning anyways
           // This allows Cupro's Stones to work, and any other mod that uses standard naming conventions for stones
-          ThingDef chunkTest = database.Find(t => t.defName == "Chunk" + rockType);
+          ThingDef chunkTest = QuarryMod.Database.Find(t => t.defName == "Chunk" + rockType);
           if (chunkTest != null) {
             rockTypesUnder.Add(rockType);
           }
@@ -161,7 +158,7 @@ namespace Quarry {
               // Check for chunks
               if (filthAmount > 80) {
                 string chunkType = RockTypesUnder.RandomElement();
-                ThingDef chunk = database.Find(t => t.defName == "Chunk" + chunkType);
+                ThingDef chunk = QuarryMod.Database.Find(t => t.defName == "Chunk" + chunkType);
                 GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
               }
             }
@@ -176,7 +173,7 @@ namespace Quarry {
       // Try to give junk first
       if (Rand.Chance(QuarryDefOf.Resources.JunkChance)) {
         if (Rand.Chance(QuarryDefOf.Resources.ChunkChance)) {
-          return new QuarryResource(database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
+          return new QuarryResource(QuarryMod.Database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
         }
         else {
           return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
@@ -202,7 +199,7 @@ namespace Quarry {
       }
       else if (req == ResourceRequest.Blocks) {
         string blockType = RockTypesUnder.RandomElement();
-        return new QuarryResource(database.Find(t => t.defName == "Blocks" + blockType), Rand.RangeInclusive(5, 10)).ToThing();
+        return new QuarryResource(QuarryMod.Database.Find(t => t.defName == "Blocks" + blockType), Rand.RangeInclusive(5, 10)).ToThing();
       }
       // The quarry was most likely toggled off while a pawn was still working. Give junk
       else {
