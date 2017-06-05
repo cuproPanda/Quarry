@@ -172,6 +172,7 @@ namespace Quarry {
 
 
     public Thing GiveResources(ResourceRequest req) {
+
       // Try to give junk first
       if (Rand.Chance(QuarryDefOf.Resources.JunkChance)) {
         if (Rand.Chance(QuarryDefOf.Resources.ChunkChance)) {
