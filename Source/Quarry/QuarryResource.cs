@@ -2,29 +2,12 @@
 
 namespace Quarry {
 
-  public class QuarryResource : IExposable {
+  public class QuarryResource {
 
-    private QuarryResourceDef def;
-    public QuarryResourceDef Def {
-      get {
-        if (def == null) {
-          def = DefDatabase<QuarryResourceDef>.GetNamed("Resources");
-        }
-        return def;
-      }
-    }
-
-    private ThingDef thingDef;
-    public ThingDef ThingDef { get { return thingDef; } set { thingDef = value; } }
-
-    private int probability;
-    public int Probability { get { return probability; } set { probability = value; } }
-
-    private int stackCount;
-    public int StackCount { get { return stackCount; } set { stackCount = value; } }
-
-    private bool largeVein;
-    public bool LargeVein { get { return largeVein; } set { largeVein = value; } }
+    public ThingDef thingDef;
+    public int probability;
+    public int stackCount;
+    public bool largeVein;
 
 
     public QuarryResource() {
@@ -37,11 +20,6 @@ namespace Quarry {
       this.probability = probability;
       this.stackCount = stackCount;
       this.largeVein = largeVein;
-    }
-
-
-    public void ExposeData() {
-      Scribe_Defs.Look(ref def, "QRY_QuarryResourceDef");
     }
   }
 

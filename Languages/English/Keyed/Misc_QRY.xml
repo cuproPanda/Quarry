@@ -3,13 +3,24 @@
 
 	<!-- Quarry -->
 	<QuarryAlreadyBuilt>Only one quarry is allowed per map.</QuarryAlreadyBuilt>
-	<QRY_Haul>Automatically haul chunks - affects entire quarry</QRY_Haul>
-	<QRY_NotHaul>Drop and ignore chunks - affects entire quarry</QRY_NotHaul>
+
+	<QRY_Mode>Hauling mode</QRY_Mode>
+	<QRY_Haul>Automatically haul chunks</QRY_Haul>
+	<QRY_NotHaul>Drop and ignore chunks</QRY_NotHaul>
+
+	<QRY_DesignatorMine>Quarry Resources</QRY_DesignatorMine>
+	<QRY_DesignatorMineDesc>Designate the quarry to be mined for resources.</QRY_DesignatorMineDesc>
+
+	<QRY_DesignatorMineBlocks>Chisel Blocks</QRY_DesignatorMineBlocks>
+	<QRY_DesignatorMineBlocksDesc>Designate the quarry to be mined for blocks.</QRY_DesignatorMineBlocksDesc>
+
 	<QRY_ChunksMined>Chunks mined</QRY_ChunksMined>
 	<QRY_ResourcesMined>Resources mined</QRY_ResourcesMined>
 	<QRY_BlocksMined>Blocks mined</QRY_BlocksMined>
+
 	<QRY_SwitchToParent>Show Hauling or Deconstruct options</QRY_SwitchToParent>
 	<QRY_NotEnoughStone>The quarry needs to be built in an area with more stone</QRY_NotEnoughStone>
+
 	<QRY_TextMote_LargeVein>Large vein!</QRY_TextMote_LargeVein>
 	<QRY_TextMote_MiningFailed>Mining failed</QRY_TextMote_MiningFailed>
 

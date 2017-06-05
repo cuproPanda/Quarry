@@ -1,26 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <WorkGivers>
-
-
+	
 	<WorkGiverDef>
-		<defName>QRY_DoBillsQuarry</defName>
-		<label>mine for resources</label>
-		<giverClass>WorkGiver_DoBill</giverClass>
+		<defName>QRY_MineQuarry</defName>
+		<label>mine a quarry for resources</label>
+		<giverClass>Quarry.WorkGiver_MineQuarry</giverClass>
 		<workType>QRY_Mining</workType>
-		<fixedBillGiverDefs>
-			<li>QRY_QuarryUL</li>
-			<li>QRY_QuarryUR</li>
-			<li>QRY_QuarryLL</li>
-			<li>QRY_QuarryLR</li>
-		</fixedBillGiverDefs>
 		<verb>mine at</verb>
 		<gerund>mining at</gerund>
 		<requiredCapacities>
 			<li>Manipulation</li>
 		</requiredCapacities>
-		<prioritizeSustains>true</prioritizeSustains>
 	</WorkGiverDef>
-
-
-
+	
 </WorkGivers>
