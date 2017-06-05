@@ -7,6 +7,7 @@ namespace Quarry {
     public static QuarryResourceDef Resources;
     public static JobDef QRY_MineQuarry;
     public static ThingDef QRY_Quarry;
+    public static ResearchProjectDef Stonecutting;
   }
 }
 
