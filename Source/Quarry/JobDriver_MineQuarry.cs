@@ -60,6 +60,26 @@ namespace Quarry {
           pawn.skills.Learn(SkillDefOf.Mining, 0.11f, false);
         }
         ticksToPickHit--;
+
+
+        //ResourceRequest req = ResourceRequest.None;
+
+        //// If both options are allowed, give one of the two
+        //if (Quarry.quarryResources && Quarry.quarryBlocks) {
+        //  req = ResourceRequest.Random;
+        //}
+        //// If only resources are allowed, try to get resources
+        //else if (Quarry.quarryResources) {
+        //  req = ResourceRequest.Resources;
+        //}
+        //// If only blocks are allowed, try to get blocks
+        //else if (Quarry.quarryBlocks) {
+        //  req = ResourceRequest.Blocks;
+        //}
+        //Log.Message(Quarry.GiveResources(req).def.label);
+
+
+
         if (ticksToPickHit <= 0) {
           if (effecter == null) {
             effecter = EffecterDefOf.Mine.Spawn();
@@ -81,25 +101,25 @@ namespace Quarry {
       collect.initAction = delegate {
         
         pawn.records.Increment(RecordDefOf.CellsMined);
-        Thing haulableResult = null;
+
+        ResourceRequest req = ResourceRequest.None;
+        
         // If both options are allowed, give one of the two
         if (Quarry.quarryResources && Quarry.quarryBlocks) {
-          haulableResult = Quarry.GiveResources(ResourceRequest.Random);
+          req = ResourceRequest.Random;
         }
         // If only resources are allowed, try to get resources
         else if (Quarry.quarryResources) {
-          haulableResult = Quarry.GiveResources(ResourceRequest.Resources);
+          req = ResourceRequest.Resources;
         }
         // If only blocks are allowed, try to get blocks
         else if (Quarry.quarryBlocks) {
-          haulableResult = Quarry.GiveResources(ResourceRequest.Blocks);
-        }
-        // The quarry was most likely toggled off while a pawn was still working. Give junk
-        else {
-          haulableResult = Quarry.GiveResources(ResourceRequest.None);
+          req = ResourceRequest.Blocks;
         }
 
-        GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
+        Thing haulableResult = Quarry.GiveResources(req);
+        
+        GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Direct);
 
         if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
           Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
