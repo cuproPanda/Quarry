@@ -19,20 +19,28 @@ namespace Quarry {
 
     public bool autoHaul = true;
     public bool mineModeToggle = true;
+    public int maxNumWorkers = 32;
+
+    private float quarryPercent = 100f;
+    private bool firstSpawn = false;
+    private CompAffectedByFacilities facilityComp;
+    private List<string> rockTypesUnder = new List<string>();
+    private int workersHere = 0;
 
     public float QuarryPercent {
       get { return quarryPercent; }
     }
 
-    private static float percentDamagedWhenQuarried = 0.2f;
+    public bool Depleted {
+      get { return quarryPercent <= 0; }
+    }
 
-    private float quarryPercent = 100f;
-    private bool firstSpawn = false;
+    public bool WorkerCountSaturated {
+      get {
+        return (workersHere - 1) >= maxNumWorkers;
+      }
+    }
 
-    // Create a list of mineable rock types
-    // This allows for a weighted list, so if the quarry is only built on 1
-    // tile of sandstone, mining sandstone will be very rare
-    private List<string> rockTypesUnder = new List<string>();
     public List<string> RockTypesUnder {
       get {
         if (rockTypesUnder.Count == 0) {
@@ -54,6 +62,7 @@ namespace Quarry {
       Scribe_Values.Look(ref mineModeToggle, "QRY_mineMode", true);
       Scribe_Values.Look(ref quarryPercent, "QRY_percentQuarried", 100f);
       Scribe_Collections.Look(ref rockTypesUnder, "QRY_rockTypesUnder", LookMode.Value);
+      //Scribe_Deep.Look<StorageSettings>(ref this.settings, "settings", new object[]{ this });
     }
 
 
@@ -101,49 +110,84 @@ namespace Quarry {
     public override void SpawnSetup(Map map, bool respawningAfterLoad) {
       base.SpawnSetup(map, respawningAfterLoad);
 
-      if (firstSpawn) {
+      facilityComp = GetComp<CompAffectedByFacilities>();
 
+      if (firstSpawn) {
+        CellRect rect = this.OccupiedRect();
         // First pass to populate rockTypesUnder
-        foreach (IntVec3 c in GenAdj.CellsOccupiedBy(this)) {
-          // What type of rock are we over?
-          string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
-          // If there isn't a known chunk for this, it probably isn't a rock type and wouldn't work for spawning anyways
-          // This allows Cupro's Stones to work, and any other mod that uses standard naming conventions for stones
-          ThingDef chunkTest = QuarryMod.Database.Find(t => t.defName == "Chunk" + rockType);
-          if (chunkTest != null) {
-            rockTypesUnder.Add(rockType);
+        SetupFirstPass(rect);
+        // Second pass to change the terrain to quarried stone
+        SetupSecondPass(rect);
+        // Third pass to spawn filth and also set terrain back to quarried stone where the ladders are
+        SetupThirdPass(rect);
+      }
+    }
+
+
+    public override void Destroy(DestroyMode mode = DestroyMode.Vanish) {
+      foreach (IntVec3 c in GenAdj.CellsOccupiedBy(this)) {
+        // Change the terrain here back to quarried stone, removing the walls
+        Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
+      }
+      base.Destroy(mode);
+    }
+
+
+    private void SetupFirstPass(CellRect rect) {
+      foreach (IntVec3 c in rect) {
+        // What type of rock are we over?
+        string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
+        // If there isn't a known chunk for this, it probably isn't a rock type and wouldn't work for spawning anyways
+        // This allows Cupro's Stones to work, and any other mod that uses standard naming conventions for stones
+        ThingDef chunkTest = QuarryMod.Database.Find(t => t.defName == "Chunk" + rockType);
+        if (chunkTest != null) {
+          rockTypesUnder.Add(rockType);
+        }
+        // Change the terrain here to be quarried stone wall
+        Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGroundWall);
+      }
+    }
+
+
+    private void SetupSecondPass(CellRect rect) {
+      foreach (IntVec3 c in rect.ContractedBy(2)) {
+        Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
+      }
+    }
+
+
+    private void SetupThirdPass(CellRect rect) {
+      foreach (IntVec3 c in rect) {
+        if (c == Position + Static.LadderOffset1.RotatedBy(Rotation) || c == Position + Static.LadderOffset2.RotatedBy(Rotation) || c == Position + Static.LadderOffset3.RotatedBy(Rotation) || c == Position + Static.LadderOffset4.RotatedBy(Rotation)) {
+          Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
+        }
+
+        List<Thing> thingsInCell = new List<Thing>();
+        bool usableCell = true;
+        // Skip this cell if it is occupied by a placed object
+        // This is to avoid save compression errors
+        thingsInCell = Map.thingGrid.ThingsListAtFast(c);
+        for (int t = 0; t < thingsInCell.Count; t++) {
+          if (thingsInCell[t].def.saveCompressible) {
+            usableCell = false;
+            break;
           }
         }
 
-        // Second pass to spawn filth
-        foreach (IntVec3 c in GenAdj.CellsOccupiedBy(this)) {
-          List<Thing> thingsInCell = new List<Thing>();
-          bool usableCell = true;
-          // Skip this cell if it is occupied by a placed object
-          // This is to avoid save compression errors
-          thingsInCell = Map.thingGrid.ThingsListAtFast(c);
-          for (int t = 0; t < thingsInCell.Count; t++) {
-            if (thingsInCell[t].def.saveCompressible) {
-              usableCell = false;
-              break;
-            }
+        if (usableCell) {
+          int filthAmount = Rand.RangeInclusive(1, 100);
+          // Check for dirt filth
+          if (filthAmount > 20 && filthAmount <= 40) {
+            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c, Map);
           }
-
-          if (usableCell) {
-            int filthAmount = Rand.RangeInclusive(1, 100);
-            // Check for dirt filth
-            if (filthAmount > 20 && filthAmount <= 40) {
-              GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c, Map);
-            }
-            // Check for rock rubble
-            else if (filthAmount > 40) {
-              GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, Map);
-              // Check for chunks
-              if (filthAmount > 80) {
-                string chunkType = RockTypesUnder.RandomElement();
-                ThingDef chunk = QuarryMod.Database.Find(t => t.defName == "Chunk" + chunkType);
-                GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
-              }
+          // Check for rock rubble
+          else if (filthAmount > 40) {
+            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, Map);
+            // Check for chunks
+            if (filthAmount > 80) {
+              string chunkType = RockTypesUnder.RandomElement();
+              ThingDef chunk = QuarryMod.Database.Find(t => t.defName == "Chunk" + chunkType);
+              GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
             }
           }
         }
@@ -151,7 +195,20 @@ namespace Quarry {
     }
 
 
+    public void Notify_WorkerStarting() {
+      workersHere++;
+    }
+
+
+    public void Notify_WorkerReleased() {
+      workersHere--;
+    }
+
+
     public Thing GiveResources(ResourceRequest req) {
+      // Decrease the amount this quarry can be mined, eventually depleting it
+      quarryPercent -= Static.DepletionPercentWhenQuarried;
+
       // Cache values since this process is convoluted and the values need to remain the same
       bool cachedJunkChance = Rand.Chance(QuarryDefOf.Resources.JunkChance);
 
@@ -197,6 +254,26 @@ namespace Quarry {
       else {
         return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
       }
+    }
+
+
+    public bool TryFindBestStoreCellFor(Thing t, Pawn carrier, Map map, Faction faction, out IntVec3 foundCell) {
+      List<Thing> facilities = facilityComp.LinkedFacilitiesListForReading;
+      for (int f = 0; f < facilities.Count; f++) {
+        foreach (IntVec3 c in GenAdj.CellsOccupiedBy(facilities[f])) {
+          if (StoreUtility.IsGoodStoreCell(c, map, t, carrier, faction)) {
+            foundCell = c;
+            return true;
+          }
+        }
+      }
+      foundCell = IntVec3.Invalid;
+      return false;
+    }
+
+
+    public override string GetInspectString() {
+      return Static.InspectWorkerCount;
     }
   }
 }

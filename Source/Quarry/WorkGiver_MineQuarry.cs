@@ -12,8 +12,8 @@ namespace Quarry {
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false) {
       Building_Quarry quarry = t as Building_Quarry;
 
-      // Make sure a permitted quarry is found
-      if (quarry == null || quarry.IsForbidden(pawn)) {
+      // Make sure a permitted quarry is found, and that it has resources, and does not have too many workers
+      if (quarry == null || quarry.IsForbidden(pawn) || quarry.Depleted || quarry.WorkerCountSaturated) {
         return null;
       }
 

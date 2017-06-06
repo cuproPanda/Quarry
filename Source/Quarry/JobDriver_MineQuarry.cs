@@ -6,7 +6,7 @@ using Verse;
 using Verse.AI;
 
 namespace Quarry {
-  // TODO: Handle facing. Make pawns face center of quarry to match interpolation
+
   public class JobDriver_MineQuarry : JobDriver {
 
     private const int BaseTicksBetweenPickHits = 120;
@@ -42,14 +42,16 @@ namespace Quarry {
 
       // Set up fail conditions
       this.FailOn(delegate {
-        return Quarry == null || Quarry.IsForbidden(pawn);
+        return Quarry == null || Quarry.IsForbidden(pawn) || Quarry.Depleted;
       });
+
+      // Notify the quarry the worker intends to work here
+      yield return BeginWork();
 
       // Reserve your spot in the quarry
       yield return Toils_Reserve.Reserve(CellInd);
 
       // Go to the quarry
-      //TODO: Add ladder climbing mechanic
       yield return Toils_Goto.Goto(CellInd, PathEndMode.OnCell);
 
       // Mine at the quarry. This is only for the delay
@@ -83,9 +85,21 @@ namespace Quarry {
     }
 
 
+    private Toil BeginWork() {
+      Toil toil = new Toil();
+      toil.initAction = delegate {
+        // Notify the quarry that there is another worker working here
+        Quarry.Notify_WorkerStarting();
+      };
+      toil.defaultCompleteMode = ToilCompleteMode.Instant;
+      return toil;
+    }
+
+
     private Toil Mine() {
       Toil toil = new Toil();
       toil.tickAction = delegate {
+        pawn.Drawer.rotator.Face(Quarry.Position.ToVector3Shifted());
 
         if (ticksToPickHit < -100) {
           ResetTicksToPickHit();
@@ -105,9 +119,14 @@ namespace Quarry {
         }
       };
       toil.defaultCompleteMode = ToilCompleteMode.Delay;
+      toil.handlingFacing = true;
       toil.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);
       float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
       toil.defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor));
+      toil.AddFinishAction(delegate {
+        // Notify the quarry that the worker is done working.
+        Quarry.Notify_WorkerReleased();
+      });
       return toil;
     }
 
@@ -128,18 +147,22 @@ namespace Quarry {
         // Place the resource near the pawn
         GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
 
+        // Prevent the colonists from trying to haul rubble, which just makes them visit the platform
+        if (haulableResult.def == ThingDefOf.RockRubble) {
+          EndJobWith(JobCondition.Succeeded);
+        }
+
         // If this is a chunk or slag, mark it as haulable if allowed to
         if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
           Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
         }
         
-        // Setup priority and IntVec
-        StoragePriority storagePriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
+        // Setup IntVec for assigning
         IntVec3 c;
 
-        // Try to find a suitable storage spot for the resource
-        // TODO: Prioritize the quarry platforms
-        if (Quarry.autoHaul && StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, storagePriority, pawn.Faction, out c)) {
+        // Try to find a suitable storage spot for the resource, removing it from the quarry
+        // If there are no platforms, hauling will be done by haulers
+        if (Quarry.autoHaul && Quarry.TryFindBestStoreCellFor(haulableResult, pawn, Map, pawn.Faction, out c)) {
           CurJob.SetTarget(TargetIndex.B, haulableResult);
           CurJob.count = haulableResult.stackCount;
           CurJob.SetTarget(TargetIndex.C, c);
