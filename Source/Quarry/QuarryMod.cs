@@ -42,7 +42,8 @@ namespace Quarry {
 
 
     private void Echo() {
-      Log.Message("Quarry:: Loaded " + Resources.Count + " defs into list.");
+      // I'm keeping this since it might prove useful in the future for user errors
+      Log.Message("Quarry:: Loaded " + Resources.Count + " entries into resource list.");
     }
   }
 }

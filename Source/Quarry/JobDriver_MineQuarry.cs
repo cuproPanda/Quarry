@@ -6,28 +6,32 @@ using Verse;
 using Verse.AI;
 
 namespace Quarry {
-
+  // TODO: Handle facing. Make pawns face center of quarry to match interpolation
   public class JobDriver_MineQuarry : JobDriver {
 
     private const int BaseTicksBetweenPickHits = 120;
-    private const TargetIndex QuarryInd = TargetIndex.A;
-    private const TargetIndex CellInd = TargetIndex.B;
+    private const TargetIndex CellInd = TargetIndex.A;
+    private const TargetIndex HaulableInd = TargetIndex.B;
     private const TargetIndex StorageCellInd = TargetIndex.C;
     private int ticksToPickHit = -1000;
     private Effecter effecter;
+    private Building_Quarry quarryBuilding = null;
 
     protected Building_Quarry Quarry {
       get {
-        return (Building_Quarry)CurJob.GetTarget(TargetIndex.A).Thing;
+        if (quarryBuilding == null) {
+          quarryBuilding = CurJob.GetTarget(TargetIndex.A).Cell.GetThingList(Map).Find(q => q is Building_Quarry) as Building_Quarry;
+        }
+        return quarryBuilding;
       }
     }
 
     protected Thing Haulable {
       get {
-        if (CurJob.GetTarget(TargetIndex.B).HasThing) {
-          return CurJob.GetTarget(TargetIndex.B).Thing;
+        if (TargetB.Thing != null) {
+          return TargetB.Thing;
         }
-        Log.Warning("Quarry:: Trying to assign a haulable to a pawn, but TargetIndex.B hasn't been changed.");
+        Log.Warning("Quarry:: Trying to assign a haulable to a pawn, but TargetB hasn't been changed.");
         EndJobWith(JobCondition.Errored);
         return null;
       }
@@ -37,9 +41,8 @@ namespace Quarry {
     protected override IEnumerable<Toil> MakeNewToils() {
 
       // Set up fail conditions
-      this.FailOnDespawnedNullOrForbidden(TargetIndex.B);
       this.FailOn(delegate {
-        return Quarry == null || (!Quarry.quarryResources && !Quarry.quarryBlocks);
+        return Quarry == null || Quarry.IsForbidden(pawn);
       });
 
       // Reserve your spot in the quarry
@@ -50,96 +53,10 @@ namespace Quarry {
       yield return Toils_Goto.Goto(CellInd, PathEndMode.OnCell);
 
       // Mine at the quarry. This is only for the delay
-      Toil quarryToil = new Toil();
-      quarryToil.tickAction = delegate {
-        
-        if (ticksToPickHit < -100) {
-          ResetTicksToPickHit();
-        }
-        if (pawn.skills != null) {
-          pawn.skills.Learn(SkillDefOf.Mining, 0.11f, false);
-        }
-        ticksToPickHit--;
-
-
-        //ResourceRequest req = ResourceRequest.None;
-
-        //// If both options are allowed, give one of the two
-        //if (Quarry.quarryResources && Quarry.quarryBlocks) {
-        //  req = ResourceRequest.Random;
-        //}
-        //// If only resources are allowed, try to get resources
-        //else if (Quarry.quarryResources) {
-        //  req = ResourceRequest.Resources;
-        //}
-        //// If only blocks are allowed, try to get blocks
-        //else if (Quarry.quarryBlocks) {
-        //  req = ResourceRequest.Blocks;
-        //}
-        //Log.Message(Quarry.GiveResources(req).def.label);
-
-
-
-        if (ticksToPickHit <= 0) {
-          if (effecter == null) {
-            effecter = EffecterDefOf.Mine.Spawn();
-          }
-          effecter.Trigger(pawn, Quarry);
-
-          ResetTicksToPickHit();
-        }
-      };
-      quarryToil.defaultCompleteMode = ToilCompleteMode.Delay;
-      quarryToil.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);
-      float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
-      quarryToil.defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor));
-      yield return quarryToil;
-      
+      yield return Mine();
 
       // Collect resources from the quarry
-      Toil collect = new Toil();
-      collect.initAction = delegate {
-        pawn.records.Increment(RecordDefOf.CellsMined);
-
-        ResourceRequest req = ResourceRequest.None;
-        
-        // If both options are allowed, give one of the two
-        if (Quarry.quarryResources && Quarry.quarryBlocks) {
-          req = ResourceRequest.Random;
-        }
-        // If only resources are allowed, try to get resources
-        else if (Quarry.quarryResources) {
-          req = ResourceRequest.Resources;
-        }
-        // If only blocks are allowed, try to get blocks
-        else if (Quarry.quarryBlocks) {
-          req = ResourceRequest.Blocks;
-        }
-
-        Thing haulableResult = Quarry.GiveResources(req);
-        
-        GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
-
-        if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
-          Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
-        }
-
-        StoragePriority storagePriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
-        IntVec3 c;
-
-        // Try to find a suitable storage spot for the resource
-        // TODO: Prioritize the quarry platforms
-        if (Quarry.autoHaul && StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, storagePriority, pawn.Faction, out c)) {
-          CurJob.SetTarget(TargetIndex.B, haulableResult);
-          CurJob.count = haulableResult.stackCount;
-          CurJob.SetTarget(TargetIndex.C, c);
-        }
-        // If there is no spot to store the resource, end this job
-        else {
-          EndJobWith(JobCondition.Succeeded);
-        }
-      };
-      collect.defaultCompleteMode = ToilCompleteMode.Instant;
+      yield return Collect();
 
       // Reserve the resource
       yield return Toils_Reserve.Reserve(TargetIndex.B);
@@ -163,6 +80,78 @@ namespace Quarry {
     private void ResetTicksToPickHit() {
       float statValue = pawn.GetStatValue(StatDefOf.MiningSpeed, true);
       ticksToPickHit = Mathf.RoundToInt((120f / statValue));
+    }
+
+
+    private Toil Mine() {
+      Toil toil = new Toil();
+      toil.tickAction = delegate {
+
+        if (ticksToPickHit < -100) {
+          ResetTicksToPickHit();
+        }
+        if (pawn.skills != null) {
+          pawn.skills.Learn(SkillDefOf.Mining, 0.11f, false);
+        }
+        ticksToPickHit--;
+
+        if (ticksToPickHit <= 0) {
+          if (effecter == null) {
+            effecter = EffecterDefOf.Mine.Spawn();
+          }
+          effecter.Trigger(pawn, Quarry);
+
+          ResetTicksToPickHit();
+        }
+      };
+      toil.defaultCompleteMode = ToilCompleteMode.Delay;
+      toil.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);
+      float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
+      toil.defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor));
+      return toil;
+    }
+
+    private Toil Collect() {
+      Toil toil = new Toil();
+      toil.initAction = delegate {
+        // Increment the record for how many cells this pawn has mined since this counts as mining
+        pawn.records.Increment(RecordDefOf.CellsMined);
+
+        // Start with None to act as a fallback. Rubble will be returned with this parameter
+        ResourceRequest req = ResourceRequest.None;
+
+        // Use the mineModeToggle to determine the request
+        req = (Quarry.mineModeToggle ? ResourceRequest.Resources : ResourceRequest.Blocks);
+
+        // Get the resource from the quarry
+        Thing haulableResult = Quarry.GiveResources(req);
+        // Place the resource near the pawn
+        GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
+
+        // If this is a chunk or slag, mark it as haulable if allowed to
+        if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
+          Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
+        }
+        
+        // Setup priority and IntVec
+        StoragePriority storagePriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
+        IntVec3 c;
+
+        // Try to find a suitable storage spot for the resource
+        // TODO: Prioritize the quarry platforms
+        if (Quarry.autoHaul && StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, storagePriority, pawn.Faction, out c)) {
+          CurJob.SetTarget(TargetIndex.B, haulableResult);
+          CurJob.count = haulableResult.stackCount;
+          CurJob.SetTarget(TargetIndex.C, c);
+        }
+        // If there is no spot to store the resource, end this job
+        else {
+          EndJobWith(JobCondition.Succeeded);
+        }
+      };
+      toil.defaultCompleteMode = ToilCompleteMode.Instant;
+
+      return toil;
     }
   }
 }

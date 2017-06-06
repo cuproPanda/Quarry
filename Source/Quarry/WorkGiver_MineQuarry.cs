@@ -12,10 +12,12 @@ namespace Quarry {
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false) {
       Building_Quarry quarry = t as Building_Quarry;
 
-      if (quarry == null || (!quarry.quarryResources && !quarry.quarryBlocks)) {
+      // Make sure a permitted quarry is found
+      if (quarry == null || quarry.IsForbidden(pawn)) {
         return null;
       }
 
+      // Find a cell within the middle of the quarry to mine at
       IntVec3 cell = IntVec3.Invalid;
       CellRect rect = quarry.OccupiedRect().ContractedBy(2);
       foreach (IntVec3 c in rect.Cells.InRandomOrder()) {
@@ -24,12 +26,12 @@ namespace Quarry {
           break;
         }
       }
-
+      // If a cell wasn't found, fail
       if (!cell.IsValid) {
         return null;
       }
 
-      return new Job(QuarryDefOf.QRY_MineQuarry, quarry, cell);
+      return new Job(QuarryDefOf.QRY_MineQuarry, cell);
     }
 
     public override System.Collections.Generic.IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn) {
