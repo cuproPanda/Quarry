@@ -7,7 +7,10 @@ namespace Quarry {
 
   public class QuarryResourceDef : Def {
 
-    private float pctJunk = 0.6f;
+    public List<SimpleQuarryResource> Resources;
+
+    // Default value to act as a fallback in case the entry is removed
+    private float pctJunk = 0.75f;
     public float JunkChance {
       get {
         // This prevents a player from setting a value too high or too low, 
@@ -16,6 +19,7 @@ namespace Quarry {
       }
     }
 
+    // Default value to act as a fallback in case the entry is removed
     private float pctChunks = 0.5f;
     public float ChunkChance {
       get {
@@ -23,13 +27,6 @@ namespace Quarry {
         // which would cause errors when trying to spawn resources
         return Mathf.Clamp01(pctChunks);
       }
-    }
-
-    public List<SimpleQuarryResource> resources;
-
-
-    public IEnumerator<SimpleQuarryResource> GetEnumerator() {
-      return resources.GetEnumerator();
     }
   }
 }

@@ -46,7 +46,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ITab_Quarry.cs" />
     <Compile Include="JobDriver_MineQuarry.cs" />
     <Compile Include="QuarryDefOf.cs" />
     <Compile Include="Building_Quarry.cs" />

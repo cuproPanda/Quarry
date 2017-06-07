@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+	<!-- ============================================== -->
+	<!-- Modded resources only get loaded if the mod they come from is installed -->
+	<!-- ============================================== -->
+	<Quarry.QuarryResourceDef>
+		<defName>CuproResources</defName>
+		<label>Resources added by cuproPanda's mods</label>
+		<Resources>
+			<!--========== Expanded Power, Quartz ==========-->
+			<li>
+				<thingDef>EXP_Quartz</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>EXP_Quartz</thingDef>
+				<probability>10</probability>
+				<stackCount>18</stackCount>
+			</li>
+			<li>
+				<thingDef>EXP_Quartz</thingDef>
+				<probability>20</probability>
+				<stackCount>8</stackCount>
+			</li>
+			<!--========== Expanded Power/Cupro's Alloys, Copper ==========-->
+			<li>
+				<thingDef>EXP_Copper</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>EXP_Copper</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>EXP_Copper</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--========== Expanded Power/Cupro's Alloys, Lead ==========-->
+			<li>
+				<thingDef>EXP_Lead</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>EXP_Lead</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>EXP_Lead</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--========== Cupro's Alloys/Expanded Power(maybe), Tin ==========-->
+			<li>
+				<thingDef>EXP_Tin</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>EXP_Tin</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>EXP_Tin</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--========== Cupro's Alloys, Aluminum ==========-->
+			<li>
+				<thingDef>CAL_Aluminum</thingDef>
+				<probability>5</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>CAL_Aluminum</thingDef>
+				<probability>10</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>CAL_Aluminum</thingDef>
+				<probability>20</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--========== Cupro's Alloys, Electrum ==========-->
+			<li>
+				<thingDef>CAL_Electrum</thingDef>
+				<probability>1</probability>
+				<stackCount>10</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>CAL_Electrum</thingDef>
+				<probability>4</probability>
+				<stackCount>5</stackCount>
+			</li>
+			<!--========== Powerless!, Glowstone ==========-->
+			<li>
+				<thingDef>POW_LargeGlowstone</thingDef>
+				<probability>4</probability>
+				<stackCount>3</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>POW_LargeGlowstone</thingDef>
+				<probability>8</probability>
+				<stackCount>1</stackCount>
+			</li>
+			<li>
+				<thingDef>POW_SmallGlowstone</thingDef>
+				<probability>12</probability>
+				<stackCount>2</stackCount>
+			</li>
+		</Resources>
+	</Quarry.QuarryResourceDef>
+
+</GameData>

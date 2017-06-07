@@ -45,9 +45,6 @@ namespace Quarry {
         return Quarry == null || Quarry.IsForbidden(pawn) || Quarry.Depleted;
       });
 
-      // Notify the quarry the worker intends to work here
-      yield return BeginWork();
-
       // Reserve your spot in the quarry
       yield return Toils_Reserve.Reserve(CellInd);
 
@@ -85,17 +82,6 @@ namespace Quarry {
     }
 
 
-    private Toil BeginWork() {
-      Toil toil = new Toil();
-      toil.initAction = delegate {
-        // Notify the quarry that there is another worker working here
-        Quarry.Notify_WorkerStarting();
-      };
-      toil.defaultCompleteMode = ToilCompleteMode.Instant;
-      return toil;
-    }
-
-
     private Toil Mine() {
       Toil toil = new Toil();
       toil.tickAction = delegate {
@@ -123,10 +109,6 @@ namespace Quarry {
       toil.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);
       float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
       toil.defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor));
-      toil.AddFinishAction(delegate {
-        // Notify the quarry that the worker is done working.
-        Quarry.Notify_WorkerReleased();
-      });
       return toil;
     }
 
@@ -142,10 +124,20 @@ namespace Quarry {
         // Use the mineModeToggle to determine the request
         req = (Quarry.mineModeToggle ? ResourceRequest.Resources : ResourceRequest.Blocks);
 
+        MoteType mote = MoteType.None;
+
         // Get the resource from the quarry
-        Thing haulableResult = Quarry.GiveResources(req);
+        Thing haulableResult = Quarry.GiveResources(req, out mote);
         // Place the resource near the pawn
         GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
+
+        // If the resource had a mote, throw it
+        if (mote == MoteType.LargeVein) {
+          MoteMaker.ThrowText(haulableResult.DrawPos, Map, Static.TextMote_LargeVein, Color.green, 3f);
+        }
+        else if (mote == MoteType.Failure) {
+          MoteMaker.ThrowText(haulableResult.DrawPos, Map, Static.TextMote_MiningFailed, Color.red, 3f);
+        }
 
         // Prevent the colonists from trying to haul rubble, which just makes them visit the platform
         if (haulableResult.def == ThingDefOf.RockRubble) {

@@ -48,9 +48,6 @@
 			<isInert>true</isInert>
 			<deconstructible>true</deconstructible>
 		</building>
-		<inspectorTabs>
-			<li>Quarry.ITab_Quarry</li>
-		</inspectorTabs>
 		<comps>
 			<li Class="CompProperties_Forbiddable" />
 			<li Class="CompProperties_AffectedByFacilities">

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+
+	<Quarry.QuarryResourceDef>
+		<defName>MainResources</defName>
+		<label>Vanilla resources and percentages</label>
+		<!-- Percent chance to get junk -->
+		<!-- If junk is not mined, a random resource will be mined -->
+		<pctJunk>0.75</pctJunk>
+		<!-- Percent chance to get a chunk -->
+		<!-- If junk is mined, this is the chance to get chunks instead of rubble -->
+		<!-- Mining for blocks uses chunk chance to determine whether a -->
+		<!-- sufficient amount of stone was mined to make blocks -->
+		<pctChunks>0.50</pctChunks>
+		<!-- If junk is not mined, a random resource is mined instead, -->
+		<!-- based on the resource's probability and amount of entries in Resources -->
+		<Resources>
+
+			<!--==================== Steel ====================-->
+			<!--===== Mountain sized vein =====-->
+			<li>
+				<!-- thingDef needs to match the defName of the desired product -->
+				<thingDef>Steel</thingDef>
+				<!-- probability sets how often this will occur when using the quarry -->
+				<probability>10</probability>
+				<!-- stackCount is how many of the item to spawn -->
+				<stackCount>35</stackCount>
+				<!-- largeVein throws a mote signifying a large quantity was mined -->
+				<largeVein>True</largeVein>
+			</li>
+
+			<!--===== Small vein =====-->
+			<li>
+				<thingDef>Steel</thingDef>
+				<probability>20</probability>
+				<stackCount>20</stackCount>
+			</li>
+
+			<!--===== Traces =====-->
+			<li>
+				<thingDef>Steel</thingDef>
+				<probability>40</probability>
+				<stackCount>10</stackCount>
+			</li>
+
+			<!--==================== Silver ====================-->
+			<li>
+				<thingDef>Silver</thingDef>
+				<probability>4</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Silver</thingDef>
+				<probability>8</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>Silver</thingDef>
+				<probability>16</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--==================== Jade ====================-->
+			<li>
+				<thingDef>Jade</thingDef>
+				<probability>3</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Jade</thingDef>
+				<probability>6</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>Jade</thingDef>
+				<probability>12</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--==================== Gold ====================-->
+			<li>
+				<thingDef>Gold</thingDef>
+				<probability>3</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Gold</thingDef>
+				<probability>6</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>Gold</thingDef>
+				<probability>12</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--==================== Component ====================-->
+			<li>
+				<thingDef>Component</thingDef>
+				<probability>3</probability>
+				<stackCount>4</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Component</thingDef>
+				<probability>6</probability>
+				<stackCount>3</stackCount>
+			</li>
+			<li>
+				<thingDef>Component</thingDef>
+				<probability>9</probability>
+				<stackCount>2</stackCount>
+			</li>
+			<!--==================== Steel Slag ====================-->
+			<li>
+				<thingDef>ChunkSlagSteel</thingDef>
+				<probability>20</probability>
+				<stackCount>1</stackCount>
+			</li>
+			<!--==================== Uranium ====================-->
+			<li>
+				<thingDef>Uranium</thingDef>
+				<probability>2</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Uranium</thingDef>
+				<probability>3</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>Uranium</thingDef>
+				<probability>4</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--==================== Plasteel ====================-->
+			<li>
+				<thingDef>Plasteel</thingDef>
+				<probability>1</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Plasteel</thingDef>
+				<probability>2</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>Plasteel</thingDef>
+				<probability>3</probability>
+				<stackCount>10</stackCount>
+			</li>
+		</Resources>
+	</Quarry.QuarryResourceDef>
+
+</GameData>

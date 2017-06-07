@@ -12,6 +12,12 @@ namespace Quarry {
     Blocks
   }
 
+  public enum MoteType {
+    None,
+    LargeVein,
+    Failure
+  }
+
 
 
   [StaticConstructorOnStartup]
@@ -19,13 +25,11 @@ namespace Quarry {
 
     public bool autoHaul = true;
     public bool mineModeToggle = true;
-    public int maxNumWorkers = 32;
 
     private float quarryPercent = 100f;
     private bool firstSpawn = false;
     private CompAffectedByFacilities facilityComp;
     private List<string> rockTypesUnder = new List<string>();
-    private int workersHere = 0;
 
     public float QuarryPercent {
       get { return quarryPercent; }
@@ -33,12 +37,6 @@ namespace Quarry {
 
     public bool Depleted {
       get { return quarryPercent <= 0; }
-    }
-
-    public bool WorkerCountSaturated {
-      get {
-        return (workersHere - 1) >= maxNumWorkers;
-      }
     }
 
     public List<string> RockTypesUnder {
@@ -62,7 +60,6 @@ namespace Quarry {
       Scribe_Values.Look(ref mineModeToggle, "QRY_mineMode", true);
       Scribe_Values.Look(ref quarryPercent, "QRY_percentQuarried", 100f);
       Scribe_Collections.Look(ref rockTypesUnder, "QRY_rockTypesUnder", LookMode.Value);
-      //Scribe_Deep.Look<StorageSettings>(ref this.settings, "settings", new object[]{ this });
     }
 
 
@@ -195,22 +192,14 @@ namespace Quarry {
     }
 
 
-    public void Notify_WorkerStarting() {
-      workersHere++;
-    }
+    public Thing GiveResources(ResourceRequest req, out MoteType mote) {
+      mote = MoteType.None;
 
-
-    public void Notify_WorkerReleased() {
-      workersHere--;
-    }
-
-
-    public Thing GiveResources(ResourceRequest req) {
       // Decrease the amount this quarry can be mined, eventually depleting it
       quarryPercent -= Static.DepletionPercentWhenQuarried;
 
       // Cache values since this process is convoluted and the values need to remain the same
-      bool cachedJunkChance = Rand.Chance(QuarryDefOf.Resources.JunkChance);
+      bool cachedJunkChance = Rand.Chance(QuarryDefOf.MainResources.JunkChance);
 
       // Check for blocka first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
@@ -219,15 +208,17 @@ namespace Quarry {
           return new QuarryResource(QuarryMod.Database.Find(t => t.defName == "Blocks" + blockType), Rand.RangeInclusive(5, 10)).ToThing();
         }
         // The rock didn't break into a usable size, spawn rubble
+        mote = MoteType.Failure;
         return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
       }
 
       // Try to give junk before resources. This simulates only mining chunks or useless rubble
       if (cachedJunkChance) {
-        if (Rand.Chance(QuarryDefOf.Resources.ChunkChance)) {
+        if (Rand.Chance(QuarryDefOf.MainResources.ChunkChance)) {
           return new QuarryResource(QuarryMod.Database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
         }
         else {
+          mote = MoteType.Failure;
           return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
         }
       }
@@ -273,7 +264,7 @@ namespace Quarry {
 
 
     public override string GetInspectString() {
-      return Static.InspectWorkerCount;
+      return Static.InspectQuarryPercent + ": " + quarryPercent.ToStringDecimalIfSmall() + "%";
     }
   }
 }

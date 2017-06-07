@@ -7,6 +7,7 @@ namespace Quarry {
     public ThingDef thingDef;
     public int probability;
     public int stackCount;
+    public bool largeVein;
 
 
     public QuarryResource() {
@@ -20,10 +21,11 @@ namespace Quarry {
     }
 
 
-    public QuarryResource(ThingDef thingDef, int probability, int stackCount) {
+    public QuarryResource(ThingDef thingDef, int probability, int stackCount, bool largeVein = false) {
       this.thingDef = thingDef;
       this.probability = probability;
       this.stackCount = stackCount;
+      this.largeVein = largeVein;
     }
 
 
@@ -44,6 +46,7 @@ namespace Quarry {
     public string thingDef;
     public int probability;
     public int stackCount;
+    public bool largeVein;
 
 
     public SimpleQuarryResource() {
@@ -51,10 +54,11 @@ namespace Quarry {
     }
 
 
-    public SimpleQuarryResource(string thingDef, int probability, int stackCount) {
+    public SimpleQuarryResource(string thingDef, int probability, int stackCount, bool largeVein = false) {
       this.thingDef = thingDef;
       this.probability = probability;
       this.stackCount = stackCount;
+      this.largeVein = largeVein;
     }
   }
 }
