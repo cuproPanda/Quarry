@@ -4,7 +4,7 @@
 	<!-- Modded resources only get loaded if the mod they come from is installed -->
 	<!-- See MainResources.xml for more information on what each entry means  -->
 	<!-- ============================================== -->
-	<Quarry.QuarryResourceDef>
+	<Quarry.QuarryResourceDef Name="QuarryModdedResources">
 		<defName>ModdedResources</defName>
 		<label>Resources from various other mods. New entries can be added here</label>
 		<Resources>

@@ -201,7 +201,7 @@ namespace Quarry {
       // Cache values since this process is convoluted and the values need to remain the same
       bool cachedJunkChance = Rand.Chance(QuarryDefOf.MainResources.JunkChance);
 
-      // Check for blocka first to prevent spawning chunks (these would just be cut into blocks)
+      // Check for blocks first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
         if (!cachedJunkChance) {
           string blockType = RockTypesUnder.RandomElement();
@@ -234,12 +234,19 @@ namespace Quarry {
         foreach (QuarryResource resource in QuarryMod.Resources) {
           for (int i = sum; i < resource.probability + sum; i++) {
             if (i >= choice) {
+              if (resource.largeVein) {
+                mote = MoteType.LargeVein;
+              }
               return resource.ToThing();
             }
           }
           sum += resource.probability;
         }
-        return QuarryMod.Resources.First().ToThing();
+        QuarryResource qr = QuarryMod.Resources.First();
+        if (qr.largeVein) {
+          mote = MoteType.LargeVein;
+        }
+        return qr.ToThing();
       }
       // The quarry was most likely toggled off while a pawn was still working. Give junk
       else {
