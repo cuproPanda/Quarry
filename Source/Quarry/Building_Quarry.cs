@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+using UnityEngine;
 using RimWorld;
 using Verse;
 using System.Linq;
@@ -26,17 +27,22 @@ namespace Quarry {
     public bool autoHaul = true;
     public bool mineModeToggle = true;
 
-    private float quarryPercent = 100f;
+    private int quarryHealth;
     private bool firstSpawn = false;
     private CompAffectedByFacilities facilityComp;
     private List<string> rockTypesUnder = new List<string>();
 
     public float QuarryPercent {
-      get { return quarryPercent; }
+      get {
+        if (QuarryMod.QuarryMaxHealth == int.MaxValue) {
+          return 100f;
+        }
+        return (quarryHealth * 100f) / QuarryMod.QuarryMaxHealth;
+      }
     }
 
     public bool Depleted {
-      get { return quarryPercent <= 0; }
+      get { return QuarryPercent <= 0; }
     }
 
     public List<string> RockTypesUnder {
@@ -58,21 +64,20 @@ namespace Quarry {
       base.ExposeData();
       Scribe_Values.Look(ref autoHaul, "QRY_boolAutoHaul", true);
       Scribe_Values.Look(ref mineModeToggle, "QRY_mineMode", true);
-      Scribe_Values.Look(ref quarryPercent, "QRY_percentQuarried", 100f);
+      Scribe_Values.Look(ref quarryHealth, "QRY_quarryHealth", 2000);
       Scribe_Collections.Look(ref rockTypesUnder, "QRY_rockTypesUnder", LookMode.Value);
     }
 
 
     public override IEnumerable<Gizmo> GetGizmos() {
 
-      Command_Toggle mineMode = new Command_Toggle() {
+      Command_Action mineMode = new Command_Action() {
         icon = (mineModeToggle ? Static.DesignationQuarryResources : Static.DesignationQuarryBlocks),
         defaultLabel = (mineModeToggle ? Static.LabelMineResources : Static.LabelMineBlocks),
         defaultDesc = (mineModeToggle ? Static.DescriptionMineResources : Static.DescriptionMineBlocks),
         hotKey = KeyBindingDefOf.Misc10,
         activateSound = SoundDefOf.Click,
-        isActive = () => mineModeToggle,
-        toggleAction = () => { mineModeToggle = !mineModeToggle; },
+        action = () => { mineModeToggle = !mineModeToggle; },
       };
       // Only allow this option if stonecutting has been researched
       // The default behavior is to allow resources, but not blocks
@@ -80,13 +85,14 @@ namespace Quarry {
         yield return mineMode;
       }
 
-      yield return new Command_Action() {
+      yield return new Command_Toggle() {
         icon = Static.DesignationHaul,
         defaultLabel = Static.LabelHaulMode,
         defaultDesc = HaulDescription,
         hotKey = KeyBindingDefOf.Misc11,
         activateSound = SoundDefOf.Click,
-        action = () => { autoHaul = !autoHaul; },
+        isActive = () => autoHaul,
+        toggleAction = () => { autoHaul = !autoHaul; },
       };
 
       if (base.GetGizmos() != null) {
@@ -109,6 +115,9 @@ namespace Quarry {
       facilityComp = GetComp<CompAffectedByFacilities>();
 
       if (firstSpawn) {
+        // Set the initial quarry health
+        quarryHealth = QuarryMod.QuarryMaxHealth;
+
         CellRect rect = this.OccupiedRect();
         // First pass to populate rockTypesUnder
         SetupFirstPass(rect);
@@ -116,6 +125,10 @@ namespace Quarry {
         SetupSecondPass(rect);
         // Third pass to spawn filth and also set terrain back to quarried stone where the ladders are
         SetupThirdPass(rect);
+      }
+
+      if (QuarryMod.SettingsChanged) {
+        quarryHealth = QuarryMod.QuarryMaxHealth;
       }
     }
 
@@ -199,10 +212,12 @@ namespace Quarry {
       mote = MoteType.None;
 
       // Decrease the amount this quarry can be mined, eventually depleting it
-      quarryPercent -= QuarryMod.DepletionPercentWhenQuarried;
+      if (QuarryMod.QuarryMaxHealth != int.MaxValue) {
+        quarryHealth--; 
+      }
 
       // Cache values since this process is convoluted and the values need to remain the same
-      bool cachedJunkChance = Rand.Chance(QuarryDefOf.MainResources.JunkChance);
+      bool cachedJunkChance = Rand.Chance(QuarryMod.JunkChance);
 
       // Check for blocks first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
@@ -217,7 +232,7 @@ namespace Quarry {
 
       // Try to give junk before resources. This simulates only mining chunks or useless rubble
       if (cachedJunkChance) {
-        if (Rand.Chance(QuarryDefOf.MainResources.ChunkChance)) {
+        if (Rand.Chance(QuarryMod.ChunkChance)) {
           return new QuarryResource(QuarryMod.Database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
         }
         else {
@@ -274,7 +289,7 @@ namespace Quarry {
 
 
     public override string GetInspectString() {
-      return Static.InspectQuarryPercent + ": " + quarryPercent.ToStringDecimalIfSmall() + "%";
+      return Static.InspectQuarryPercent + ": " + QuarryPercent.ToStringDecimalIfSmall() + "%";
     }
   }
 }

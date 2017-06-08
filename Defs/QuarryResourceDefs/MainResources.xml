@@ -3,17 +3,7 @@
 
 	<Quarry.QuarryResourceDef>
 		<defName>MainResources</defName>
-		<label>Vanilla resources and percentages</label>
-		<!-- Percent chance to get junk -->
-		<!-- If junk is not mined, a random resource will be mined -->
-		<pctJunk>0.75</pctJunk>
-		<!-- Percent chance to get a chunk -->
-		<!-- If junk is mined, this is the chance to get chunks instead of rubble -->
-		<!-- Mining for blocks uses chunk chance to determine whether a -->
-		<!-- sufficient amount of stone was mined to make blocks -->
-		<pctChunks>0.50</pctChunks>
-		<!-- If junk is not mined, a random resource is mined instead, -->
-		<!-- based on the resource's probability and amount of entries in Resources -->
+		<label>Vanilla resources</label>
 		<Resources>
 
 			<!--==================== Steel ====================-->

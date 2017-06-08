@@ -27,7 +27,11 @@ namespace Quarry {
     public static string TextMote_MiningFailed = "QRY_TextMote_MiningFailed".Translate();
     public static string LetterLabel = "QRY_LetterLabel".Translate();
     public static string LetterText = "QRY_LetterText".Translate();
+    public static string LetterSent = "QRY_LetterSentQuery".Translate();
     public static string SettingsDepletionPercent = "QRY_SettingsDepletionPercent".Translate();
     public static string Quarry = "QRY_Quarry".Translate();
+    public static string ToolTipLetter = "QRY_TooltipLetter".Translate();
+    public static string ToolTipJunkChance = "QRY_TooltipJunkChance".Translate();
+    public static string ToolTipChunkChance = "QRY_TooltipChunkChance".Translate();
   }
 }
