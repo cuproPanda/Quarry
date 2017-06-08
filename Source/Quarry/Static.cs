@@ -25,7 +25,9 @@ namespace Quarry {
     public static string InspectQuarryPercent = "QRY_InspectQuarryPercent".Translate();
     public static string TextMote_LargeVein = "QRY_TextMote_LargeVein".Translate();
     public static string TextMote_MiningFailed = "QRY_TextMote_MiningFailed".Translate();
-
-    public static float DepletionPercentWhenQuarried = 0.05f;
+    public static string LetterLabel = "QRY_LetterLabel".Translate();
+    public static string LetterText = "QRY_LetterText".Translate();
+    public static string SettingsDepletionPercent = "QRY_SettingsDepletionPercent".Translate();
+    public static string Quarry = "QRY_Quarry".Translate();
   }
 }

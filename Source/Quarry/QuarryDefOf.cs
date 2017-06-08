@@ -12,6 +12,7 @@ namespace Quarry {
     public static ResearchProjectDef Stonecutting;
     public static TerrainDef QRY_QuarriedGround;
     public static TerrainDef QRY_QuarriedGroundWall;
+    public static LetterDef CuproLetter;
   }
 }
 

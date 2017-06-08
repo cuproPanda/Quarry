@@ -80,14 +80,13 @@ namespace Quarry {
         yield return mineMode;
       }
 
-      yield return new Command_Toggle() {
+      yield return new Command_Action() {
         icon = Static.DesignationHaul,
         defaultLabel = Static.LabelHaulMode,
         defaultDesc = HaulDescription,
         hotKey = KeyBindingDefOf.Misc11,
         activateSound = SoundDefOf.Click,
-        isActive = () => autoHaul,
-        toggleAction = () => { autoHaul = !autoHaul; },
+        action = () => { autoHaul = !autoHaul; },
       };
 
       if (base.GetGizmos() != null) {
@@ -125,6 +124,10 @@ namespace Quarry {
       foreach (IntVec3 c in GenAdj.CellsOccupiedBy(this)) {
         // Change the terrain here back to quarried stone, removing the walls
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
+      }
+      if (!QuarryMod.LetterSent) {
+        Find.LetterStack.ReceiveLetter(Static.LetterLabel, Static.LetterText, QuarryDefOf.CuproLetter, new RimWorld.Planet.GlobalTargetInfo(Position, Map));
+        QuarryMod.Instance.Notify_LetterSent();
       }
       base.Destroy(mode);
     }
@@ -196,7 +199,7 @@ namespace Quarry {
       mote = MoteType.None;
 
       // Decrease the amount this quarry can be mined, eventually depleting it
-      quarryPercent -= Static.DepletionPercentWhenQuarried;
+      quarryPercent -= QuarryMod.DepletionPercentWhenQuarried;
 
       // Cache values since this process is convoluted and the values need to remain the same
       bool cachedJunkChance = Rand.Chance(QuarryDefOf.MainResources.JunkChance);

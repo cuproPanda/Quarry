@@ -5,7 +5,7 @@
 		<defName>QRY_MineQuarry</defName>
 		<label>mine a quarry for resources</label>
 		<giverClass>Quarry.WorkGiver_MineQuarry</giverClass>
-		<workType>QRY_Mining</workType>
+		<workType>Mining</workType>
 		<verb>mine at</verb>
 		<gerund>mining at</gerund>
 		<requiredCapacities>
