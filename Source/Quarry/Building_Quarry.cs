@@ -138,9 +138,12 @@ namespace Quarry {
         // Change the terrain here back to quarried stone, removing the walls
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
       }
-      if (!QuarryMod.LetterSent) {
+      if (!QuarryMod.LetterSent && !TutorSystem.AdaptiveTrainingEnabled) {
         Find.LetterStack.ReceiveLetter(Static.LetterLabel, Static.LetterText, QuarryDefOf.CuproLetter, new RimWorld.Planet.GlobalTargetInfo(Position, Map));
         QuarryMod.Instance.Notify_LetterSent();
+      }
+      if (TutorSystem.AdaptiveTrainingEnabled) {
+        LessonAutoActivator.TeachOpportunity(QuarryDefOf.QRY_ReclaimingSoil, OpportunityType.GoodToKnow);
       }
       base.Destroy(mode);
     }
