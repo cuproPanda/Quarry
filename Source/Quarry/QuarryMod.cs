@@ -25,15 +25,15 @@ namespace Quarry {
 
 
     private void BuildResourceList() {
-      List<ThingDef> database = DefDatabase<ThingDef>.AllDefsListForReading;
+      QuarrySettings.database = DefDatabase<ThingDef>.AllDefsListForReading;
       List<QuarryResource> resources = new List<QuarryResource>();
 
       // Add vanilla resources
       foreach (SimpleQuarryResource resource in QuarryDefOf.MainResources.Resources) {
-        ThingDef tmpThing = database.Find(t => t.defName == resource.thingDef);
+        ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
         if (tmpThing != null) {
           vanillaTracker++;
-          resources.Add(new QuarryResource(
+          QuarrySettings.resources.Add(new QuarryResource(
             tmpThing,
             resource.probability,
             resource.stackCount));
@@ -41,10 +41,10 @@ namespace Quarry {
       }
       // Add resources from my mods
       foreach (SimpleQuarryResource resource in QuarryDefOf.CuproResources.Resources) {
-        ThingDef tmpThing = database.Find(t => t.defName == resource.thingDef);
+        ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
         if (tmpThing != null) {
           moddedTracker++;
-          resources.Add(new QuarryResource(
+          QuarrySettings.resources.Add(new QuarryResource(
             tmpThing,
             resource.probability,
             resource.stackCount));
@@ -52,18 +52,15 @@ namespace Quarry {
       }
       // Add other modded resources
       foreach (SimpleQuarryResource resource in QuarryDefOf.ModdedResources.Resources) {
-        ThingDef tmpThing = database.Find(t => t.defName == resource.thingDef);
+        ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
         if (tmpThing != null) {
           moddedTracker++;
-          resources.Add(new QuarryResource(
+          QuarrySettings.resources.Add(new QuarryResource(
             tmpThing,
             resource.probability,
             resource.stackCount));
         }
       }
-      // Assign the lists
-      QuarrySettings.database = database;
-      QuarrySettings.resources = resources;
     }
 
 
