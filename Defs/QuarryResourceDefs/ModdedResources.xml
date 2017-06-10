@@ -93,6 +93,40 @@
 				<probability>6</probability>
 				<stackCount>4</stackCount>
 			</li>
+			<!--========== Mechanoid Tech, Wolframium ==========-->
+			<li>
+				<thingDef>Vanya_Wolframium</thingDef>
+				<probability>4</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Vanya_Wolframium</thingDef>
+				<probability>8</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>Vanya_Wolframium</thingDef>
+				<probability>16</probability>
+				<stackCount>10</stackCount>
+			</li>
+			<!--========== Mechanoid Tech, Cobalt ==========-->
+			<li>
+				<thingDef>Vanya_Cobalt</thingDef>
+				<probability>2</probability>
+				<stackCount>35</stackCount>
+				<largeVein>True</largeVein>
+			</li>
+			<li>
+				<thingDef>Vanya_Cobalt</thingDef>
+				<probability>4</probability>
+				<stackCount>20</stackCount>
+			</li>
+			<li>
+				<thingDef>Vanya_Cobalt</thingDef>
+				<probability>6</probability>
+				<stackCount>10</stackCount>
+			</li>
 		</Resources>
 	</Quarry.QuarryResourceDef>
 

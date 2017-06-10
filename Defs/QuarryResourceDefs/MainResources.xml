@@ -12,7 +12,7 @@
 				<!-- thingDef needs to match the defName of the desired product -->
 				<thingDef>Steel</thingDef>
 				<!-- probability sets how often this will occur when using the quarry -->
-				<probability>10</probability>
+				<probability>15</probability>
 				<!-- stackCount is how many of the item to spawn -->
 				<stackCount>35</stackCount>
 				<!-- largeVein throws a mote signifying a large quantity was mined -->
@@ -22,14 +22,14 @@
 			<!--===== Small vein =====-->
 			<li>
 				<thingDef>Steel</thingDef>
-				<probability>20</probability>
+				<probability>30</probability>
 				<stackCount>20</stackCount>
 			</li>
 
 			<!--===== Traces =====-->
 			<li>
 				<thingDef>Steel</thingDef>
-				<probability>40</probability>
+				<probability>60</probability>
 				<stackCount>10</stackCount>
 			</li>
 
