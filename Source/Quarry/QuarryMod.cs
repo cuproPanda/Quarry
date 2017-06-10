@@ -6,80 +6,27 @@ using Verse;
 
 namespace Quarry {
 
-  public sealed class QuarryMod : Mod, IExposable {
+  public sealed class QuarryMod : Mod {
 
-    private List<ThingDef> database;
-    private List<QuarryResource> resources;
-    private int quarryMaxHealth = -1;
-    private int cachedMaxHealth = -1;
     private int vanillaTracker = 0;
     private int moddedTracker = 0;
-    private int junkChance = 70;
-    private int chunkChance = 50;
-    private bool letterSent = false;
-
-    public static List<QuarryResource> Resources {
-      get { return Instance.resources; }
-    }
-    public static List<ThingDef> Database {
-      get { return Instance.database; }
-    }
-
-    public static bool LetterSent {
-      get { return Instance.letterSent; }
-    }
-
-    public static int QuarryMaxHealth {
-      get {
-        if (Instance.quarryMaxHealth > 10000) {
-          return int.MaxValue;
-        }
-        return Instance.quarryMaxHealth;
-      }
-    }
-
-    public static bool SettingsChanged {
-      get {
-        if (Instance.cachedMaxHealth == -1) {
-          return false;
-        }
-        if (Instance.cachedMaxHealth == Instance.quarryMaxHealth) {
-          return false;
-        }
-        return true;
-      }
-    }
-
-    public static float JunkChance {
-      get { return Instance.junkChance / 100f; }
-    }
-
-    public static float ChunkChance {
-      get { return Instance.chunkChance / 100f; }
-    }
-
-    public static QuarryMod Instance { get; private set; }
 
 
     public QuarryMod(ModContentPack mcp) : base(mcp) {
-      Instance = this;
-      quarryMaxHealth = (quarryMaxHealth == -1) ? 2000 : quarryMaxHealth;
+      GetSettings<QuarrySettings>();
       LongEventHandler.ExecuteWhenFinished(BuildResourceList);
       LongEventHandler.ExecuteWhenFinished(Echo);
     }
 
 
-    public void ExposeData() {
-      Scribe_Values.Look(ref letterSent, "QRY_letterSent", false);
-      Scribe_Values.Look(ref quarryMaxHealth, "QRY_quarryMaxHealth", 2000);
-      Scribe_Values.Look(ref junkChance, "QRY_junkChance", 70);
-      Scribe_Values.Look(ref chunkChance, "QRY_chunkChance", 50);
+    public override void WriteSettings() {
+      base.WriteSettings();
     }
 
 
     private void BuildResourceList() {
-      database = DefDatabase<ThingDef>.AllDefsListForReading;
-      resources = new List<QuarryResource>();
+      List<ThingDef> database = DefDatabase<ThingDef>.AllDefsListForReading;
+      List<QuarryResource> resources = new List<QuarryResource>();
 
       // Add vanilla resources
       foreach (SimpleQuarryResource resource in QuarryDefOf.MainResources.Resources) {
@@ -114,17 +61,15 @@ namespace Quarry {
             resource.stackCount));
         }
       }
+      // Assign the lists
+      QuarrySettings.database = database;
+      QuarrySettings.resources = resources;
     }
 
 
     private void Echo() {
       // I'm keeping this since it might prove useful in the future for user errors
       Log.Message("Quarry:: Loaded " + vanillaTracker + " vanilla and " + moddedTracker + " modded entries into resource list.");
-    }
-
-
-    public void Notify_LetterSent() {
-      Instance.letterSent = true;
     }
 
 
@@ -135,7 +80,7 @@ namespace Quarry {
 
     public override void DoSettingsWindowContents(Rect rect) {
       Listing_Standard list = new Listing_Standard();
-      cachedMaxHealth = quarryMaxHealth;
+
       list.ColumnWidth = rect.width;
       list.Begin(rect);
       list.Gap(10);
@@ -144,8 +89,8 @@ namespace Quarry {
         Rect leftRect = fullRect.LeftHalf().Rounded();
         Rect rightRect = fullRect.RightHalf().Rounded();
 
-        if (quarryMaxHealth <= 10000) {
-          Widgets.Label(leftRect, "QRY_DepletionLabel".Translate(quarryMaxHealth.ToString("N0")));
+        if (QuarrySettings.quarryMaxHealth <= 10000) {
+          Widgets.Label(leftRect, "QRY_DepletionLabel".Translate(QuarrySettings.quarryMaxHealth.ToString("N0")));
         }
         else {
           Widgets.Label(leftRect, "QRY_DepletionLabel".Translate("Infinite"));
@@ -153,19 +98,19 @@ namespace Quarry {
 
         //Increment timer value by -100 (button).
         if (Widgets.ButtonText(new Rect(rightRect.xMin, rightRect.y, rightRect.height, rightRect.height), "-", true, false, true)) {
-          if (quarryMaxHealth >= 200) {
-            quarryMaxHealth -= 100;
+          if (QuarrySettings.quarryMaxHealth >= 200) {
+            QuarrySettings.quarryMaxHealth -= 100;
           }
         }
 
-        quarryMaxHealth = RoundToAsInt(100, Widgets.HorizontalSlider(
+        QuarrySettings.quarryMaxHealth = RoundToAsInt(100, Widgets.HorizontalSlider(
           new Rect(rightRect.xMin + rightRect.height + 10f, rightRect.y, rightRect.width - ((rightRect.height * 2) + 20f),rightRect.height),
-          quarryMaxHealth, 100f, 10100f, true));
+          QuarrySettings.quarryMaxHealth, 100f, 10100f, true));
 
         //Increment timer value by +100 (button).
         if (Widgets.ButtonText(new Rect(rightRect.xMax - rightRect.height, rightRect.y, rightRect.height, rightRect.height), "+", true, false, true)) {
-          if (quarryMaxHealth < 10100) {
-            quarryMaxHealth += 100;
+          if (QuarrySettings.quarryMaxHealth < 10100) {
+            QuarrySettings.quarryMaxHealth += 100;
           }
         }
 
@@ -174,7 +119,7 @@ namespace Quarry {
         {
           Rect letterRect = list.GetRect(Text.LineHeight).LeftHalf().Rounded();
 
-          Widgets.CheckboxLabeled(letterRect, Static.LetterSent, ref letterSent);
+          Widgets.CheckboxLabeled(letterRect, Static.LetterSent, ref QuarrySettings.letterSent);
           if (Mouse.IsOver(letterRect)) {
             Widgets.DrawHighlight(letterRect);
           }
@@ -187,10 +132,10 @@ namespace Quarry {
           Rect junkRect = list.GetRect(Text.LineHeight).LeftHalf().Rounded();
           Rect junkSliderOffset = junkRect.RightHalf().Rounded().RightPartPixels(200);
 
-          Widgets.Label(junkRect, "QRY_SettingsJunkChance".Translate(junkChance));
-          junkChance = RoundToAsInt(5, Widgets.HorizontalSlider(
+          Widgets.Label(junkRect, "QRY_SettingsJunkChance".Translate(QuarrySettings.junkChance));
+          QuarrySettings.junkChance = RoundToAsInt(5, Widgets.HorizontalSlider(
           junkSliderOffset,
-          junkChance, 10f, 90f, true));
+          QuarrySettings.junkChance, 10f, 90f, true));
           if (Mouse.IsOver(junkRect)) {
             Widgets.DrawHighlight(junkRect);
           }
@@ -204,10 +149,10 @@ namespace Quarry {
           Rect chunkRect = list.GetRect(Text.LineHeight).LeftHalf().Rounded();
           Rect chunkSliderOffset = chunkRect.RightHalf().Rounded().RightPartPixels(200);
 
-          Widgets.Label(chunkRect, "QRY_SettingsChunkChance".Translate(chunkChance));
-          chunkChance = RoundToAsInt(5, Widgets.HorizontalSlider(
+          Widgets.Label(chunkRect, "QRY_SettingsChunkChance".Translate(QuarrySettings.chunkChance));
+          QuarrySettings.chunkChance = RoundToAsInt(5, Widgets.HorizontalSlider(
           chunkSliderOffset,
-          chunkChance, 10f, 90f, true));
+          QuarrySettings.chunkChance, 10f, 90f, true));
           if (Mouse.IsOver(chunkRect)) {
             Widgets.DrawHighlight(chunkRect);
           }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 
-using UnityEngine;
 using RimWorld;
 using Verse;
 using System.Linq;
@@ -34,10 +33,10 @@ namespace Quarry {
 
     public float QuarryPercent {
       get {
-        if (QuarryMod.QuarryMaxHealth == int.MaxValue) {
+        if (QuarrySettings.QuarryMaxHealth == int.MaxValue) {
           return 100f;
         }
-        return (quarryHealth * 100f) / QuarryMod.QuarryMaxHealth;
+        return (quarryHealth * 100f) / QuarrySettings.QuarryMaxHealth;
       }
     }
 
@@ -116,7 +115,7 @@ namespace Quarry {
 
       if (firstSpawn) {
         // Set the initial quarry health
-        quarryHealth = QuarryMod.QuarryMaxHealth;
+        quarryHealth = QuarrySettings.QuarryMaxHealth;
 
         CellRect rect = this.OccupiedRect();
         // First pass to populate rockTypesUnder
@@ -126,10 +125,6 @@ namespace Quarry {
         // Third pass to spawn filth and also set terrain back to quarried stone where the ladders are
         SetupThirdPass(rect);
       }
-
-      if (QuarryMod.SettingsChanged) {
-        quarryHealth = QuarryMod.QuarryMaxHealth;
-      }
     }
 
 
@@ -138,9 +133,9 @@ namespace Quarry {
         // Change the terrain here back to quarried stone, removing the walls
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
       }
-      if (!QuarryMod.LetterSent && !TutorSystem.AdaptiveTrainingEnabled) {
+      if (!QuarrySettings.letterSent && !TutorSystem.AdaptiveTrainingEnabled) {
         Find.LetterStack.ReceiveLetter(Static.LetterLabel, Static.LetterText, QuarryDefOf.CuproLetter, new RimWorld.Planet.GlobalTargetInfo(Position, Map));
-        QuarryMod.Instance.Notify_LetterSent();
+        QuarrySettings.letterSent = true;
       }
       if (TutorSystem.AdaptiveTrainingEnabled) {
         LessonAutoActivator.TeachOpportunity(QuarryDefOf.QRY_ReclaimingSoil, OpportunityType.GoodToKnow);
@@ -155,9 +150,21 @@ namespace Quarry {
         string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
         // If there isn't a known chunk for this, it probably isn't a rock type and wouldn't work for spawning anyways
         // This allows Cupro's Stones to work, and any other mod that uses standard naming conventions for stones
-        ThingDef chunkTest = QuarryMod.Database.Find(t => t.defName == "Chunk" + rockType);
-        if (chunkTest != null) {
+        ThingDef chunkTest = QuarrySettings.database.Find(t => t.defName == "Chunk" + rockType);
+        // Add a second scan for blocks matching this stone name to prevent errors
+        ThingDef blocksTest = QuarrySettings.database.Find(t => t.defName == "Blocks" + rockType);
+        if (chunkTest != null && blocksTest != null) {
           rockTypesUnder.Add(rockType);
+        }
+        if (rockTypesUnder.Count <= 0) {
+          // If the quarry was just built over gravel (no stone types), add a random stone (or two) from the map
+          string weightedStone = Find.World.NaturalRockTypesIn(Map.Tile).RandomElement().building.mineableThing.ToString().Replace("Chunk", "");
+          for (int i = 0; i < 2; i++) {
+            // Add this stone twice so there won't be a perfect 50/50 split
+            rockTypesUnder.Add(weightedStone);
+          }
+          // Try to add another stone type. This may return the same stone type, but it may also get a different one. Either way works
+          rockTypesUnder.Add(Find.World.NaturalRockTypesIn(Map.Tile).RandomElement().building.mineableThing.ToString().Replace("Chunk", ""));
         }
         // Change the terrain here to be quarried stone wall
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGroundWall);
@@ -202,7 +209,7 @@ namespace Quarry {
             // Check for chunks
             if (filthAmount > 80) {
               string chunkType = RockTypesUnder.RandomElement();
-              ThingDef chunk = QuarryMod.Database.Find(t => t.defName == "Chunk" + chunkType);
+              ThingDef chunk = QuarrySettings.database.Find(t => t.defName == "Chunk" + chunkType);
               GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
             }
           }
@@ -215,18 +222,18 @@ namespace Quarry {
       mote = MoteType.None;
 
       // Decrease the amount this quarry can be mined, eventually depleting it
-      if (QuarryMod.QuarryMaxHealth != int.MaxValue) {
+      if (QuarrySettings.QuarryMaxHealth != int.MaxValue) {
         quarryHealth--; 
       }
 
       // Cache values since this process is convoluted and the values need to remain the same
-      bool cachedJunkChance = Rand.Chance(QuarryMod.JunkChance);
+      bool cachedJunkChance = Rand.Chance(QuarrySettings.junkChance);
 
       // Check for blocks first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
         if (!cachedJunkChance) {
           string blockType = RockTypesUnder.RandomElement();
-          return new QuarryResource(QuarryMod.Database.Find(t => t.defName == "Blocks" + blockType), Rand.RangeInclusive(5, 10)).ToThing();
+          return new QuarryResource(QuarrySettings.database.Find(t => t.defName == "Blocks" + blockType), Rand.RangeInclusive(5, 10)).ToThing();
         }
         // The rock didn't break into a usable size, spawn rubble
         mote = MoteType.Failure;
@@ -235,8 +242,8 @@ namespace Quarry {
 
       // Try to give junk before resources. This simulates only mining chunks or useless rubble
       if (cachedJunkChance) {
-        if (Rand.Chance(QuarryMod.ChunkChance)) {
-          return new QuarryResource(QuarryMod.Database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
+        if (Rand.Chance(QuarrySettings.chunkChance)) {
+          return new QuarryResource(QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
         }
         else {
           mote = MoteType.Failure;
@@ -248,11 +255,11 @@ namespace Quarry {
 
       // Try to give resources
       if (req == ResourceRequest.Resources) {
-        int maxProb = QuarryMod.Resources.Sum(c => c.probability);
+        int maxProb = QuarrySettings.resources.Sum(c => c.probability);
         int choice = rand.Next(maxProb);
         int sum = 0;
 
-        foreach (QuarryResource resource in QuarryMod.Resources) {
+        foreach (QuarryResource resource in QuarrySettings.resources) {
           for (int i = sum; i < resource.probability + sum; i++) {
             if (i >= choice) {
               if (resource.largeVein) {
@@ -263,7 +270,7 @@ namespace Quarry {
           }
           sum += resource.probability;
         }
-        QuarryResource qr = QuarryMod.Resources.First();
+        QuarryResource qr = QuarrySettings.resources.First();
         if (qr.largeVein) {
           mote = MoteType.LargeVein;
         }
