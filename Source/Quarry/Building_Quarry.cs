@@ -227,7 +227,7 @@ namespace Quarry {
       }
 
       // Cache values since this process is convoluted and the values need to remain the same
-      bool cachedJunkChance = Rand.Chance(QuarrySettings.junkChance);
+      bool cachedJunkChance = Rand.Chance(QuarrySettings.JunkChance);
 
       // Check for blocks first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
@@ -242,7 +242,7 @@ namespace Quarry {
 
       // Try to give junk before resources. This simulates only mining chunks or useless rubble
       if (cachedJunkChance) {
-        if (Rand.Chance(QuarrySettings.chunkChance)) {
+        if (Rand.Chance(QuarrySettings.ChunkChance)) {
           return new QuarryResource(QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
         }
         else {

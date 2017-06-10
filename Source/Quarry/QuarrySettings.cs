@@ -13,6 +13,14 @@ namespace Quarry {
     internal static List<ThingDef> database;
     internal static List<QuarryResource> resources;
 
+    public static float JunkChance {
+      get { return junkChance / 100f; }
+    }
+
+    public static float ChunkChance {
+      get { return chunkChance / 100f; }
+    }
+
     internal static int QuarryMaxHealth {
       get {
         if (quarryMaxHealth > 10000) {

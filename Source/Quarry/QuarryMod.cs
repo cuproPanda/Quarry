@@ -33,7 +33,7 @@ namespace Quarry {
         ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
         if (tmpThing != null) {
           vanillaTracker++;
-          QuarrySettings.resources.Add(new QuarryResource(
+          resources.Add(new QuarryResource(
             tmpThing,
             resource.probability,
             resource.stackCount));
@@ -44,7 +44,7 @@ namespace Quarry {
         ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
         if (tmpThing != null) {
           moddedTracker++;
-          QuarrySettings.resources.Add(new QuarryResource(
+          resources.Add(new QuarryResource(
             tmpThing,
             resource.probability,
             resource.stackCount));
@@ -55,12 +55,13 @@ namespace Quarry {
         ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
         if (tmpThing != null) {
           moddedTracker++;
-          QuarrySettings.resources.Add(new QuarryResource(
+          resources.Add(new QuarryResource(
             tmpThing,
             resource.probability,
             resource.stackCount));
         }
       }
+      QuarrySettings.resources = resources;
     }
 
 
