@@ -7,18 +7,10 @@ namespace Quarry {
 
     internal static bool letterSent = false;
     internal static int quarryMaxHealth = 2000;
-    internal static int junkChance = 70;
+    internal static int junkChance = 60;
     internal static int chunkChance = 50;
 
     internal static List<ThingDef> database;
-
-    public static float JunkChance {
-      get { return junkChance / 100f; }
-    }
-
-    public static float ChunkChance {
-      get { return chunkChance / 100f; }
-    }
 
     internal static int QuarryMaxHealth {
       get {

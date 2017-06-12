@@ -129,10 +129,16 @@ namespace Quarry {
         int stackCount = 1;
 
         // Get the resource from the quarry
-        ThingDef t = Quarry.GiveResources(req, out mote, out singleSpawn);
-        Thing haulableResult = ThingMaker.MakeThing(t);
+        ThingDef def = Quarry.GiveResources(req, out mote, out singleSpawn);
+
+        // If something went wrong, bail out
+        if (def == null || def.thingClass == null) {
+          EndJobWith(JobCondition.Errored);
+        }
+
+        Thing haulableResult = ThingMaker.MakeThing(def);
         if (!singleSpawn) {
-          stackCount += Mathf.Max(0, Rand.RangeInclusive((int)(20 / (t.BaseMarketValue + 1)), (int)(100 / (t.BaseMarketValue + 1))));
+          stackCount += Mathf.Max(0, Rand.RangeInclusive((int)(20 / (def.BaseMarketValue + 1)), (int)(100 / (def.BaseMarketValue + 1))));
         }
 
         haulableResult.stackCount = stackCount;
