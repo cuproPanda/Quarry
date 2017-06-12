@@ -58,10 +58,6 @@ namespace Quarry {
             // There's no reason to have a blueprint for an ore, so I can use it for the ore
             mineable = database[t].blueprintDef;
           }
-          // If the value is less than 1, but hideAtSnowDepth isn't used, skip this resource
-          else {
-            continue;
-          }
         }
         int weight = (int)(size - (marketValue / 8));
         if (weight < 1) {
