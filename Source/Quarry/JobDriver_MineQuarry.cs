@@ -125,9 +125,22 @@ namespace Quarry {
         req = (Quarry.mineModeToggle ? ResourceRequest.Resources : ResourceRequest.Blocks);
 
         MoteType mote = MoteType.None;
+        bool singleSpawn = true;
+        int stackCount = 1;
 
         // Get the resource from the quarry
-        Thing haulableResult = Quarry.GiveResources(req, out mote);
+        ThingDef t = Quarry.GiveResources(req, out mote, out singleSpawn);
+        Thing haulableResult = ThingMaker.MakeThing(t);
+        if (!singleSpawn) {
+          stackCount += Mathf.Max(0, Rand.RangeInclusive((int)(20 / (t.BaseMarketValue + 1)), (int)(100 / (t.BaseMarketValue + 1))));
+        }
+
+        haulableResult.stackCount = stackCount;
+
+        if (stackCount >= 30) {
+          mote = MoteType.LargeVein;
+        }
+
         // Place the resource near the pawn
         GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
 

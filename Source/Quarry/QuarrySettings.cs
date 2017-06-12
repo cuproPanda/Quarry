@@ -11,7 +11,6 @@ namespace Quarry {
     internal static int chunkChance = 50;
 
     internal static List<ThingDef> database;
-    internal static List<QuarryResource> resources;
 
     public static float JunkChance {
       get { return junkChance / 100f; }

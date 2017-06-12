@@ -52,9 +52,8 @@
     <Compile Include="PlaceWorker_Quarry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuarryMod.cs" />
-    <Compile Include="QuarryResource.cs" />
-    <Compile Include="QuarryResourceDef.cs" />
     <Compile Include="QuarrySettings.cs" />
+    <Compile Include="OreDictionary.cs" />
     <Compile Include="Static.cs" />
     <Compile Include="WorkGiver_MineQuarry.cs" />
   </ItemGroup>

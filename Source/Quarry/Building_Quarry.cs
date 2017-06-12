@@ -218,8 +218,9 @@ namespace Quarry {
     }
 
 
-    public Thing GiveResources(ResourceRequest req, out MoteType mote) {
+    public ThingDef GiveResources(ResourceRequest req, out MoteType mote, out bool singleSpawn) {
       mote = MoteType.None;
+      singleSpawn = true;
 
       // Decrease the amount this quarry can be mined, eventually depleting it
       if (QuarrySettings.QuarryMaxHealth != int.MaxValue) {
@@ -232,22 +233,23 @@ namespace Quarry {
       // Check for blocks first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
         if (!cachedJunkChance) {
+          singleSpawn = false;
           string blockType = RockTypesUnder.RandomElement();
-          return new QuarryResource(QuarrySettings.database.Find(t => t.defName == "Blocks" + blockType), Rand.RangeInclusive(5, 10)).ToThing();
+          return QuarrySettings.database.Find(t => t.defName == "Blocks" + blockType);
         }
         // The rock didn't break into a usable size, spawn rubble
         mote = MoteType.Failure;
-        return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
+        return ThingDefOf.RockRubble;
       }
 
       // Try to give junk before resources. This simulates only mining chunks or useless rubble
       if (cachedJunkChance) {
         if (Rand.Chance(QuarrySettings.ChunkChance)) {
-          return new QuarryResource(QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement()), 1).ToThing();
+          return QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement());
         }
         else {
           mote = MoteType.Failure;
-          return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
+          return ThingDefOf.RockRubble;
         }
       }
 
@@ -255,30 +257,12 @@ namespace Quarry {
 
       // Try to give resources
       if (req == ResourceRequest.Resources) {
-        int maxProb = QuarrySettings.resources.Sum(c => c.probability);
-        int choice = rand.Next(maxProb);
-        int sum = 0;
-
-        foreach (QuarryResource resource in QuarrySettings.resources) {
-          for (int i = sum; i < resource.probability + sum; i++) {
-            if (i >= choice) {
-              if (resource.largeVein) {
-                mote = MoteType.LargeVein;
-              }
-              return resource.ToThing();
-            }
-          }
-          sum += resource.probability;
-        }
-        QuarryResource qr = QuarrySettings.resources.First();
-        if (qr.largeVein) {
-          mote = MoteType.LargeVein;
-        }
-        return qr.ToThing();
+        singleSpawn = false;
+        return OreDictionary.From(QuarryMod.oreDictionary).TakeOne();
       }
       // The quarry was most likely toggled off while a pawn was still working. Give junk
       else {
-        return new QuarryResource(ThingDefOf.RockRubble, 1).ToThing();
+        return ThingDefOf.RockRubble;
       }
     }
 

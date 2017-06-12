@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
+
 using UnityEngine;
+using RimWorld;
 using Verse;
 
 namespace Quarry {
 
   public sealed class QuarryMod : Mod {
 
-    private int vanillaTracker = 0;
-    private int moddedTracker = 0;
+    public static Dictionary<ThingDef, int> oreDictionary;
 
 
     public QuarryMod(ModContentPack mcp) : base(mcp) {
       GetSettings<QuarrySettings>();
-      LongEventHandler.ExecuteWhenFinished(BuildResourceList);
-      LongEventHandler.ExecuteWhenFinished(Echo);
+      LongEventHandler.ExecuteWhenFinished(PushDatabase);
+      LongEventHandler.ExecuteWhenFinished(BuildDictionary);
     }
 
 
@@ -24,50 +25,50 @@ namespace Quarry {
     }
 
 
-    private void BuildResourceList() {
+    private void PushDatabase() {
       QuarrySettings.database = DefDatabase<ThingDef>.AllDefsListForReading;
-      List<QuarryResource> resources = new List<QuarryResource>();
-
-      // Add vanilla resources
-      foreach (SimpleQuarryResource resource in QuarryDefOf.MainResources.Resources) {
-        ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
-        if (tmpThing != null) {
-          vanillaTracker++;
-          resources.Add(new QuarryResource(
-            tmpThing,
-            resource.probability,
-            resource.stackCount));
-        }
-      }
-      // Add resources from my mods
-      foreach (SimpleQuarryResource resource in QuarryDefOf.CuproResources.Resources) {
-        ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
-        if (tmpThing != null) {
-          moddedTracker++;
-          resources.Add(new QuarryResource(
-            tmpThing,
-            resource.probability,
-            resource.stackCount));
-        }
-      }
-      // Add other modded resources
-      foreach (SimpleQuarryResource resource in QuarryDefOf.ModdedResources.Resources) {
-        ThingDef tmpThing = QuarrySettings.database.Find(t => t.defName == resource.thingDef);
-        if (tmpThing != null) {
-          moddedTracker++;
-          resources.Add(new QuarryResource(
-            tmpThing,
-            resource.probability,
-            resource.stackCount));
-        }
-      }
-      QuarrySettings.resources = resources;
     }
 
 
-    private void Echo() {
-      // I'm keeping this since it might prove useful in the future for user errors
-      Log.Message("Quarry:: Loaded " + vanillaTracker + " vanilla and " + moddedTracker + " modded entries into resource list.");
+    private void BuildDictionary() {
+      oreDictionary = new Dictionary<ThingDef, int>();
+      List<ThingDef> database = QuarrySettings.database;
+      for (int t = 0; t < database.Count; t++) {
+        if (database[t].building == null) {
+          continue;
+        }
+        if (database[t].building.mineableThing == null || oreDictionary.ContainsKey(database[t].building.mineableThing)) {
+          continue;
+        }
+        if (database[t].building.mineableScatterCommonality == 0) {
+          continue;
+        }
+
+        BuildingProperties ore = database[t].building;
+        float size = ore.mineableScatterCommonality * (ore.mineableScatterLumpSizeRange.max - ore.mineableScatterLumpSizeRange.min) * 15;
+        float marketValue = ore.mineableThing.BaseMarketValue;
+        ThingDef mineable = database[t].building.mineableThing;
+
+        if (marketValue <= 1) {
+          // This is probably an itemSpawner, but let's chack anyways to be sure
+          if (database[t].hideAtSnowDepth > 1f && database[t].hideAtSnowDepth < 9999f && database[t].blueprintDef != null) {
+            // hideAtSnowDepth should never be above 1 normally, so I can use this value
+            // to manually calculate the value of ItemSpawners, since they spawn multiple items, or weighted chances
+            marketValue = database[t].hideAtSnowDepth;
+            // There's no reason to have a blueprint for an ore, so I can use it for the ore
+            mineable = database[t].blueprintDef;
+          }
+          // If the value is less than 1, but hideAtSnowDepth isn't used, skip this resource
+          else {
+            continue;
+          }
+        }
+        int weight = (int)(size - (marketValue / 8));
+        if (weight < 1) {
+          weight = 1;
+        }
+        oreDictionary.Add(mineable, weight);
+      }
     }
 
 
@@ -155,18 +156,45 @@ namespace Quarry {
             Widgets.DrawHighlight(chunkRect);
           }
           TooltipHandler.TipRegion(chunkRect, Static.ToolTipChunkChance);
-
         }
 
-        list.Gap(75);
+        list.Gap(15);
         {
-          Vector2 rbCenter = list.GetRect(Text.LineHeight).center;
-          Rect rbRect = new Rect(rbCenter.x - 100, rbCenter.x + 100, 200, 30);
-          // Only allows opening the resource folder on windows. I should be able to support linux and mac in the future
-          if ((Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) && Widgets.ButtonText(rbRect, "Open Resource Defs Folder")) {
-            Application.OpenURL(ModsConfig.ActiveModsInLoadOrder.Single(m => m.Name == "Quarry").RootDir.ToString() + "/Defs/QuarryResourceDefs");
+          Vector2 lbCenter = list.GetRect(Text.LineHeight).center;
+          Rect lbRect = new Rect(lbCenter.x - 100, lbCenter.x + 70, 200, 30);
+          // Print the resources to the debug log
+          if (Widgets.ButtonText(lbRect, "Show Resources in Log")) {
+            var enumerator = oreDictionary.GetEnumerator();
+            Log.Message("Quarry Resources: \n====================");
+            for (int i = 0; i < oreDictionary.Count; i++) {
+              enumerator.MoveNext();
+              Log.Message(enumerator.Current.Key.LabelCap + " -- Weight: " + enumerator.Current.Value);
+            }
+            Log.TryOpenLogWindow();
           }
+        }
 
+        list.Gap(30);
+
+        {
+          Vector2 cbCenter = list.GetRect(Text.LineHeight).center;
+          Rect cbRect = new Rect(cbCenter.x - 100, cbCenter.x + 100, 200, 30);
+          // Copy the list of resources to the clipboard
+          if (Widgets.ButtonText(cbRect, "Copy Resources to Clipboard")) {
+            StringBuilder clipboard = new StringBuilder();
+            var enumerator = oreDictionary.GetEnumerator();
+            for (int i = 0; i < oreDictionary.Count; i++) {
+              if (clipboard.Length == 0) {
+                clipboard.AppendLine("Quarry Resources: \n====================");
+              }
+              enumerator.MoveNext();
+              clipboard.AppendLine(enumerator.Current.Key.LabelCap + " -- Weight: " + enumerator.Current.Value);
+              if (clipboard[clipboard.Length - 1] != '\n') {
+                clipboard.AppendLine();
+              }
+            }
+            GUIUtility.systemCopyBuffer = clipboard.ToString();
+          }
         }
 
         list.Gap(10);
