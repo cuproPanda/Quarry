@@ -4,15 +4,19 @@ using System.Collections.Generic;
 namespace Quarry {
 
   public static class OreDictionary {
+    public static OreDictionary<R> From<R>(Dictionary<R, int> oreDictionary) {
+      return new OreDictionary<R>(oreDictionary);
     }
   }
 
 
 
+  public class OreDictionary<T> {
     private static Random rand = new Random();
     private Dictionary<T, int> oreDictionary;
 
 
+    public OreDictionary(Dictionary<T, int> oreDictionary) {
       this.oreDictionary = oreDictionary;
     }
 
