@@ -31,7 +31,7 @@ namespace Quarry {
         if (TargetB.Thing != null) {
           return TargetB.Thing;
         }
-        Log.Warning("Quarry:: Trying to assign a haulable to a pawn, but TargetB hasn't been changed.");
+        Log.Warning("Quarry:: Trying to assign a null haulable to a pawn.");
         EndJobWith(JobCondition.Errored);
         return null;
       }
@@ -133,7 +133,11 @@ namespace Quarry {
 
         // If something went wrong, bail out
         if (def == null || def.thingClass == null) {
-          EndJobWith(JobCondition.Errored);
+          Log.Warning("Quarry:: Tried to quarry mineable ore, but the ore given was null.");
+          mote = MoteType.None;
+          singleSpawn = true;
+          // This shouldn't happen at all, but if it does let's add a little reward instead of just giving rubble
+          def = ThingDefOf.ChunkSlagSteel;
         }
 
         Thing haulableResult = ThingMaker.MakeThing(def);

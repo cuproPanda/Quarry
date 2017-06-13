@@ -47,7 +47,9 @@ namespace Quarry {
     public List<string> RockTypesUnder {
       get {
         if (rockTypesUnder.Count == 0) {
-          return null;
+          // This will cause an error if there isn't a list, so make a new one using known rocks
+          Log.Warning("Quarry:: No valid rock types were found under the quarry. Building list using vanilla rocks.");
+          rockTypesUnder = new List<string>() { "Sandstone", "Limestone", "Granite", "Marble", "Slate" };
         }
         return rockTypesUnder;
       }
@@ -157,14 +159,8 @@ namespace Quarry {
           rockTypesUnder.Add(rockType);
         }
         if (rockTypesUnder.Count <= 0) {
-          // If the quarry was just built over gravel (no stone types), add a random stone (or two) from the map
-          string weightedStone = Find.World.NaturalRockTypesIn(Map.Tile).RandomElement().building.mineableThing.ToString().Replace("Chunk", "");
-          for (int i = 0; i < 2; i++) {
-            // Add this stone twice so there won't be a perfect 50/50 split
-            rockTypesUnder.Add(weightedStone);
-          }
-          // Try to add another stone type. This may return the same stone type, but it may also get a different one. Either way works
-          rockTypesUnder.Add(Find.World.NaturalRockTypesIn(Map.Tile).RandomElement().building.mineableThing.ToString().Replace("Chunk", ""));
+          // Call RockTypes under to generate the vanilla list. gcList will be garbage collected
+          List<string> gcList = RockTypesUnder;
         }
         // Change the terrain here to be quarried stone wall
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGroundWall);
