@@ -147,7 +147,7 @@ namespace Quarry {
             sub = 9;
           }
           
-          stackCount += Rand.RangeInclusive(15 - sub, 40 - (sub * 2));
+          stackCount += Mathf.Min(Rand.RangeInclusive(15 - sub, 40 - (sub * 2)), def.stackLimit - 1 );
         }
 
         haulableResult.stackCount = stackCount;
