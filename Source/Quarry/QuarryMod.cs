@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using UnityEngine;
@@ -32,38 +33,24 @@ namespace Quarry {
 
     private void BuildDictionary() {
       oreDictionary = new Dictionary<ThingDef, int>();
-      List<ThingDef> database = QuarrySettings.database;
-      for (int t = 0; t < database.Count; t++) {
-        if (database[t].building == null) {
-          continue;
-        }
-        if (database[t].building.mineableThing == null || oreDictionary.ContainsKey(database[t].building.mineableThing)) {
-          continue;
-        }
-        if (database[t].building.mineableScatterCommonality == 0) {
-          continue;
-        }
 
-        BuildingProperties ore = database[t].building;
-        float size = ore.mineableScatterCommonality * (ore.mineableScatterLumpSizeRange.max - ore.mineableScatterLumpSizeRange.min) * 15;
-        float marketValue = ore.mineableThing.BaseMarketValue;
-        ThingDef mineable = database[t].building.mineableThing;
+      IEnumerable<ThingDef> ores = DefDatabase<ThingDef>.AllDefs.Where((ThingDef def) => def.deepCommonality != 0);
 
-        if (marketValue <= 1) {
-          // This is probably an itemSpawner, but let's chack anyways to be sure
-          if (database[t].hideAtSnowDepth > 1f && database[t].hideAtSnowDepth < 9999f && database[t].blueprintDef != null) {
-            // hideAtSnowDepth should never be above 1 normally, so I can use this value
-            // to manually calculate the value of ItemSpawners, since they spawn multiple items, or weighted chances
-            marketValue = database[t].hideAtSnowDepth;
-            // There's no reason to have a blueprint for an ore, so I can use it for the ore
-            mineable = database[t].blueprintDef;
-          }
+      foreach (ThingDef ore in ores) {
+        // Chemfuel shouldn't show up here, since it would be heavily exploited
+        // Players can still choose to add it manually, though
+        if (ore != QuarryDefOf.Chemfuel) {
+          oreDictionary.Add(ore, (int)(ore.deepCommonality * 20));
         }
-        int weight = (int)(size - (marketValue / 8));
-        if (weight < 1) {
-          weight = 1;
+      }
+
+      foreach (KeyValuePair<ThingDef, int> pair in DefDatabase<QuarryResourcesDef>.GetNamedSilentFail("AdditionalResources").additionalResources) {
+        if (oreDictionary.ContainsKey(pair.Key)) {
+          oreDictionary[pair.Key] += pair.Value;
         }
-        oreDictionary.Add(mineable, weight);
+        else {
+          oreDictionary.Add(pair.Key, pair.Value);
+        }
       }
     }
 
@@ -152,6 +139,17 @@ namespace Quarry {
             Widgets.DrawHighlight(chunkRect);
           }
           TooltipHandler.TipRegion(chunkRect, Static.ToolTipChunkChance);
+        }
+
+        list.Gap(15);
+        {
+          Vector2 rbCenter = list.GetRect(Text.LineHeight).center;
+          Rect rbRect = new Rect(rbCenter.x - 100, rbCenter.x + 40, 200, 30);
+          // Only allows opening the resource folder on windows. I should be able to support linux and mac in the future
+          if ((Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) && Widgets.ButtonText(rbRect, "Open Resource Defs Folder")) {
+            Application.OpenURL(ModsConfig.ActiveModsInLoadOrder.Single(m => m.Name == "Quarry").RootDir.ToString() + "/Defs/AdditionalResources");
+          }
+
         }
 
         list.Gap(15);

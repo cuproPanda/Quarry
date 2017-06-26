@@ -142,7 +142,12 @@ namespace Quarry {
 
         Thing haulableResult = ThingMaker.MakeThing(def);
         if (!singleSpawn) {
-          stackCount += Mathf.Max(0, Rand.RangeInclusive((int)(20 / (def.BaseMarketValue + 1)), (int)(100 / (def.BaseMarketValue + 1))));
+          int sub = (int)(def.BaseMarketValue / 3f);
+          if (sub >= 10) {
+            sub = 9;
+          }
+          
+          stackCount += Rand.RangeInclusive(15 - sub, 40 - (sub * 2));
         }
 
         haulableResult.stackCount = stackCount;
