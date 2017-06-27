@@ -141,13 +141,17 @@ namespace Quarry {
         }
 
         Thing haulableResult = ThingMaker.MakeThing(def);
-        if (!singleSpawn) {
+        if (!singleSpawn && def != ThingDefOf.Component) {
           int sub = (int)(def.BaseMarketValue / 3f);
           if (sub >= 10) {
             sub = 9;
           }
           
           stackCount += Mathf.Min(Rand.RangeInclusive(15 - sub, 40 - (sub * 2)), def.stackLimit - 1 );
+        }
+
+        if (def == ThingDefOf.Component) {
+          stackCount += Random.Range(0, 1);
         }
 
         haulableResult.stackCount = stackCount;
