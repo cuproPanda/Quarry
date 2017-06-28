@@ -230,7 +230,7 @@ namespace Quarry {
       }
 
       // Determine if the mining job resulted in a sinkhole event, based on game difficulty
-      if (jobsCompleted % 100 == 0 && Rand.Chance(Find.Storyteller.difficulty.difficulty / 50)) {
+      if (jobsCompleted % 100 == 0 && Rand.Chance(Find.Storyteller.difficulty.difficulty / 50f)) {
         eventTriggered = true;
       }
 
