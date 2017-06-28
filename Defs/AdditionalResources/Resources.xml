@@ -4,7 +4,7 @@
 	<Quarry.QuarryResourcesDef>
 		<defName>AdditionalResources</defName>
 		<label>Additional resources to quarry</label>
-		<description>This is for adding resources that don't normally appear in the quarry, or offsetting the resource weights. Use the desired ThingDef's defName for the key and a commonality integer (usually between 10 and 20) for value.</description>
+		<description>This is for adding resources that don't normally appear in the quarry, or offsetting the resource weights. Use the desired ThingDef's defName for the key and a commonality integer (usually between 10 and 60) for value.</description>
 		<additionalResources>
 			<li>
 				<key>Component</key>

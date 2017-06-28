@@ -40,7 +40,11 @@ namespace Quarry {
         // Chemfuel shouldn't show up here, since it would be heavily exploited
         // Players can still choose to add it manually, though
         if (ore != QuarryDefOf.Chemfuel) {
-          oreDictionary.Add(ore, (int)(ore.deepCommonality * 20));
+          float commonality = ore.deepCommonality;
+          if (commonality < 1f) {
+            commonality += 1f;
+          }
+          oreDictionary.Add(ore, (int)((commonality * commonality) * 10f));
         }
       }
 
