@@ -27,6 +27,7 @@ namespace Quarry {
     public bool mineModeToggle = true;
 
     private int quarryHealth;
+    private int jobsCompleted = 0;
     private bool firstSpawn = false;
     private CompAffectedByFacilities facilityComp;
     private List<string> rockTypesUnder = new List<string>();
@@ -66,6 +67,7 @@ namespace Quarry {
       Scribe_Values.Look(ref autoHaul, "QRY_boolAutoHaul", true);
       Scribe_Values.Look(ref mineModeToggle, "QRY_mineMode", true);
       Scribe_Values.Look(ref quarryHealth, "QRY_quarryHealth", 2000);
+      Scribe_Values.Look(ref jobsCompleted, "QRY_jobsCompleted", 0);
       Scribe_Collections.Look(ref rockTypesUnder, "QRY_rockTypesUnder", LookMode.Value);
     }
 
@@ -214,13 +216,22 @@ namespace Quarry {
     }
 
 
-    public ThingDef GiveResources(ResourceRequest req, out MoteType mote, out bool singleSpawn) {
+    public ThingDef GiveResources(ResourceRequest req, out MoteType mote, out bool singleSpawn, out bool eventTriggered) {
+      // Increment the jobs completed
+      jobsCompleted++;
+
+      eventTriggered = false;
       mote = MoteType.None;
       singleSpawn = true;
 
       // Decrease the amount this quarry can be mined, eventually depleting it
       if (QuarrySettings.QuarryMaxHealth != int.MaxValue) {
         quarryHealth--; 
+      }
+
+      // Determine if the mining job resulted in a sinkhole event, based on game difficulty
+      if (jobsCompleted % 100 == 0 && Rand.Chance(Find.Storyteller.difficulty.difficulty / 50)) {
+        eventTriggered = true;
       }
 
       // Cache values since this process is convoluted and the values need to remain the same

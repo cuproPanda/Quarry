@@ -126,10 +126,11 @@ namespace Quarry {
 
         MoteType mote = MoteType.None;
         bool singleSpawn = true;
+        bool eventTriggered = false;
         int stackCount = 1;
 
         // Get the resource from the quarry
-        ThingDef def = Quarry.GiveResources(req, out mote, out singleSpawn);
+        ThingDef def = Quarry.GiveResources(req, out mote, out singleSpawn, out eventTriggered);
 
         // If something went wrong, bail out
         if (def == null || def.thingClass == null) {
@@ -169,6 +170,17 @@ namespace Quarry {
         }
         else if (mote == MoteType.Failure) {
           MoteMaker.ThrowText(haulableResult.DrawPos, Map, Static.TextMote_MiningFailed, Color.red, 3f);
+        }
+
+        // If the sinkhole event was triggered, damage the pawn and end this job
+        // Even if the sinkhole doesn't incapacitate the pawn, they will probably want to seek medical attention
+        if (eventTriggered) {
+          DamageInfo dInfo = new DamageInfo(DamageDefOf.Crush, 9, -1f, category: DamageInfo.SourceCategory.Collapse);
+          dInfo.SetBodyRegion(BodyPartHeight.Bottom, BodyPartDepth.Inside);
+          pawn.TakeDamage(dInfo);
+          pawn.TakeDamage(dInfo);
+
+          EndJobWith(JobCondition.Succeeded);
         }
 
         // Prevent the colonists from trying to haul rubble, which just makes them visit the platform
