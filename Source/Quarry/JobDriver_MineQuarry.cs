@@ -175,6 +175,7 @@ namespace Quarry {
         // If the sinkhole event was triggered, damage the pawn and end this job
         // Even if the sinkhole doesn't incapacitate the pawn, they will probably want to seek medical attention
         if (eventTriggered) {
+          Messages.Message("QRY_MessageSinkhole".Translate(pawn.NameStringShort), pawn, MessageSound.Negative);
           DamageInfo dInfo = new DamageInfo(DamageDefOf.Crush, 9, -1f, category: DamageInfo.SourceCategory.Collapse);
           dInfo.SetBodyRegion(BodyPartHeight.Bottom, BodyPartDepth.Inside);
           pawn.TakeDamage(dInfo);
