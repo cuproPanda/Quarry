@@ -32,7 +32,7 @@
 		<statBases>
 			<Flammability>0</Flammability>
 			<WorkToBuild>50000</WorkToBuild>
-			<Beauty>-75</Beauty>
+			<Beauty>-25</Beauty>
 		</statBases>
 		<size>(12,12)</size>
 		<passability>PassThroughOnly</passability>
