@@ -198,11 +198,21 @@ namespace Quarry {
         IntVec3 c;
 
         // Try to find a suitable storage spot for the resource, removing it from the quarry
-        // If there are no platforms, hauling will be done by haulers
-        if (Quarry.autoHaul && Quarry.TryFindBestStoreCellFor(haulableResult, pawn, Map, pawn.Faction, out c)) {
-          CurJob.SetTarget(TargetIndex.B, haulableResult);
-          CurJob.count = haulableResult.stackCount;
-          CurJob.SetTarget(TargetIndex.C, c);
+        // If there are no platforms with free space, try to haul it to a storage area
+        if (Quarry.autoHaul) {
+					if (Quarry.HasConnectedPlatform && Quarry.TryFindBestStoreCellFor(haulableResult, pawn, Map, pawn.Faction, out c)) {
+						CurJob.SetTarget(TargetIndex.B, haulableResult);
+						CurJob.count = haulableResult.stackCount;
+						CurJob.SetTarget(TargetIndex.C, c);
+					}
+					else {
+						StoragePriority currentPriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
+						if (StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, currentPriority, pawn.Faction, out c)) {
+							CurJob.SetTarget(TargetIndex.B, haulableResult);
+							CurJob.count = haulableResult.stackCount;
+							CurJob.SetTarget(TargetIndex.C, c);
+						}
+					}
         }
         // If there is no spot to store the resource, end this job
         else {

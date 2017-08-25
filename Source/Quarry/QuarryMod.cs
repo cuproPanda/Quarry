@@ -12,6 +12,7 @@ namespace Quarry {
   public sealed class QuarryMod : Mod {
 
     public static Dictionary<ThingDef, int> oreDictionary;
+		public static char slash = System.IO.Path.DirectorySeparatorChar;
 
 
     public QuarryMod(ModContentPack mcp) : base(mcp) {
@@ -121,7 +122,7 @@ namespace Quarry {
           Widgets.Label(junkRect, "QRY_SettingsJunkChance".Translate(QuarrySettings.junkChance));
           QuarrySettings.junkChance = RoundToAsInt(5, Widgets.HorizontalSlider(
           junkSliderOffset,
-          QuarrySettings.junkChance, 10f, 90f, true));
+          QuarrySettings.junkChance, 0f, 100f, true));
           if (Mouse.IsOver(junkRect)) {
             Widgets.DrawHighlight(junkRect);
           }
@@ -138,7 +139,7 @@ namespace Quarry {
           Widgets.Label(chunkRect, "QRY_SettingsChunkChance".Translate(QuarrySettings.chunkChance));
           QuarrySettings.chunkChance = RoundToAsInt(5, Widgets.HorizontalSlider(
           chunkSliderOffset,
-          QuarrySettings.chunkChance, 10f, 90f, true));
+          QuarrySettings.chunkChance, 0f, 100f, true));
           if (Mouse.IsOver(chunkRect)) {
             Widgets.DrawHighlight(chunkRect);
           }
@@ -149,9 +150,8 @@ namespace Quarry {
         {
           Vector2 rbCenter = list.GetRect(Text.LineHeight).center;
           Rect rbRect = new Rect(rbCenter.x - 100, rbCenter.x + 40, 200, 30);
-          // Only allows opening the resource folder on windows. I should be able to support linux and mac in the future
-          if ((Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) && Widgets.ButtonText(rbRect, "Open Resource Defs Folder")) {
-            Application.OpenURL(ModsConfig.ActiveModsInLoadOrder.Single(m => m.Name == "Quarry").RootDir.ToString() + "/Defs/AdditionalResources");
+					if (Widgets.ButtonText(rbRect, "Open Resource Defs Folder")) {
+						Application.OpenURL($"{ModsConfig.ActiveModsInLoadOrder.Single(m => m.Name == "Quarry").RootDir.ToString()}{slash}Defs{slash}AdditionalResources");
           }
 
         }

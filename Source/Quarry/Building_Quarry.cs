@@ -45,7 +45,11 @@ namespace Quarry {
       get { return QuarryPercent <= 0; }
     }
 
-    public List<string> RockTypesUnder {
+		public bool HasConnectedPlatform {
+			get { return !facilityComp.LinkedFacilitiesListForReading.NullOrEmpty(); }
+		}
+
+		public List<string> RockTypesUnder {
       get {
         if (rockTypesUnder.Count == 0) {
           // This will cause an error if there isn't a list, so make a new one using known rocks
