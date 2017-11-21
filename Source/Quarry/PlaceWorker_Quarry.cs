@@ -14,8 +14,7 @@ namespace Quarry {
       get { return Find.VisibleMap; }
     }
 
-
-    public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot, Thing thingToIgnore = null) {
+    public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot, Map map, Thing thingToIgnore = null) {
 
       int occCells = 0;
       int rockCells = 0;

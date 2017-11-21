@@ -20,7 +20,7 @@ namespace Quarry {
     protected Building_Quarry Quarry {
       get {
         if (quarryBuilding == null) {
-          quarryBuilding = CurJob.GetTarget(TargetIndex.A).Cell.GetThingList(Map).Find(q => q is Building_Quarry) as Building_Quarry;
+          quarryBuilding = job.GetTarget(TargetIndex.A).Cell.GetThingList(Map).Find(q => q is Building_Quarry) as Building_Quarry;
         }
         return quarryBuilding;
       }
@@ -85,7 +85,7 @@ namespace Quarry {
     private Toil Mine() {
       Toil toil = new Toil();
       toil.tickAction = delegate {
-        pawn.Drawer.rotator.Face(Quarry.Position.ToVector3Shifted());
+        pawn.rotationTracker.Face(Quarry.Position.ToVector3Shifted());
 
         if (ticksToPickHit < -100) {
           ResetTicksToPickHit();
@@ -175,7 +175,7 @@ namespace Quarry {
         // If the sinkhole event was triggered, damage the pawn and end this job
         // Even if the sinkhole doesn't incapacitate the pawn, they will probably want to seek medical attention
         if (eventTriggered) {
-          Messages.Message("QRY_MessageSinkhole".Translate(pawn.NameStringShort), pawn, MessageSound.Negative);
+          Messages.Message("QRY_MessageSinkhole".Translate(pawn.NameStringShort), pawn, MessageTypeDefOf.ThreatSmall);
           DamageInfo dInfo = new DamageInfo(DamageDefOf.Crush, 9, -1f, category: DamageInfo.SourceCategory.Collapse);
           dInfo.SetBodyRegion(BodyPartHeight.Bottom, BodyPartDepth.Inside);
           pawn.TakeDamage(dInfo);
@@ -201,16 +201,16 @@ namespace Quarry {
         // If there are no platforms with free space, try to haul it to a storage area
         if (Quarry.autoHaul) {
 					if (Quarry.HasConnectedPlatform && Quarry.TryFindBestStoreCellFor(haulableResult, pawn, Map, pawn.Faction, out c)) {
-						CurJob.SetTarget(TargetIndex.B, haulableResult);
-						CurJob.count = haulableResult.stackCount;
-						CurJob.SetTarget(TargetIndex.C, c);
+						job.SetTarget(TargetIndex.B, haulableResult);
+						job.count = haulableResult.stackCount;
+						job.SetTarget(TargetIndex.C, c);
 					}
 					else {
 						StoragePriority currentPriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
 						if (StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, currentPriority, pawn.Faction, out c)) {
-							CurJob.SetTarget(TargetIndex.B, haulableResult);
-							CurJob.count = haulableResult.stackCount;
-							CurJob.SetTarget(TargetIndex.C, c);
+							job.SetTarget(TargetIndex.B, haulableResult);
+							job.count = haulableResult.stackCount;
+							job.SetTarget(TargetIndex.C, c);
 						}
 					}
         }
@@ -223,6 +223,11 @@ namespace Quarry {
 
       return toil;
     }
-  }
+
+        public override bool TryMakePreToilReservations()
+        {
+            return true; //Nothing needs to be reserved... ?
+        }
+    }
 }
 
