@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
-using RimWorld;
 using Verse;
 
 namespace Quarry {
@@ -10,12 +9,8 @@ namespace Quarry {
 
     List<IntVec3> occupiedCellsTemp = new List<IntVec3>();
 
-    private Map ThisMap {
-      get { return Find.VisibleMap; }
-    }
 
-
-    public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot, Thing thingToIgnore = null) {
+		public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot, Map map, Thing thingToIgnore = null) {
 
       int occCells = 0;
       int rockCells = 0;
@@ -24,8 +19,7 @@ namespace Quarry {
 
         // Make sure the quarry is over sufficient rock
         // Gravel is an acceptable terrain since it normally borders stone
-        Predicate<TerrainDef> validator = ((TerrainDef t) => t == TerrainDefOf.Gravel || t.defName.EndsWith("_Rough") || t.defName.EndsWith("_RoughHewn") || t.defName.EndsWith("_Smooth"));
-        if (validator(ThisMap.terrainGrid.TerrainAt(c))) {
+        if (QuarryPlacementUtility.validator(map.terrainGrid.TerrainAt(c))) {
           rockCells++;
         }
       }
@@ -37,5 +31,5 @@ namespace Quarry {
 
       return true;
     }
-  }
+	}
 }

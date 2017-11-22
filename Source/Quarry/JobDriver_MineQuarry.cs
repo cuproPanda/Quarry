@@ -20,7 +20,7 @@ namespace Quarry {
     protected Building_Quarry Quarry {
       get {
         if (quarryBuilding == null) {
-          quarryBuilding = CurJob.GetTarget(TargetIndex.A).Cell.GetThingList(Map).Find(q => q is Building_Quarry) as Building_Quarry;
+          quarryBuilding = job.GetTarget(TargetIndex.A).Cell.GetThingList(Map).Find(q => q is Building_Quarry) as Building_Quarry;
         }
         return quarryBuilding;
       }
@@ -38,15 +38,17 @@ namespace Quarry {
     }
 
 
-    protected override IEnumerable<Toil> MakeNewToils() {
+		public override bool TryMakePreToilReservations() {
+			return pawn.Reserve(job.GetTarget(TargetIndex.A), job);
+		}
+
+
+		protected override IEnumerable<Toil> MakeNewToils() {
 
       // Set up fail conditions
       this.FailOn(delegate {
         return Quarry == null || Quarry.IsForbidden(pawn) || Quarry.Depleted;
       });
-
-      // Reserve your spot in the quarry
-      yield return Toils_Reserve.Reserve(CellInd);
 
       // Go to the quarry
       yield return Toils_Goto.Goto(CellInd, PathEndMode.OnCell);
@@ -83,145 +85,138 @@ namespace Quarry {
 
 
     private Toil Mine() {
-      Toil toil = new Toil();
-      toil.tickAction = delegate {
-        pawn.Drawer.rotator.Face(Quarry.Position.ToVector3Shifted());
+			float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
+			return new Toil() {
+				tickAction = delegate {
+					pawn.rotationTracker.Face(Quarry.Position.ToVector3Shifted());
 
-        if (ticksToPickHit < -100) {
-          ResetTicksToPickHit();
-        }
-        if (pawn.skills != null) {
-          pawn.skills.Learn(SkillDefOf.Mining, 0.11f, false);
-        }
-        ticksToPickHit--;
+					if (ticksToPickHit < -100) {
+						ResetTicksToPickHit();
+					}
+					if (pawn.skills != null) {
+						pawn.skills.Learn(SkillDefOf.Mining, 0.11f, false);
+					}
+					ticksToPickHit--;
 
-        if (ticksToPickHit <= 0) {
-          if (effecter == null) {
-            effecter = EffecterDefOf.Mine.Spawn();
-          }
-          effecter.Trigger(pawn, Quarry);
+					if (ticksToPickHit <= 0) {
+						if (effecter == null) {
+							effecter = EffecterDefOf.Mine.Spawn();
+						}
+						effecter.Trigger(pawn, Quarry);
 
-          ResetTicksToPickHit();
-        }
-      };
-      toil.defaultCompleteMode = ToilCompleteMode.Delay;
-      toil.handlingFacing = true;
-      toil.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);
-      float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
-      toil.defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor));
-      return toil;
+						ResetTicksToPickHit();
+					}
+				},
+				defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor)),
+				defaultCompleteMode = ToilCompleteMode.Delay,
+				handlingFacing = true
+			}.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);
     }
 
     private Toil Collect() {
-      Toil toil = new Toil();
-      toil.initAction = delegate {
-        // Increment the record for how many cells this pawn has mined since this counts as mining
-        pawn.records.Increment(RecordDefOf.CellsMined);
+			return new Toil() {
+				initAction = delegate {
+					// Increment the record for how many cells this pawn has mined since this counts as mining
+					pawn.records.Increment(RecordDefOf.CellsMined);
 
-        // Start with None to act as a fallback. Rubble will be returned with this parameter
-        ResourceRequest req = ResourceRequest.None;
+					// Start with None to act as a fallback. Rubble will be returned with this parameter
+					ResourceRequest req = ResourceRequest.None;
 
-        // Use the mineModeToggle to determine the request
-        req = (Quarry.mineModeToggle ? ResourceRequest.Resources : ResourceRequest.Blocks);
+					// Use the mineModeToggle to determine the request
+					req = (Quarry.mineModeToggle ? ResourceRequest.Resources : ResourceRequest.Blocks);
 
-        MoteType mote = MoteType.None;
-        bool singleSpawn = true;
-        bool eventTriggered = false;
-        int stackCount = 1;
+					MoteType mote = MoteType.None;
+					int stackCount = 1;
 
-        // Get the resource from the quarry
-        ThingDef def = Quarry.GiveResources(req, out mote, out singleSpawn, out eventTriggered);
+					// Get the resource from the quarry
+					ThingDef def = Quarry.GiveResources(req, out mote, out bool singleSpawn, out bool eventTriggered);
 
-        // If something went wrong, bail out
-        if (def == null || def.thingClass == null) {
-          Log.Warning("Quarry:: Tried to quarry mineable ore, but the ore given was null.");
-          mote = MoteType.None;
-          singleSpawn = true;
-          // This shouldn't happen at all, but if it does let's add a little reward instead of just giving rubble
-          def = ThingDefOf.ChunkSlagSteel;
-        }
-
-        Thing haulableResult = ThingMaker.MakeThing(def);
-        if (!singleSpawn && def != ThingDefOf.Component) {
-          int sub = (int)(def.BaseMarketValue / 3f);
-          if (sub >= 10) {
-            sub = 9;
-          }
-          
-          stackCount += Mathf.Min(Rand.RangeInclusive(15 - sub, 40 - (sub * 2)), def.stackLimit - 1 );
-        }
-
-        if (def == ThingDefOf.Component) {
-          stackCount += Random.Range(0, 1);
-        }
-
-        haulableResult.stackCount = stackCount;
-
-        if (stackCount >= 30) {
-          mote = MoteType.LargeVein;
-        }
-
-        // Place the resource near the pawn
-        GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
-
-        // If the resource had a mote, throw it
-        if (mote == MoteType.LargeVein) {
-          MoteMaker.ThrowText(haulableResult.DrawPos, Map, Static.TextMote_LargeVein, Color.green, 3f);
-        }
-        else if (mote == MoteType.Failure) {
-          MoteMaker.ThrowText(haulableResult.DrawPos, Map, Static.TextMote_MiningFailed, Color.red, 3f);
-        }
-
-        // If the sinkhole event was triggered, damage the pawn and end this job
-        // Even if the sinkhole doesn't incapacitate the pawn, they will probably want to seek medical attention
-        if (eventTriggered) {
-          Messages.Message("QRY_MessageSinkhole".Translate(pawn.NameStringShort), pawn, MessageSound.Negative);
-          DamageInfo dInfo = new DamageInfo(DamageDefOf.Crush, 9, -1f, category: DamageInfo.SourceCategory.Collapse);
-          dInfo.SetBodyRegion(BodyPartHeight.Bottom, BodyPartDepth.Inside);
-          pawn.TakeDamage(dInfo);
-          pawn.TakeDamage(dInfo);
-
-          EndJobWith(JobCondition.Succeeded);
-        }
-
-        // Prevent the colonists from trying to haul rubble, which just makes them visit the platform
-        if (haulableResult.def == ThingDefOf.RockRubble) {
-          EndJobWith(JobCondition.Succeeded);
-        }
-
-        // If this is a chunk or slag, mark it as haulable if allowed to
-        if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
-          Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
-        }
-        
-        // Setup IntVec for assigning
-        IntVec3 c;
-
-        // Try to find a suitable storage spot for the resource, removing it from the quarry
-        // If there are no platforms with free space, try to haul it to a storage area
-        if (Quarry.autoHaul) {
-					if (Quarry.HasConnectedPlatform && Quarry.TryFindBestStoreCellFor(haulableResult, pawn, Map, pawn.Faction, out c)) {
-						CurJob.SetTarget(TargetIndex.B, haulableResult);
-						CurJob.count = haulableResult.stackCount;
-						CurJob.SetTarget(TargetIndex.C, c);
+					// If something went wrong, bail out
+					if (def == null || def.thingClass == null) {
+						Log.Warning("Quarry:: Tried to quarry mineable ore, but the ore given was null.");
+						mote = MoteType.None;
+						singleSpawn = true;
+						// This shouldn't happen at all, but if it does let's add a little reward instead of just giving rubble
+						def = ThingDefOf.ChunkSlagSteel;
 					}
-					else {
-						StoragePriority currentPriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
-						if (StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, currentPriority, pawn.Faction, out c)) {
-							CurJob.SetTarget(TargetIndex.B, haulableResult);
-							CurJob.count = haulableResult.stackCount;
-							CurJob.SetTarget(TargetIndex.C, c);
+
+					Thing haulableResult = ThingMaker.MakeThing(def);
+					if (!singleSpawn && def != ThingDefOf.Component) {
+						int sub = (int)(def.BaseMarketValue / 3f);
+						if (sub >= 10) {
+							sub = 9;
+						}
+
+						stackCount += Mathf.Min(Rand.RangeInclusive(15 - sub, 40 - (sub * 2)), def.stackLimit - 1);
+					}
+
+					if (def == ThingDefOf.Component) {
+						stackCount += Random.Range(0, 1);
+					}
+
+					haulableResult.stackCount = stackCount;
+
+					if (stackCount >= 30) {
+						mote = MoteType.LargeVein;
+					}
+
+					// Place the resource near the pawn
+					GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
+
+					// If the resource had a mote, throw it
+					if (mote == MoteType.LargeVein) {
+						MoteMaker.ThrowText(haulableResult.DrawPos, Map, Static.TextMote_LargeVein, Color.green, 3f);
+					}
+					else if (mote == MoteType.Failure) {
+						MoteMaker.ThrowText(haulableResult.DrawPos, Map, Static.TextMote_MiningFailed, Color.red, 3f);
+					}
+
+					// If the sinkhole event was triggered, damage the pawn and end this job
+					// Even if the sinkhole doesn't incapacitate the pawn, they will probably want to seek medical attention
+					if (eventTriggered) {
+						Messages.Message("QRY_MessageSinkhole".Translate(pawn.NameStringShort), pawn, MessageTypeDefOf.NegativeEvent);
+						DamageInfo dInfo = new DamageInfo(DamageDefOf.Crush, 9, -1f, category: DamageInfo.SourceCategory.Collapse);
+						dInfo.SetBodyRegion(BodyPartHeight.Bottom, BodyPartDepth.Inside);
+						pawn.TakeDamage(dInfo);
+						pawn.TakeDamage(dInfo);
+
+						EndJobWith(JobCondition.Succeeded);
+					}
+
+					// Prevent the colonists from trying to haul rubble, which just makes them visit the platform
+					if (haulableResult.def == ThingDefOf.RockRubble) {
+						EndJobWith(JobCondition.Succeeded);
+					}
+
+					// If this is a chunk or slag, mark it as haulable if allowed to
+					if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
+						Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
+					}
+
+					// Try to find a suitable storage spot for the resource, removing it from the quarry
+					// If there are no platforms with free space, try to haul it to a storage area
+					if (Quarry.autoHaul) {
+						if (Quarry.HasConnectedPlatform && Quarry.TryFindBestStoreCellFor(haulableResult, pawn, Map, pawn.Faction, out IntVec3 c)) {
+							job.SetTarget(TargetIndex.B, haulableResult);
+							job.count = haulableResult.stackCount;
+							job.SetTarget(TargetIndex.C, c);
+						}
+						else {
+							StoragePriority currentPriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
+							if (StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, currentPriority, pawn.Faction, out c)) {
+								job.SetTarget(TargetIndex.B, haulableResult);
+								job.count = haulableResult.stackCount;
+								job.SetTarget(TargetIndex.C, c);
+							}
 						}
 					}
-        }
-        // If there is no spot to store the resource, end this job
-        else {
-          EndJobWith(JobCondition.Succeeded);
-        }
-      };
-      toil.defaultCompleteMode = ToilCompleteMode.Instant;
-
-      return toil;
+					// If there is no spot to store the resource, end this job
+					else {
+						EndJobWith(JobCondition.Succeeded);
+					}
+				},
+				defaultCompleteMode = ToilCompleteMode.Instant
+			};
     }
   }
 }

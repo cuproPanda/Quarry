@@ -66,10 +66,11 @@ namespace Quarry {
 
 
     public override void DoSettingsWindowContents(Rect rect) {
-      Listing_Standard list = new Listing_Standard();
+			Listing_Standard list = new Listing_Standard() {
+				ColumnWidth = rect.width
+			};
 
-      list.ColumnWidth = rect.width;
-      list.Begin(rect);
+			list.Begin(rect);
       list.Gap(10);
       {
         Rect fullRect = list.GetRect(Text.LineHeight);

@@ -30,19 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=0.17.6351.26619, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Assembly-CSharp, Version=0.17.6351.26908, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\RimWorld1546Win\RimWorld1546Win_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\RimWorld_18.1700.762\RimWorldWin_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\RimWorld1238Win\RimWorld1238Win_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\RimWorld_18.1700.762\RimWorldWin_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +48,7 @@
     <Compile Include="PlaceWorker_Quarry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuarryMod.cs" />
+    <Compile Include="QuarryPlacementUtility.cs" />
     <Compile Include="QuarryResourcesDef.cs" />
     <Compile Include="QuarrySettings.cs" />
     <Compile Include="OreDictionary.cs" />

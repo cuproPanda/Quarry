@@ -3,6 +3,6 @@
   <name>Quarry</name>
   <author>cuproPanda</author>
   <url>https://ludeon.com/forums/index.php?topic=13400.0</url>
-  <targetVersion>0.17.0</targetVersion>
+  <targetVersion>0.18.0</targetVersion>
   <description>Adds a quarry for mining in flat terrain.</description>
 </ModMetaData>
