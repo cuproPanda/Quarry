@@ -105,7 +105,7 @@
 		<comps>
 			<li Class="CompProperties_Facility">
 				<maxSimultaneous>2</maxSimultaneous>
-				<mustBePlacedAdjacent>true</mustBePlacedAdjacent>
+				<maxDistance>12</maxDistance>
 			</li>
 		</comps>
 		<placeWorkers>
