@@ -12,6 +12,8 @@ namespace Quarry {
     public static TerrainDef QRY_QuarriedGroundWall;
     public static LetterDef CuproLetter;
     public static ConceptDef QRY_ReclaimingSoil;
-  }
+		public static StuffAppearanceDef Bricks;
+		public static StuffAppearanceDef Planks;
+	}
 }
 

@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-	<ThingDef Name="BuildingBase" Abstract="True">
-		<category>Building</category>
-		<thingClass>Building</thingClass>
-		<soundImpactDefault>BulletImpactMetal</soundImpactDefault>
-		<selectable>true</selectable>
-		<drawerType>MapMeshAndRealTime</drawerType>
-		<terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
-		<repairEffect>Repair</repairEffect>
-		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
-		<filthLeaving>BuildingRubble</filthLeaving>
-	</ThingDef>
-
 	<ThingDef ParentName="BuildingBase">
 		<defName>QRY_Quarry</defName>
 		<thingClass>Quarry.Building_Quarry</thingClass>
@@ -66,28 +54,36 @@
 
 	<ThingDef ParentName="BuildingBase">
 		<defName>QRY_Platform</defName>
+		<thingClass>Quarry.Building_Platform</thingClass>
 		<label>quarry platform</label>
-		<altitudeLayer>LowPlant</altitudeLayer>
 		<description>A platform quarry workers will haul resources to. Must be placed next to a quarry, preferably near the ladders. Quarries can be linked to only one or two platforms.</description>
 		<graphicData>
-			<texPath>Cupro/Object/Platform</texPath>
+			<texPath>Cupro/Object/Platform/Platform_Smooth</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<drawSize>(3,3)</drawSize>
 			<damageData>
 				<cornerTL>Damage/Corner</cornerTL>
-				<cornerTR>Damage/Corner</cornerTR>
-				<cornerBL>Damage/Corner</cornerBL>
-				<cornerBR>Damage/Corner</cornerBR>
+        <cornerTR>Damage/Corner</cornerTR>
+        <cornerBL>Damage/Corner</cornerBL>
+        <cornerBR>Damage/Corner</cornerBR>
+        <edgeTop>Damage/Edge</edgeTop>
+        <edgeBot>Damage/Edge</edgeBot>
+        <edgeLeft>Damage/Edge</edgeLeft>
+        <edgeRight>Damage/Edge</edgeRight>
 			</damageData>
 		</graphicData>
+		<altitudeLayer>LowPlant</altitudeLayer>
 		<passability>Standable</passability>
 		<castEdgeShadows>false</castEdgeShadows>
 		<designationCategory>Misc</designationCategory>
 		<pathCost>0</pathCost>
 		<fillPercent>0</fillPercent>
+    <coversFloor>true</coversFloor>
 		<canOverlapZones>false</canOverlapZones>
 		<stuffCategories>
 			<li>Woody</li>
+			<li>Stony</li>
+			<li>Metallic</li>
 		</stuffCategories>
 		<costStuffCount>50</costStuffCount>
 		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
@@ -105,7 +101,7 @@
 		<comps>
 			<li Class="CompProperties_Facility">
 				<maxSimultaneous>2</maxSimultaneous>
-				<maxDistance>12</maxDistance>
+				<maxDistance>15</maxDistance>
 			</li>
 		</comps>
 		<placeWorkers>

@@ -9,7 +9,14 @@ namespace Quarry {
     public static Texture2D DesignationQuarryBlocks = ContentFinder<Texture2D>.Get("Cupro/UI/Designators/QuarryBlocks", false);
     public static Texture2D DesignationHaul = ContentFinder<Texture2D>.Get("UI/Designators/Haul");
 
-    public static IntVec3 LadderOffset1 = new IntVec3(-3,0,5);
+		public static Graphic Platform_Bricks = GraphicDatabase.Get<Graphic_Single>("Cupro/Object/Platform/Platform_Bricks", ShaderDatabase.DefaultShader, new Vector2(3,3), Color.white);
+		public static Graphic Platform_GraniticStone = GraphicDatabase.Get<Graphic_Single>("Cupro/Object/Platform/Platform_GraniticStone", ShaderDatabase.DefaultShader, new Vector2(3,3), Color.white);
+		public static Graphic Platform_Planks = GraphicDatabase.Get<Graphic_Single>("Cupro/Object/Platform/Platform_Planks", ShaderDatabase.DefaultShader, new Vector2(3,3), Color.white);
+		public static Graphic Platform_RockyStone = GraphicDatabase.Get<Graphic_Single>("Cupro/Object/Platform/Platform_RockyStone", ShaderDatabase.DefaultShader, new Vector2(3,3), Color.white);
+		public static Graphic Platform_Smooth = GraphicDatabase.Get<Graphic_Single>("Cupro/Object/Platform/Platform_Smooth", ShaderDatabase.DefaultShader, new Vector2(3,3), Color.white);
+		public static Graphic Platform_SmoothStone = GraphicDatabase.Get<Graphic_Single>("Cupro/Object/Platform/Platform_SmoothStone", ShaderDatabase.DefaultShader, new Vector2(3,3), Color.white);
+
+		public static IntVec3 LadderOffset1 = new IntVec3(-3,0,5);
     public static IntVec3 LadderOffset2 = new IntVec3(-3,0,6);
     public static IntVec3 LadderOffset3 = new IntVec3(4,0,5);
     public static IntVec3 LadderOffset4 = new IntVec3(4,0,6);
@@ -33,5 +40,8 @@ namespace Quarry {
     public static string ToolTipLetter = "QRY_TooltipLetter".Translate();
     public static string ToolTipJunkChance = "QRY_TooltipJunkChance".Translate();
     public static string ToolTipChunkChance = "QRY_TooltipChunkChance".Translate();
-  }
+		public static string StringGraniticStone = "GraniticStone";
+		public static string StringRockyStone = "RockyStone";
+		public static string StringSmoothStone = "SmoothStone";
+	}
 }
