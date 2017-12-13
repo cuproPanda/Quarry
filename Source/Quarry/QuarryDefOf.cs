@@ -7,7 +7,8 @@ namespace Quarry {
     public static JobDef QRY_MineQuarry;
     public static ThingDef QRY_Quarry;
     public static ThingDef Chemfuel;
-    public static ResearchProjectDef Stonecutting;
+    public static ThingDef MineableComponents;
+		public static ResearchProjectDef Stonecutting;
     public static TerrainDef QRY_QuarriedGround;
     public static TerrainDef QRY_QuarriedGroundWall;
     public static LetterDef CuproLetter;

@@ -11,14 +11,14 @@ namespace Quarry {
 
   public sealed class QuarryMod : Mod {
 
-    public static Dictionary<ThingDef, int> oreDictionary;
+    public static Dictionary<ThingDef, int> oreDictionary = null;
 		public static char slash = System.IO.Path.DirectorySeparatorChar;
 
 
     public QuarryMod(ModContentPack mcp) : base(mcp) {
       GetSettings<QuarrySettings>();
       LongEventHandler.ExecuteWhenFinished(PushDatabase);
-      LongEventHandler.ExecuteWhenFinished(BuildDictionary);
+      LongEventHandler.ExecuteWhenFinished(OreDictionary.Build);
     }
 
 
@@ -29,34 +29,6 @@ namespace Quarry {
 
     private void PushDatabase() {
       QuarrySettings.database = DefDatabase<ThingDef>.AllDefsListForReading;
-    }
-
-
-    private void BuildDictionary() {
-      oreDictionary = new Dictionary<ThingDef, int>();
-
-      IEnumerable<ThingDef> ores = DefDatabase<ThingDef>.AllDefs.Where((ThingDef def) => def.deepCommonality != 0);
-
-      foreach (ThingDef ore in ores) {
-        // Chemfuel shouldn't show up here, since it would be heavily exploited
-        // Players can still choose to add it manually, though
-        if (ore != QuarryDefOf.Chemfuel) {
-          float commonality = ore.deepCommonality;
-          if (commonality < 1f) {
-            commonality += 1f;
-          }
-          oreDictionary.Add(ore, (int)((commonality * commonality) * 10f));
-        }
-      }
-
-      foreach (KeyValuePair<ThingDef, int> pair in DefDatabase<QuarryResourcesDef>.GetNamedSilentFail("AdditionalResources").additionalResources) {
-        if (oreDictionary.ContainsKey(pair.Key)) {
-          oreDictionary[pair.Key] += pair.Value;
-        }
-        else {
-          oreDictionary.Add(pair.Key, pair.Value);
-        }
-      }
     }
 
 

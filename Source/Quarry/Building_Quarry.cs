@@ -26,7 +26,7 @@ namespace Quarry {
     public bool autoHaul = true;
     public bool mineModeToggle = true;
 
-    private int quarryHealth;
+    private float quarryPercent = 1f;
     private int jobsCompleted = 0;
     private bool firstSpawn = false;
     private CompAffectedByFacilities facilityComp;
@@ -37,7 +37,7 @@ namespace Quarry {
         if (QuarrySettings.QuarryMaxHealth == int.MaxValue) {
           return 100f;
         }
-        return (quarryHealth * 100f) / QuarrySettings.QuarryMaxHealth;
+        return quarryPercent * 100f;
       }
     }
 
@@ -70,7 +70,7 @@ namespace Quarry {
       base.ExposeData();
       Scribe_Values.Look(ref autoHaul, "QRY_boolAutoHaul", true);
       Scribe_Values.Look(ref mineModeToggle, "QRY_mineMode", true);
-      Scribe_Values.Look(ref quarryHealth, "QRY_quarryHealth", 2000);
+      Scribe_Values.Look(ref quarryPercent, "QRY_quarryPercent", 1f);
       Scribe_Values.Look(ref jobsCompleted, "QRY_jobsCompleted", 0);
       Scribe_Collections.Look(ref rockTypesUnder, "QRY_rockTypesUnder", LookMode.Value);
     }
@@ -123,7 +123,7 @@ namespace Quarry {
 
       if (firstSpawn) {
         // Set the initial quarry health
-        quarryHealth = QuarrySettings.QuarryMaxHealth;
+        quarryPercent = 1f;
 
         CellRect rect = this.OccupiedRect();
         // First pass to populate rockTypesUnder
@@ -230,7 +230,7 @@ namespace Quarry {
 
       // Decrease the amount this quarry can be mined, eventually depleting it
       if (QuarrySettings.QuarryMaxHealth != int.MaxValue) {
-        quarryHealth--; 
+        QuarryMined(); 
       }
 
       // Determine if the mining job resulted in a sinkhole event, based on game difficulty
@@ -269,13 +269,18 @@ namespace Quarry {
       // Try to give resources
       if (req == ResourceRequest.Resources) {
         singleSpawn = false;
-        return OreDictionary.From(QuarryMod.oreDictionary).TakeOne();
+        return OreDictionary.TakeOne();
       }
       // The quarry was most likely toggled off while a pawn was still working. Give junk
       else {
         return ThingDefOf.RockRubble;
       }
     }
+
+
+		private void QuarryMined() {
+			quarryPercent = ((QuarrySettings.quarryMaxHealth * quarryPercent) - 1f) / QuarrySettings.quarryMaxHealth;
+		}
 
 
     public bool TryFindBestStoreCellFor(Thing t, Pawn carrier, Map map, Faction faction, out IntVec3 foundCell) {
