@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using UnityEngine;
+using RimWorld;
 using Verse;
 
 namespace Quarry {
@@ -22,27 +22,21 @@ namespace Quarry {
 
 
 		public static void Build() {
-			Dictionary<ThingDef, int> oreDictionary = new Dictionary<ThingDef, int>();
+			List<ThingCountExposable> oreDictionary = new List<ThingCountExposable>();
+
 			// Get all ThingDefs that have mineable resources
 			IEnumerable<ThingDef> ores = DefDatabase<ThingDef>.AllDefs.Where((ThingDef def) => validOre(def));
-			
-			// Assign commonality values for ores
-			foreach (ThingDef ore in ores) {				
-				oreDictionary.Add(ore.building.mineableThing, ValueForMineableOre(ore));
-			}
-			// Include AdditionalResources.xml resources
-			foreach (KeyValuePair<ThingDef, int> pair in DefDatabase<QuarryResourcesDef>.GetNamedSilentFail("AdditionalResources").additionalResources) {
-				int value = pair.Value;
 
-				if (oreDictionary.ContainsKey(pair.Key)) {
-					oreDictionary[pair.Key] += value;
-				}
-				else {
-					oreDictionary.Add(pair.Key, value);
-				}
+			// Assign commonality values for ores
+			foreach (ThingDef ore in ores) {
+				oreDictionary.Add(new ThingCountExposable(ore.building.mineableThing, ValueForMineableOre(ore)));
 			}
+
+			// Manually add components
+			oreDictionary.Add(new ThingCountExposable(ThingDefOf.Component, 7));
+
 			// Assign this dictionary for the mod to use
-			QuarryMod.oreDictionary = PercentageDictionary(oreDictionary);
+			QuarrySettings.oreDictionary = oreDictionary;
 		}
 
 
@@ -59,44 +53,50 @@ namespace Quarry {
 
 		public static Dictionary<ThingDef, int> PercentageDictionary(Dictionary<ThingDef, int> dictionary) {
 			Dictionary<ThingDef, int> dict = new Dictionary<ThingDef, int>();
-			float sum = 0;
 
-			foreach (KeyValuePair<ThingDef, int> pair  in dictionary) {
-				sum += pair.Value;
-			}
 			foreach (KeyValuePair<ThingDef, int> pair in dictionary) {
-				dict.Add(pair.Key, (int)((pair.Value / sum) * 100f));
+				dict.Add(pair.Key, WeightAsPercentage(dictionary.AsThingCountExposableList(), pair.Value));
 			}
 			return dict;
 		}
 
 
+		public static int WeightAsPercentage(List<ThingCountExposable> dictionary, int weight) {
+			float sum = 0;
+
+			foreach (ThingCountExposable tc in dictionary) {
+				sum += tc.count;
+			}
+			return (int)((weight / sum) * 100f);
+		}
+
+
     public static ThingDef TakeOne() {
 			// Make sure there is a dictionary to work from
-			if (QuarryMod.oreDictionary == null) {
+			if (QuarrySettings.oreDictionary == null) {
 				Build();
 			}
 
 			// Sorts the weight list
-			List<KeyValuePair<ThingDef, int>> sortedWeights = Sort(QuarryMod.oreDictionary);
+			List<ThingCountExposable> sortedWeights = Sort(QuarrySettings.oreDictionary);
 
       // Sums all weights
       int sum = 0;
-      foreach (KeyValuePair<ThingDef, int> ore in QuarryMod.oreDictionary) {
-        sum += ore.Value;
+      foreach (ThingCountExposable ore in QuarrySettings.oreDictionary) {
+        sum += ore.count;
       }
 
       // Randomizes a number from Zero to Sum
       int roll = rand.Next(0, sum);
 
       // Finds chosen item based on weight
-      ThingDef selected = sortedWeights[sortedWeights.Count - 1].Key;
-      foreach (KeyValuePair<ThingDef, int> ore in sortedWeights) {
-        if (roll < ore.Value) {
-          selected = ore.Key;
+      ThingDef selected = sortedWeights[sortedWeights.Count - 1].thingDef;
+      foreach (ThingCountExposable ore in sortedWeights) {
+        if (roll < ore.count) {
+          selected = ore.thingDef;
           break;
         }
-        roll -= ore.Value;
+        roll -= ore.count;
       }
 
       // Returns the selected item
@@ -104,14 +104,14 @@ namespace Quarry {
     }
 
 
-    private static List<KeyValuePair<ThingDef, int>> Sort(Dictionary<ThingDef, int> weights) {
-			List<KeyValuePair<ThingDef, int>> list = new List<KeyValuePair<ThingDef, int>>(weights);
+    private static List<ThingCountExposable> Sort(List<ThingCountExposable> weights) {
+			List<ThingCountExposable> list = new List<ThingCountExposable>(weights);
 
       // Sorts the Weights List for randomization later
       list.Sort(
-          delegate (KeyValuePair<ThingDef, int> firstPair,
-										KeyValuePair<ThingDef, int> nextPair) {
-                    return firstPair.Value.CompareTo(nextPair.Value);
+          delegate (ThingCountExposable firstPair,
+										ThingCountExposable nextPair) {
+                    return firstPair.count.CompareTo(nextPair.count);
                    }
        );
 

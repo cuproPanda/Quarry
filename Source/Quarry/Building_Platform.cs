@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using RimWorld;
 using Verse;
 
 namespace Quarry {
 
-	public class Building_Platform : Building {
+	public class Building_Platform : Building_Storage {
 
 		private Graphic cachedGraphic = null;
 

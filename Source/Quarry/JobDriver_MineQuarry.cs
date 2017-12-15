@@ -160,6 +160,17 @@ namespace Quarry {
 						mote = MoteType.LargeVein;
 					}
 
+					// Adjust hitpoints, this was just mined from under the ground after all
+					if (def.useHitPoints) {
+						int hp = Mathf.RoundToInt(Rand.Range(0.25f, 1f) * haulableResult.MaxHitPoints);
+						hp = Mathf.Max(1, hp);
+						haulableResult.HitPoints = hp;
+					}
+					// Adjust quality for items that use it
+					if (haulableResult.TryGetComp<CompQuality>() != null) {
+						haulableResult.TryGetComp<CompQuality>().SetQuality(QualityUtility.RandomTraderItemQuality(), ArtGenerationContext.Outsider);
+					}
+
 					// Place the resource near the pawn
 					GenPlace.TryPlaceThing(haulableResult, pawn.Position, Map, ThingPlaceMode.Near);
 
@@ -196,7 +207,7 @@ namespace Quarry {
 					// Try to find a suitable storage spot for the resource, removing it from the quarry
 					// If there are no platforms with free space, try to haul it to a storage area
 					if (Quarry.autoHaul) {
-						if (Quarry.HasConnectedPlatform && Quarry.TryFindBestStoreCellFor(haulableResult, pawn, Map, pawn.Faction, out IntVec3 c)) {
+						if (Quarry.HasConnectedPlatform && Quarry.TryFindBestPlatformCell(haulableResult, pawn, Map, pawn.Faction, out IntVec3 c)) {
 							job.SetTarget(TargetIndex.B, haulableResult);
 							job.count = haulableResult.stackCount;
 							job.SetTarget(TargetIndex.C, c);

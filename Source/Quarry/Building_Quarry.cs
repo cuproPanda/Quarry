@@ -283,9 +283,12 @@ namespace Quarry {
 		}
 
 
-    public bool TryFindBestStoreCellFor(Thing t, Pawn carrier, Map map, Faction faction, out IntVec3 foundCell) {
+    public bool TryFindBestPlatformCell(Thing t, Pawn carrier, Map map, Faction faction, out IntVec3 foundCell) {
       List<Thing> facilities = facilityComp.LinkedFacilitiesListForReading;
       for (int f = 0; f < facilities.Count; f++) {
+				if (facilities[f].GetSlotGroup() == null || !facilities[f].GetSlotGroup().Settings.AllowedToAccept(t)) {
+					continue;
+				}
         foreach (IntVec3 c in GenAdj.CellsOccupiedBy(facilities[f])) {
           if (StoreUtility.IsGoodStoreCell(c, map, t, carrier, faction)) {
             foundCell = c;

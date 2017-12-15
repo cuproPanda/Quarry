@@ -50,10 +50,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuarryMod.cs" />
     <Compile Include="QuarryPlacementUtility.cs" />
-    <Compile Include="QuarryResourcesDef.cs" />
     <Compile Include="QuarrySettings.cs" />
     <Compile Include="OreDictionary.cs" />
     <Compile Include="Static.cs" />
+    <Compile Include="ThingCountExposable.cs" />
     <Compile Include="WorkGiver_MineQuarry.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -98,12 +98,29 @@
 		</statBases>
 		<size>(3,3)</size>
 		<rotatable>false</rotatable>
+		<building>
+      <preventDeteriorationOnTop>false</preventDeteriorationOnTop>
+      <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
+      <defaultStorageSettings>
+        <priority>Low</priority>
+        <filter>
+          <categories>
+            <li>ResourcesRaw</li>
+            <li>Items</li>
+            <li>Chunks</li>
+          </categories>
+        </filter>
+      </defaultStorageSettings>
+    </building>
 		<comps>
 			<li Class="CompProperties_Facility">
 				<maxSimultaneous>2</maxSimultaneous>
-				<maxDistance>15</maxDistance>
+				<maxDistance>18</maxDistance>
 			</li>
 		</comps>
+    <inspectorTabs>
+      <li>ITab_Storage</li>
+    </inspectorTabs>
 		<placeWorkers>
 			<li>PlaceWorker_ShowFacilitiesConnections</li>
 		</placeWorkers>
