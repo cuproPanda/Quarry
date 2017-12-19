@@ -118,8 +118,9 @@ namespace Quarry {
     private Toil Collect() {
 			return new Toil() {
 				initAction = delegate {
-					// Increment the record for how many m3 this pawn has mined since this counts as mining
-					pawn.records.Increment(QuarryDefOf.QRY_CellsMined);
+					// Increment the record for how many cells this pawn has mined since this counts as mining
+					// TODO: B19 - change to quarry m3
+					pawn.records.Increment(RecordDefOf.CellsMined);
 
 					// Start with None to act as a fallback. Rubble will be returned with this parameter
 					ResourceRequest req = ResourceRequest.None;
