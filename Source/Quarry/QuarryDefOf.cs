@@ -15,6 +15,7 @@ namespace Quarry {
     public static ConceptDef QRY_ReclaimingSoil;
 		public static StuffAppearanceDef Bricks;
 		public static StuffAppearanceDef Planks;
+		public static RecordDef QRY_CellsMined;
 	}
 }
 

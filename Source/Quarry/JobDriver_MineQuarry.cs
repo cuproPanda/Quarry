@@ -78,14 +78,16 @@ namespace Quarry {
     }
 
 
-    private void ResetTicksToPickHit() {
+		private void ResetTicksToPickHit() {
       float statValue = pawn.GetStatValue(StatDefOf.MiningSpeed, true);
-      ticksToPickHit = Mathf.RoundToInt((120f / statValue));
+			if (statValue < 0.5f && pawn.Faction != Faction.OfPlayer) {
+				statValue = 0.5f;
+			}
+			ticksToPickHit = Mathf.RoundToInt((120f / statValue));
     }
 
 
     private Toil Mine() {
-			float skillFactor = pawn.skills.GetSkill(SkillDefOf.Mining).Level / 20f;
 			return new Toil() {
 				tickAction = delegate {
 					pawn.rotationTracker.Face(Quarry.Position.ToVector3Shifted());
@@ -107,7 +109,7 @@ namespace Quarry {
 						ResetTicksToPickHit();
 					}
 				},
-				defaultDuration = (int)(3000 * Mathf.Lerp(1.5f, 0.5f, skillFactor)),
+				defaultDuration = (int)(3000 / pawn.GetStatValue(StatDefOf.MiningSpeed, true)),
 				defaultCompleteMode = ToilCompleteMode.Delay,
 				handlingFacing = true
 			}.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);
@@ -116,8 +118,8 @@ namespace Quarry {
     private Toil Collect() {
 			return new Toil() {
 				initAction = delegate {
-					// Increment the record for how many cells this pawn has mined since this counts as mining
-					pawn.records.Increment(RecordDefOf.CellsMined);
+					// Increment the record for how many m3 this pawn has mined since this counts as mining
+					pawn.records.Increment(QuarryDefOf.QRY_CellsMined);
 
 					// Start with None to act as a fallback. Rubble will be returned with this parameter
 					ResourceRequest req = ResourceRequest.None;
@@ -142,10 +144,8 @@ namespace Quarry {
 
 					Thing haulableResult = ThingMaker.MakeThing(def);
 					if (!singleSpawn && def != ThingDefOf.Component) {
-						int sub = (int)(def.BaseMarketValue / 3f);
-						if (sub >= 10) {
-							sub = 9;
-						}
+						int sub = (int)(def.BaseMarketValue / 2f);
+						sub = Mathf.Clamp(sub, 0, 10);
 
 						stackCount += Mathf.Min(Rand.RangeInclusive(15 - sub, 40 - (sub * 2)), def.stackLimit - 1);
 					}
@@ -160,15 +160,21 @@ namespace Quarry {
 						mote = MoteType.LargeVein;
 					}
 
-					// Adjust hitpoints, this was just mined from under the ground after all
-					if (def.useHitPoints) {
-						int hp = Mathf.RoundToInt(Rand.Range(0.25f, 1f) * haulableResult.MaxHitPoints);
-						hp = Mathf.Max(1, hp);
-						haulableResult.HitPoints = hp;
-					}
+					bool usesQuality = false;
 					// Adjust quality for items that use it
 					if (haulableResult.TryGetComp<CompQuality>() != null) {
+						usesQuality = true;
 						haulableResult.TryGetComp<CompQuality>().SetQuality(QualityUtility.RandomTraderItemQuality(), ArtGenerationContext.Outsider);
+					}
+					// Adjust hitpoints, this was just mined from under the ground after all
+					if (def.useHitPoints) {
+						float minHpThresh = 0.25f;
+						if (usesQuality) {
+							minHpThresh = Mathf.Clamp((float)haulableResult.TryGetComp<CompQuality>().Quality / 10f, 0.1f, 0.7f);
+						}
+						int hp = Mathf.RoundToInt(Rand.Range(minHpThresh, 1f) * haulableResult.MaxHitPoints);
+						hp = Mathf.Max(1, hp);
+						haulableResult.HitPoints = hp;
 					}
 
 					// Place the resource near the pawn
@@ -186,9 +192,8 @@ namespace Quarry {
 					// Even if the sinkhole doesn't incapacitate the pawn, they will probably want to seek medical attention
 					if (eventTriggered) {
 						Messages.Message("QRY_MessageSinkhole".Translate(pawn.NameStringShort), pawn, MessageTypeDefOf.NegativeEvent);
-						DamageInfo dInfo = new DamageInfo(DamageDefOf.Crush, 9, -1f, category: DamageInfo.SourceCategory.Collapse);
+						DamageInfo dInfo = new DamageInfo(DamageDefOf.Crush, 9, category: DamageInfo.SourceCategory.Collapse);
 						dInfo.SetBodyRegion(BodyPartHeight.Bottom, BodyPartDepth.Inside);
-						pawn.TakeDamage(dInfo);
 						pawn.TakeDamage(dInfo);
 
 						EndJobWith(JobCondition.Succeeded);

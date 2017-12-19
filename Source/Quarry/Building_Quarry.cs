@@ -236,14 +236,16 @@ namespace Quarry {
       // Determine if the mining job resulted in a sinkhole event, based on game difficulty
       if (jobsCompleted % 100 == 0 && Rand.Chance(Find.Storyteller.difficulty.difficulty / 50f)) {
         eventTriggered = true;
-      }
+				// The sinkhole damages the quarry a little
+				QuarryMined(Rand.RangeInclusive(1, 3));
+			}
 
       // Cache values since this process is convoluted and the values need to remain the same
-      bool cachedJunkChance = Rand.Chance(QuarrySettings.junkChance / 100f);
+      bool junkMined = Rand.Chance(QuarrySettings.junkChance / 100f);
 
       // Check for blocks first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
-        if (!cachedJunkChance) {
+        if (!junkMined) {
           singleSpawn = false;
           string blockType = RockTypesUnder.RandomElement();
           return QuarrySettings.database.Find(t => t.defName == "Blocks" + blockType);
@@ -254,7 +256,7 @@ namespace Quarry {
       }
 
       // Try to give junk before resources. This simulates only mining chunks or useless rubble
-      if (cachedJunkChance) {
+      if (junkMined) {
         if (Rand.Chance(QuarrySettings.chunkChance / 100f)) {
           return QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement());
         }
@@ -278,8 +280,8 @@ namespace Quarry {
     }
 
 
-		private void QuarryMined() {
-			quarryPercent = ((QuarrySettings.quarryMaxHealth * quarryPercent) - 1f) / QuarrySettings.quarryMaxHealth;
+		private void QuarryMined(int damage = 1) {
+			quarryPercent = ((QuarrySettings.quarryMaxHealth * quarryPercent) - damage) / QuarrySettings.quarryMaxHealth;
 		}
 
 
