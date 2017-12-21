@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
@@ -86,6 +87,18 @@ namespace Quarry {
 			return from d in DefDatabase<ThingDef>.AllDefs
 						 where (d.category == ThingCategory.Item && d.scatterableOnMapGen && !d.destroyOnDrop && !d.MadeFromStuff && d.GetCompProperties<CompProperties_Rottable>() == null)
 						 select d;
+		}
+
+
+		public static string ToStringDecimal(this float f) {
+			string result;
+			if (Mathf.Abs(f) < 1f) {
+				result = Math.Round(f, 2).ToString("0.##");
+			}
+			else {
+				result = Math.Round(f, 1).ToString("0.#");
+			}
+			return result;
 		}
 	}
 }

@@ -51,23 +51,13 @@ namespace Quarry {
 		}
 
 
-		public static Dictionary<ThingDef, int> PercentageDictionary(Dictionary<ThingDef, int> dictionary) {
-			Dictionary<ThingDef, int> dict = new Dictionary<ThingDef, int>();
-
-			foreach (KeyValuePair<ThingDef, int> pair in dictionary) {
-				dict.Add(pair.Key, WeightAsPercentage(dictionary.AsThingCountExposableList(), pair.Value));
-			}
-			return dict;
-		}
-
-
-		public static int WeightAsPercentage(List<ThingCountExposable> dictionary, int weight) {
+		public static float WeightAsPercentageOf(this List<ThingCountExposable> dictionary, int weight) {
 			float sum = 0;
 
-			foreach (ThingCountExposable tc in dictionary) {
-				sum += tc.count;
+			for (int i = 0; i < dictionary.Count; i++) {
+				sum += dictionary[i].count;
 			}
-			return (int)((weight / sum) * 100f);
+			return (weight / sum) * 100f;
 		}
 
 
@@ -82,22 +72,22 @@ namespace Quarry {
 
       // Sums all weights
       int sum = 0;
-      foreach (ThingCountExposable ore in QuarrySettings.oreDictionary) {
-        sum += ore.count;
-      }
+			for (int i = 0; i < QuarrySettings.oreDictionary.Count; i++) {
+				sum += QuarrySettings.oreDictionary[i].count;
+			}
 
       // Randomizes a number from Zero to Sum
       int roll = rand.Next(0, sum);
 
       // Finds chosen item based on weight
       ThingDef selected = sortedWeights[sortedWeights.Count - 1].thingDef;
-      foreach (ThingCountExposable ore in sortedWeights) {
-        if (roll < ore.count) {
-          selected = ore.thingDef;
-          break;
-        }
-        roll -= ore.count;
-      }
+			for (int j = 0; j < sortedWeights.Count; j++) {
+				if (roll < sortedWeights[j].count) {
+					selected = sortedWeights[j].thingDef;
+					break;
+				}
+				roll -= sortedWeights[j].count;
+			}
 
       // Returns the selected item
       return selected;

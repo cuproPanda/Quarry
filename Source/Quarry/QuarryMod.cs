@@ -140,8 +140,70 @@ namespace Quarry {
 					Text.Font = GameFont.Small;
 					Text.Anchor = TextAnchor.UpperLeft;
 				}
-
 				list.Gap(1);
+
+				{
+					Rect buttonsRect = list.GetRect(Text.LineHeight).LeftHalf().Rounded();
+					float buttonThirdSize = buttonsRect.width / 3f;
+					float buttonThirdOffset = buttonThirdSize / 2f;
+					Vector2 abCenter = buttonsRect.LeftPartPixels(buttonThirdSize).center;
+					Vector2 rbCenter = buttonsRect.center;
+					Vector2 lbCenter = buttonsRect.RightPartPixels(buttonThirdSize).center;
+					Rect abRect = new Rect(abCenter.x - buttonThirdOffset, abCenter.y, buttonThirdSize, Text.LineHeight);
+					Rect rbRect = new Rect(rbCenter.x - buttonThirdOffset, rbCenter.y, buttonThirdSize, Text.LineHeight);
+					Rect lbRect = new Rect(lbCenter.x - buttonThirdOffset, lbCenter.y, buttonThirdSize, Text.LineHeight);
+
+					// Add an entry to the dictionary
+					if (Widgets.ButtonText(abRect, Static.LabelAddThing)) {
+						List<FloatMenuOption> thingList = new List<FloatMenuOption>();
+						foreach (ThingDef current in from t in Static.PossibleThingDefs()
+																				 orderby t.label
+																				 select t) {
+
+							bool skip = false;
+							for (int i = 0; i < QuarrySettings.oreDictionary.Count; i++) {
+								if (QuarrySettings.oreDictionary[i].thingDef == current) {
+									skip = true;
+									break;
+								}
+							};
+							if (skip) continue;
+
+							thingList.Add(new FloatMenuOption(current.LabelCap, delegate {
+								QuarrySettings.oreDictionary.Add(new ThingCountExposable(current, 1));
+							}));
+						}
+						FloatMenu menu = new FloatMenu(thingList);
+						Find.WindowStack.Add(menu);
+					}
+
+					// Remove an entry from the dictionary
+					if (Widgets.ButtonText(rbRect, Static.LabelRemoveThing) && QuarrySettings.oreDictionary.Count >= 2) {
+						List<FloatMenuOption> thingList = new List<FloatMenuOption>();
+						foreach (ThingCountExposable current in from t in QuarrySettings.oreDictionary
+																										orderby t.thingDef.label
+																										select t) {
+							ThingDef localTd = current.thingDef;
+							thingList.Add(new FloatMenuOption(localTd.LabelCap, delegate {
+								for (int i = 0; i < QuarrySettings.oreDictionary.Count; i++) {
+									if (QuarrySettings.oreDictionary[i].thingDef == localTd) {
+										QuarrySettings.oreDictionary.Remove(QuarrySettings.oreDictionary[i]);
+										break;
+									}
+								};
+							}));
+						}
+						FloatMenu menu = new FloatMenu(thingList);
+						Find.WindowStack.Add(menu);
+					}
+
+					// Reset the dictionary
+					if (Widgets.ButtonText(lbRect, Static.LabelResetList)) {
+						OreDictionary.Build();
+					}
+				}
+
+				list.Gap(5);
 				{
 					Rect listRect = list.GetRect(200f).LeftHalf().Rounded();
 					Rect cRect = listRect.ContractedBy(10f);
@@ -157,14 +219,14 @@ namespace Quarry {
 
 					foreach (var tc in dict.Select((value, index) => new { index, value })) {
 						Rect entryRect = new Rect(0f, num, viewRect.width, 32);
-						Rect iconRect = entryRect.LeftHalf().LeftHalf().LeftPartPixels(32).Rounded();
-						Rect labelRect = entryRect.LeftHalf().RightPartPixels(150).Rounded();
-						Rect pctRect = labelRect.RightPartPixels(50).Rounded();
-						Rect sliderRect = entryRect.RightHalf().Rounded();
+						Rect iconRect = entryRect.LeftPartPixels(32);
+						Rect labelRect = new Rect(entryRect.LeftHalf().x + 33f, entryRect.y, entryRect.LeftHalf().width - 35f, entryRect.height);
+						Rect pctRect = new Rect(entryRect.RightHalf().x, entryRect.y, 40f, entryRect.height);
+						Rect sliderRect = new Rect(entryRect.RightHalf().x + 41f, entryRect.y, entryRect.RightHalf().width - 42f, entryRect.height);
 
 						Widgets.ThingIcon(iconRect, tc.value.thingDef);
 						Widgets.Label(labelRect, tc.value.thingDef.LabelCap);
-						Widgets.Label(pctRect, $"{OreDictionary.WeightAsPercentage(QuarrySettings.oreDictionary, tc.value.count)}%");
+						Widgets.Label(pctRect, $"{QuarrySettings.oreDictionary.WeightAsPercentageOf(tc.value.count).ToStringDecimal()}%");
 						int val = tc.value.count;
 						val = RoundToAsInt(1, Widgets.HorizontalSlider(
 							sliderRect,
@@ -174,6 +236,12 @@ namespace Quarry {
 							QuarrySettings.oreDictionary[tc.index].count = val;
 						}
 
+						if (Mouse.IsOver(entryRect)) {
+							Widgets.DrawHighlight(entryRect);
+						}
+						TooltipHandler.TipRegion(entryRect.LeftHalf(), tc.value.thingDef.description);
+						TooltipHandler.TipRegion(sliderRect, val.ToString());
+
 						num += 32f;
 						scrollViewHeight = num;
 					}
@@ -181,72 +249,6 @@ namespace Quarry {
 					Widgets.EndScrollView();
 					GUI.EndGroup();
 				}
-
-				list.Gap(15);
-				{
-					Vector2 abCenter = list.GetRect(Text.LineHeight).center;
-					Rect abRect = new Rect(abCenter.x - 100, abCenter.x + 10, 200, 30);
-
-					if (Widgets.ButtonText(abRect, Static.LabelAddThing)) {
-						List<FloatMenuOption> thingList = new List<FloatMenuOption>();
-						foreach (ThingDef current in from t in Static.PossibleThingDefs()
-																				 orderby t.label
-																				 select t) {
-
-							bool skip = false;
-							for (int i = 0; i < QuarrySettings.oreDictionary.Count; i++) {
-								if (QuarrySettings.oreDictionary[i].thingDef == current) {
-									skip = true;
-									break;
-								}
-							};
-							if (skip)	continue;
-
-							thingList.Add(new FloatMenuOption(current.LabelCap, delegate {
-								QuarrySettings.oreDictionary.Add(new ThingCountExposable(current, 1));
-							}));
-						}
-						FloatMenu menu = new FloatMenu(thingList);
-						Find.WindowStack.Add(menu);
-					}
-				}
-
-				list.Gap(15);
-				{
-					Vector2 rbCenter = list.GetRect(Text.LineHeight).center;
-					Rect rbRect = new Rect(rbCenter.x - 100, rbCenter.x + 40, 200, 30);
-
-					if (Widgets.ButtonText(rbRect, Static.LabelRemoveThing) && QuarrySettings.oreDictionary.Count >= 2) {
-						List<FloatMenuOption> thingList = new List<FloatMenuOption>();
-						foreach (ThingCountExposable current in from t in QuarrySettings.oreDictionary
-																				 orderby t.thingDef.label
-																				 select t) {
-							ThingDef localTd = current.thingDef;
-							thingList.Add(new FloatMenuOption(localTd.LabelCap, delegate {
-								for (int i = 0; i < QuarrySettings.oreDictionary.Count; i++) {
-									if (QuarrySettings.oreDictionary[i].thingDef == localTd) {
-										QuarrySettings.oreDictionary.Remove(QuarrySettings.oreDictionary[i]);
-										break;
-									}
-								};
-							}));
-						}
-						FloatMenu menu = new FloatMenu(thingList);
-						Find.WindowStack.Add(menu);
-					}
-				}
-
-				list.Gap(15);
-        {
-          Vector2 lbCenter = list.GetRect(Text.LineHeight).center;
-          Rect lbRect = new Rect(lbCenter.x - 100, lbCenter.x + 70, 200, 30);
-          // Reset the dictionary
-          if (Widgets.ButtonText(lbRect, Static.LabelResetList)) {
-						OreDictionary.Build();
-          }
-        }
-
-        list.Gap(10);
 
         list.End();
       }

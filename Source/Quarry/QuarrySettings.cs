@@ -31,6 +31,23 @@ namespace Quarry {
       Scribe_Values.Look(ref junkChance, "QRY_junkChance", 60);
       Scribe_Values.Look(ref chunkChance, "QRY_chunkChance", 50);
 			Scribe_Collections.Look(ref oreDictionary, "QRY_OreDictionary");
+
+			// Remove all null entries in the oreDictionary
+			// This is most likely due to removing a mod, which will trigger a game reset
+			if (Scribe.mode == LoadSaveMode.LoadingVars) {
+				List<ThingCountExposable> dict = new List<ThingCountExposable>();
+				bool warning = false;
+				for (int i = 0; i < oreDictionary.Count; i++) {
+					if (oreDictionary[i] != null) {
+						dict.Add(new ThingCountExposable(oreDictionary[i].thingDef, oreDictionary[i].count));
+					}
+					else if (!warning){
+						warning = true;
+						Log.Warning($"{Static.Quarry}:: Found 1 or more null entries in ore dictionary. This is most likely due to an uninstalled mod. Removing entries from list.");
+					}
+				}
+				oreDictionary = dict;
+			}
 		}
   }
 }
