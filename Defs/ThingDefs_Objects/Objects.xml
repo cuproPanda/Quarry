@@ -109,6 +109,9 @@
             <li>Items</li>
             <li>Chunks</li>
           </categories>
+					<thingDefs>
+						<li>Component</li>
+					</thingDefs>
         </filter>
       </defaultStorageSettings>
     </building>

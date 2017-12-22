@@ -16,6 +16,7 @@ namespace Quarry {
 		public static StuffAppearanceDef Bricks;
 		public static StuffAppearanceDef Planks;
 		public static RecordDef QRY_CellsMined;
+		public static ThingCategoryDef StoneChunks;
 	}
 }
 

@@ -168,7 +168,7 @@ namespace Quarry {
 						haulableResult.TryGetComp<CompQuality>().SetQuality(QualityUtility.RandomTraderItemQuality(), ArtGenerationContext.Outsider);
 					}
 					// Adjust hitpoints, this was just mined from under the ground after all
-					if (def.useHitPoints) {
+					if (def.useHitPoints && !def.thingCategories.Contains(QuarryDefOf.StoneChunks) && def != ThingDefOf.Component) {
 						float minHpThresh = 0.25f;
 						if (usesQuality) {
 							minHpThresh = Mathf.Clamp((float)haulableResult.TryGetComp<CompQuality>().Quality / 10f, 0.1f, 0.7f);
