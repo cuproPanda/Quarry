@@ -133,7 +133,6 @@ namespace Quarry {
 
 					// Get the resource from the quarry
 					ThingDef def = Quarry.GiveResources(req, out mote, out bool singleSpawn, out bool eventTriggered);
-
 					// If something went wrong, bail out
 					if (def == null || def.thingClass == null) {
 						Log.Warning("Quarry:: Tried to quarry mineable ore, but the ore given was null.");
@@ -199,38 +198,41 @@ namespace Quarry {
 
 						EndJobWith(JobCondition.Succeeded);
 					}
-
-					// Prevent the colonists from trying to haul rubble, which just makes them visit the platform
-					if (haulableResult.def == ThingDefOf.RockRubble) {
-						EndJobWith(JobCondition.Succeeded);
-					}
-
-					// If this is a chunk or slag, mark it as haulable if allowed to
-					if (haulableResult.def.designateHaulable && Quarry.autoHaul) {
-						Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
-					}
-
-					// Try to find a suitable storage spot for the resource, removing it from the quarry
-					// If there are no platforms with free space, try to haul it to a storage area
-					if (Quarry.autoHaul) {
-						if (Quarry.HasConnectedPlatform && Quarry.TryFindBestPlatformCell(haulableResult, pawn, Map, pawn.Faction, out IntVec3 c)) {
-							job.SetTarget(TargetIndex.B, haulableResult);
-							job.count = haulableResult.stackCount;
-							job.SetTarget(TargetIndex.C, c);
+					else {
+						// Prevent the colonists from trying to haul rubble, which just makes them visit the platform
+						if (def == ThingDefOf.RockRubble) {
+							EndJobWith(JobCondition.Succeeded);
 						}
 						else {
-							StoragePriority currentPriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
-							if (StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, currentPriority, pawn.Faction, out c)) {
-								job.SetTarget(TargetIndex.B, haulableResult);
-								job.count = haulableResult.stackCount;
-								job.SetTarget(TargetIndex.C, c);
+							Log.Message("Marker");
+							// If this is a chunk or slag, mark it as haulable if allowed to
+							if (def.designateHaulable && Quarry.autoHaul) {
+								Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));
+							}
+
+							// Try to find a suitable storage spot for the resource, removing it from the quarry
+							// If there are no platforms with free space, or if the resource is a chunk, try to haul it to a storage area
+							if (Quarry.autoHaul) {
+								if (!def.thingCategories.Contains(QuarryDefOf.StoneChunks) && Quarry.HasConnectedPlatform && Quarry.TryFindBestPlatformCell(haulableResult, pawn, Map, pawn.Faction, out IntVec3 c)) {
+									job.SetTarget(TargetIndex.B, haulableResult);
+									job.count = haulableResult.stackCount;
+									job.SetTarget(TargetIndex.C, c);
+								}
+								else {
+									StoragePriority currentPriority = HaulAIUtility.StoragePriorityAtFor(haulableResult.Position, haulableResult);
+									if (StoreUtility.TryFindBestBetterStoreCellFor(haulableResult, pawn, Map, currentPriority, pawn.Faction, out c)) {
+										job.SetTarget(TargetIndex.B, haulableResult);
+										job.count = haulableResult.stackCount;
+										job.SetTarget(TargetIndex.C, c);
+									}
+								}
+							}
+							// If there is no spot to store the resource, end this job
+							else {
+								EndJobWith(JobCondition.Succeeded);
 							}
 						}
-					}
-					// If there is no spot to store the resource, end this job
-					else {
-						EndJobWith(JobCondition.Succeeded);
-					}
+					}					
 				},
 				defaultCompleteMode = ToilCompleteMode.Instant
 			};

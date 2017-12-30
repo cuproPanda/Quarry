@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
+using RimWorld;
 using Verse;
 using Verse.AI;
-using RimWorld;
 
 namespace Quarry {
 
@@ -19,7 +20,7 @@ namespace Quarry {
 
       // Find a cell within the middle of the quarry to mine at
       IntVec3 cell = IntVec3.Invalid;
-      CellRect rect = quarry.OccupiedRect().ContractedBy(2);
+      CellRect rect = quarry.OccupiedRect().ContractedBy(quarry.WallThickness);
       foreach (IntVec3 c in rect.Cells.InRandomOrder()) {
         if (pawn.Map.reservationManager.CanReserve(pawn, c, 1)) {
           cell = c;
@@ -34,8 +35,9 @@ namespace Quarry {
       return new Job(QuarryDefOf.QRY_MineQuarry, cell);
     }
 
-    public override System.Collections.Generic.IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn) {
-      return pawn.Map.listerBuildings.AllBuildingsColonistOfDef(QuarryDefOf.QRY_Quarry).Cast<Thing>();
+    public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn) {
+      return	pawn.Map.listerBuildings.AllBuildingsColonistOfDef(QuarryDefOf.QRY_Quarry).Cast<Thing>().Concat(
+							pawn.Map.listerBuildings.AllBuildingsColonistOfDef(QuarryDefOf.QRY_MiniQuarry).Cast<Thing>());
     }
   }
 }

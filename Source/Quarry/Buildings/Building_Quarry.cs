@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 
 using RimWorld;
 using Verse;
-using System.Linq;
 
 namespace Quarry {
 
@@ -32,6 +32,10 @@ namespace Quarry {
     private CompAffectedByFacilities facilityComp;
     private List<string> rockTypesUnder = new List<string>();
 
+		public virtual int WallThickness => 2;
+
+    public bool Depleted => QuarryPercent <= 0;
+
     public float QuarryPercent {
       get {
         if (QuarrySettings.QuarryMaxHealth == int.MaxValue) {
@@ -41,24 +45,32 @@ namespace Quarry {
       }
     }
 
-    public bool Depleted {
-      get { return QuarryPercent <= 0; }
-    }
-
 		public bool HasConnectedPlatform {
 			get { return !facilityComp.LinkedFacilitiesListForReading.NullOrEmpty(); }
 		}
 
 		public List<string> RockTypesUnder {
       get {
-        if (rockTypesUnder.Count == 0) {
-          // This will cause an error if there isn't a list, so make a new one using known rocks
-          Log.Warning("Quarry:: No valid rock types were found under the quarry. Building list using vanilla rocks.");
-          rockTypesUnder = new List<string>() { "Sandstone", "Limestone", "Granite", "Marble", "Slate" };
-        }
+        if (rockTypesUnder.Count <= 0) {
+					TryAssignRockTypesFromMap(rockTypesUnder);
+				}
         return rockTypesUnder;
       }
     }
+
+		protected virtual int QuarryDamageMultiplier => 1;
+		protected virtual int SinkholeFrequency => 100;
+
+		protected virtual List<IntVec3> LadderOffsets {
+			get {
+				return new List<IntVec3>() {
+					Static.LadderOffset_Big1,
+					Static.LadderOffset_Big2,
+					Static.LadderOffset_Big3,
+					Static.LadderOffset_Big4
+				};
+			}
+		}
 
     private string HaulDescription {
       get { return (autoHaul ? Static.LabelHaul : Static.LabelNotHaul); }
@@ -122,12 +134,14 @@ namespace Quarry {
       facilityComp = GetComp<CompAffectedByFacilities>();
 
       if (firstSpawn) {
-        // Set the initial quarry health
-        quarryPercent = 1f;
+				// Set the initial quarry health
+				quarryPercent = 1f;
 
         CellRect rect = this.OccupiedRect();
-        // First pass to populate rockTypesUnder
-        SetupFirstPass(rect);
+				// Remove this area from the quarry grid. Quarries can never be built here again
+				map.GetComponent<QuarryGrid>().RemoveFromGrid(rect);
+				// First pass to populate rockTypesUnder
+				SetupFirstPass(rect);
         // Second pass to change the terrain to quarried stone
         SetupSecondPass(rect);
         // Third pass to spawn filth and also set terrain back to quarried stone where the ladders are
@@ -152,22 +166,33 @@ namespace Quarry {
     }
 
 
+		private void TryAssignRockTypesFromMap(List<string> list) {
+			// Try to add all the rock types found in the map
+			list = new List<string>();
+			List<string> tempRockTypesUnder = Find.World.NaturalRockTypesIn(Map.Tile).Select(r => r.LabelCap).ToList();
+			foreach (string str in tempRockTypesUnder) {
+				if (QuarryUtility.IsValidQuarryRock(str)) {
+					list.Add(str);
+				}
+			}
+			// This will cause an error if there still isn't a list, so make a new one using known rocks
+			if (list.Count <= 0) {
+				Log.Warning("Quarry:: No valid rock types were found in the map. Building list using vanilla rocks.");
+				list = new List<string>() { "Sandstone", "Limestone", "Granite", "Marble", "Slate" };
+			}
+		}
+
+
     private void SetupFirstPass(CellRect rect) {
       foreach (IntVec3 c in rect) {
         // What type of rock are we over?
         string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
-        // If there isn't a known chunk for this, it probably isn't a rock type and wouldn't work for spawning anyways
-        // This allows Cupro's Stones to work, and any other mod that uses standard naming conventions for stones
-        ThingDef chunkTest = QuarrySettings.database.Find(t => t.defName == "Chunk" + rockType);
-        // Add a second scan for blocks matching this stone name to prevent errors
-        ThingDef blocksTest = QuarrySettings.database.Find(t => t.defName == "Blocks" + rockType);
-        if (chunkTest != null && blocksTest != null) {
+        if (QuarryUtility.IsValidQuarryRock(rockType)) {
           rockTypesUnder.Add(rockType);
         }
         if (rockTypesUnder.Count <= 0) {
-          // Call RockTypes under to generate the vanilla list. gcList will be garbage collected
-          List<string> gcList = RockTypesUnder;
-        }
+					TryAssignRockTypesFromMap(rockTypesUnder);
+				}
         // Change the terrain here to be quarried stone wall
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGroundWall);
       }
@@ -175,18 +200,17 @@ namespace Quarry {
 
 
     private void SetupSecondPass(CellRect rect) {
-      foreach (IntVec3 c in rect.ContractedBy(2)) {
+      foreach (IntVec3 c in rect.ContractedBy(WallThickness)) {
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
       }
     }
 
 
     private void SetupThirdPass(CellRect rect) {
+			foreach (IntVec3 offset in LadderOffsets) {
+				Map.terrainGrid.SetTerrain(Position + offset.RotatedBy(Rotation), QuarryDefOf.QRY_QuarriedGround);
+			}
       foreach (IntVec3 c in rect) {
-        if (c == Position + Static.LadderOffset1.RotatedBy(Rotation) || c == Position + Static.LadderOffset2.RotatedBy(Rotation) || c == Position + Static.LadderOffset3.RotatedBy(Rotation) || c == Position + Static.LadderOffset4.RotatedBy(Rotation)) {
-          Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
-        }
-
         List<Thing> thingsInCell = new List<Thing>();
         bool usableCell = true;
         // Skip this cell if it is occupied by a placed object
@@ -210,8 +234,7 @@ namespace Quarry {
             GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, Map);
             // Check for chunks
             if (filthAmount > 80) {
-              string chunkType = RockTypesUnder.RandomElement();
-              ThingDef chunk = QuarrySettings.database.Find(t => t.defName == "Chunk" + chunkType);
+              ThingDef chunk = QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement());
               GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
             }
           }
@@ -234,7 +257,7 @@ namespace Quarry {
       }
 
       // Determine if the mining job resulted in a sinkhole event, based on game difficulty
-      if (jobsCompleted % 100 == 0 && Rand.Chance(Find.Storyteller.difficulty.difficulty / 50f)) {
+      if (jobsCompleted % SinkholeFrequency == 0 && Rand.Chance(Find.Storyteller.difficulty.difficulty / 50f)) {
         eventTriggered = true;
 				// The sinkhole damages the quarry a little
 				QuarryMined(Rand.RangeInclusive(1, 3));
@@ -247,8 +270,7 @@ namespace Quarry {
       if (req == ResourceRequest.Blocks) {
         if (!junkMined) {
           singleSpawn = false;
-          string blockType = RockTypesUnder.RandomElement();
-          return QuarrySettings.database.Find(t => t.defName == "Blocks" + blockType);
+          return QuarrySettings.database.Find(t => t.defName == "Blocks" + RockTypesUnder.RandomElement());
         }
         // The rock didn't break into a usable size, spawn rubble
         mote = MoteType.Failure;
@@ -266,8 +288,6 @@ namespace Quarry {
         }
       }
 
-      System.Random rand = new System.Random();
-
       // Try to give resources
       if (req == ResourceRequest.Resources) {
         singleSpawn = false;
@@ -281,7 +301,7 @@ namespace Quarry {
 
 
 		private void QuarryMined(int damage = 1) {
-			quarryPercent = ((QuarrySettings.quarryMaxHealth * quarryPercent) - damage) / QuarrySettings.quarryMaxHealth;
+			quarryPercent = ((QuarrySettings.quarryMaxHealth * quarryPercent) - (damage * QuarryDamageMultiplier)) / QuarrySettings.quarryMaxHealth;
 		}
 
 

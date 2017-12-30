@@ -8,11 +8,11 @@
     <label>Reclaim soil</label>
     <priority>50</priority>
     <needsOpportunity>True</needsOpportunity>
-    <helpText>Once the quarry has been deconstructed, you can use the Smooth Floor tool to designate colonists to cover the old ground with soil in order to get a usable terrain where the quarry once was.</helpText>
+    <helpText>Once the quarry has been deconstructed, you can use the Reclaim Soil tool to designate colonists to cover the old ground with soil in order to get a usable terrain where the quarry once was.</helpText>
     <highlightTags>
       <li>MainTab-Architect-Closed</li>
       <li>DesignationCategoryButton-Floors-Closed</li>
-      <li>Designator-DesignatorSmoothFloor</li>
+      <li>Designator-QRY_Designator_ReclaimSoil</li>
     </highlightTags>
   </ConceptDef>
 

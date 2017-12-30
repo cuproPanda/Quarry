@@ -1,15 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-	<ThingDef ParentName="BuildingBase">
-		<defName>QRY_Quarry</defName>
-		<thingClass>Quarry.Building_Quarry</thingClass>
-		<label>quarry</label>
-		<description>A large pit for digging up long buried resources.</description>
+	<ThingDef Name="QRY_QuarryBase" ParentName="BuildingBase" Abstract="True">
 		<graphicData>
-			<texPath>Cupro/Object/Quarry</texPath>
 			<graphicClass>Graphic_Multi</graphicClass>
-			<drawSize>(12,12)</drawSize>
 		</graphicData>
 		<drawOffscreen>true</drawOffscreen>
 		<constructEffect>ConstructDirt</constructEffect>
@@ -19,10 +13,7 @@
 		<useHitPoints>false</useHitPoints>
 		<statBases>
 			<Flammability>0</Flammability>
-			<WorkToBuild>50000</WorkToBuild>
-			<Beauty>-25</Beauty>
 		</statBases>
-		<size>(12,12)</size>
 		<passability>PassThroughOnly</passability>
 		<canOverlapZones>false</canOverlapZones>
 		<pathCost>20</pathCost>
@@ -44,12 +35,47 @@
 				</linkableFacilities>
 			</li>
 		</comps>
-		<costList>
-			<Steel>100</Steel>
-		</costList>
 		<placeWorkers>
 			<li>Quarry.PlaceWorker_Quarry</li>
 		</placeWorkers>
+	</ThingDef>
+
+	<ThingDef ParentName="QRY_QuarryBase">
+		<defName>QRY_Quarry</defName>
+		<thingClass>Quarry.Building_Quarry</thingClass>
+		<label>quarry</label>
+		<description>A large pit for digging up long buried resources.</description>
+		<graphicData>
+			<texPath>Cupro/Object/Quarry</texPath>
+			<drawSize>(12,12)</drawSize>
+		</graphicData>
+		<statBases>
+			<WorkToBuild>50000</WorkToBuild>
+			<Beauty>-25</Beauty>
+		</statBases>
+		<size>(12,12)</size>
+		<costList>
+			<Steel>100</Steel>
+		</costList>
+	</ThingDef>
+
+	<ThingDef ParentName="QRY_QuarryBase">
+		<defName>QRY_MiniQuarry</defName>
+		<thingClass>Quarry.Building_MiniQuarry</thingClass>
+		<label>mini quarry</label>
+		<description>A small pit for digging up long buried resources.</description>
+		<graphicData>
+			<texPath>Cupro/Object/MiniQuarry</texPath>
+			<drawSize>(7,7)</drawSize>
+		</graphicData>
+		<statBases>
+			<WorkToBuild>17000</WorkToBuild>
+			<Beauty>-10</Beauty>
+		</statBases>
+		<size>(7,7)</size>
+		<costList>
+			<Steel>50</Steel>
+		</costList>
 	</ThingDef>
 
 	<ThingDef ParentName="BuildingBase">
@@ -107,7 +133,6 @@
           <categories>
             <li>ResourcesRaw</li>
             <li>Items</li>
-            <li>Chunks</li>
           </categories>
 					<thingDefs>
 						<li>Component</li>

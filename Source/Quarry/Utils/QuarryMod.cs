@@ -156,7 +156,7 @@ namespace Quarry {
 					// Add an entry to the dictionary
 					if (Widgets.ButtonText(abRect, Static.LabelAddThing)) {
 						List<FloatMenuOption> thingList = new List<FloatMenuOption>();
-						foreach (ThingDef current in from t in Static.PossibleThingDefs()
+						foreach (ThingDef current in from t in QuarryUtility.PossibleThingDefs()
 																				 orderby t.label
 																				 select t) {
 
