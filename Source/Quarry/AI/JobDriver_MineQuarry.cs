@@ -204,7 +204,6 @@ namespace Quarry {
 							EndJobWith(JobCondition.Succeeded);
 						}
 						else {
-							Log.Message("Marker");
 							// If this is a chunk or slag, mark it as haulable if allowed to
 							if (def.designateHaulable && Quarry.autoHaul) {
 								Map.designationManager.AddDesignation(new Designation(haulableResult, DesignationDefOf.Haul));

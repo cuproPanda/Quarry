@@ -52,7 +52,7 @@ namespace Quarry {
 		public List<string> RockTypesUnder {
       get {
         if (rockTypesUnder.Count <= 0) {
-					TryAssignRockTypesFromMap(rockTypesUnder);
+					rockTypesUnder = RockTypesFromMap();
 				}
         return rockTypesUnder;
       }
@@ -166,9 +166,9 @@ namespace Quarry {
     }
 
 
-		private void TryAssignRockTypesFromMap(List<string> list) {
+		private List<string> RockTypesFromMap() {
 			// Try to add all the rock types found in the map
-			list = new List<string>();
+			List<string> list = new List<string>();
 			List<string> tempRockTypesUnder = Find.World.NaturalRockTypesIn(Map.Tile).Select(r => r.LabelCap).ToList();
 			foreach (string str in tempRockTypesUnder) {
 				if (QuarryUtility.IsValidQuarryRock(str)) {
@@ -180,6 +180,7 @@ namespace Quarry {
 				Log.Warning("Quarry:: No valid rock types were found in the map. Building list using vanilla rocks.");
 				list = new List<string>() { "Sandstone", "Limestone", "Granite", "Marble", "Slate" };
 			}
+			return list;
 		}
 
 
@@ -189,14 +190,14 @@ namespace Quarry {
         string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
         if (QuarryUtility.IsValidQuarryRock(rockType)) {
           rockTypesUnder.Add(rockType);
-        }
-        if (rockTypesUnder.Count <= 0) {
-					TryAssignRockTypesFromMap(rockTypesUnder);
 				}
         // Change the terrain here to be quarried stone wall
         Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGroundWall);
       }
-    }
+			if (rockTypesUnder.Count <= 0) {
+				rockTypesUnder = RockTypesFromMap();
+			}
+		}
 
 
     private void SetupSecondPass(CellRect rect) {
@@ -234,8 +235,14 @@ namespace Quarry {
             GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, Map);
             // Check for chunks
             if (filthAmount > 80) {
-              ThingDef chunk = QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement());
-              GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
+							string str = "Chunk" + RockTypesUnder.RandomElement();
+							ThingDef chunk = QuarrySettings.database.Find(t => t.defName == str);
+							if (chunk != null) {
+								GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
+							}
+							else {
+								Log.Error(str);
+							}
             }
           }
         }
