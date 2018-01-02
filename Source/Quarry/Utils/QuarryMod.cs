@@ -1,5 +1,4 @@
-﻿using RimWorld;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,8 +8,7 @@ using Verse;
 namespace Quarry {
 
   public sealed class QuarryMod : Mod {
-
-		public static char slash = System.IO.Path.DirectorySeparatorChar;
+		
 		private Vector2 scrollPosition = Vector2.zero;
 		private float scrollViewHeight = 0f;
 

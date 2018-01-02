@@ -9,7 +9,8 @@ namespace Quarry {
 
   public static class OreDictionary {
 
-    private static System.Random rand = new System.Random();
+    private static Random rand = new Random();
+
 		private static SimpleCurve commonalityCurve = new SimpleCurve {
 			{ new CurvePoint(0.0f, 10f) },
 			{ new CurvePoint(0.02f, 9f) },
@@ -18,7 +19,14 @@ namespace Quarry {
 			{ new CurvePoint(0.08f, 3f) },
 			{ new CurvePoint(float.MaxValue, 1f) }
 		};
-		private static Predicate<ThingDef> validOre = ((ThingDef def) => def.mineable && def != QuarryDefOf.MineableComponents && def.building != null && def.building.isResourceRock && def.building.mineableThing != null);
+
+		private static Predicate<ThingDef> validOre = (
+			(ThingDef def) => def.mineable && 
+			def != QuarryDefOf.MineableComponents && 
+			def.building != null && 
+			def.building.isResourceRock && 
+			def.building.mineableThing != null
+		);
 
 
 		public static void Build() {

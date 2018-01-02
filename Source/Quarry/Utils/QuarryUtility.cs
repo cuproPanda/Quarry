@@ -32,6 +32,34 @@ namespace Quarry {
 		}
 
 
+		public static bool IsValidQuarryChunk(string str, out ThingDef chunk) {
+			chunk = null;
+			if (QuarrySettings.database.NullOrEmpty()) {
+				Log.Error("Quarry:: Trying to validate chunks before the database has been built.");
+				return false;
+			}
+			chunk = QuarrySettings.database.Find(t => t.defName == "Chunk" + str);
+			if (chunk != null) {
+				return true;
+			}
+			return false;
+		}
+
+
+		public static bool IsValidQuarryBlocks(string str, out ThingDef blocks) {
+			blocks = null;
+			if (QuarrySettings.database.NullOrEmpty()) {
+				Log.Error("Quarry:: Trying to validate blocks before the database has been built.");
+				return false;
+			}
+			blocks = QuarrySettings.database.Find(t => t.defName == "Blocks" + str);
+			if (blocks != null) {
+				return true;
+			}
+			return false;
+		}
+
+
 		public static IEnumerable<ThingDef> PossibleThingDefs() {
 			return from d in DefDatabase<ThingDef>.AllDefs
 						 where (d.category == ThingCategory.Item && d.scatterableOnMapGen && !d.destroyOnDrop && !d.MadeFromStuff && d.GetCompProperties<CompProperties_Rottable>() == null)

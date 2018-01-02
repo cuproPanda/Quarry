@@ -31,9 +31,10 @@ namespace Quarry {
     private bool firstSpawn = false;
     private CompAffectedByFacilities facilityComp;
     private List<string> rockTypesUnder = new List<string>();
+    private List<ThingDef> blocksUnder = new List<ThingDef>();
+    private List<ThingDef> chunksUnder = new List<ThingDef>();
 
 		public virtual int WallThickness => 2;
-
     public bool Depleted => QuarryPercent <= 0;
 
     public float QuarryPercent {
@@ -49,14 +50,23 @@ namespace Quarry {
 			get { return !facilityComp.LinkedFacilitiesListForReading.NullOrEmpty(); }
 		}
 
-		public List<string> RockTypesUnder {
-      get {
-        if (rockTypesUnder.Count <= 0) {
-					rockTypesUnder = RockTypesFromMap();
+		public List<ThingDef> ChunksUnder {
+			get {
+				if (chunksUnder.Count <= 0) {
+					MakeThingDefListsFrom(RockTypesUnder);
 				}
-        return rockTypesUnder;
-      }
-    }
+				return chunksUnder;
+			}
+		}
+
+		public List<ThingDef> BlocksUnder {
+			get {
+				if (blocksUnder.Count <= 0) {
+					MakeThingDefListsFrom(RockTypesUnder);
+				}
+				return blocksUnder;
+			}
+		}
 
 		protected virtual int QuarryDamageMultiplier => 1;
 		protected virtual int SinkholeFrequency => 100;
@@ -71,6 +81,15 @@ namespace Quarry {
 				};
 			}
 		}
+
+		private List<string> RockTypesUnder {
+      get {
+        if (rockTypesUnder.Count <= 0) {
+					rockTypesUnder = RockTypesFromMap();
+				}
+        return rockTypesUnder;
+      }
+    }
 
     private string HaulDescription {
       get { return (autoHaul ? Static.LabelHaul : Static.LabelNotHaul); }
@@ -140,14 +159,35 @@ namespace Quarry {
         CellRect rect = this.OccupiedRect();
 				// Remove this area from the quarry grid. Quarries can never be built here again
 				map.GetComponent<QuarryGrid>().RemoveFromGrid(rect);
-				// First pass to populate rockTypesUnder
-				SetupFirstPass(rect);
-        // Second pass to change the terrain to quarried stone
-        SetupSecondPass(rect);
-        // Third pass to spawn filth and also set terrain back to quarried stone where the ladders are
-        SetupThirdPass(rect);
-      }
-    }
+
+				foreach (IntVec3 c in rect) {
+					// What type of terrain are we over?
+					string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
+					// If this is a valid rock type, add it to the list
+					if (QuarryUtility.IsValidQuarryRock(rockType)) {
+						rockTypesUnder.Add(rockType);
+					}
+					// Change the terrain here to be quarried stone					
+					if (rect.ContractedBy(WallThickness).Contains(c)) {
+						Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
+					}
+					else {
+						Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGroundWall);
+					}
+				}
+				// Now that all the cells have been processed, create ThingDef lists
+				MakeThingDefListsFrom(RockTypesUnder);
+				// Spawn filth for the quarry
+				foreach (IntVec3 c in rect) {
+					SpawnFilth(c);
+				}
+				// Change the ground back to normal quarried stone where the ladders are
+				// This is to negate the speed decrease and encourages pawns to use the ladders
+				foreach (IntVec3 offset in LadderOffsets) {
+					Map.terrainGrid.SetTerrain(Position + offset.RotatedBy(Rotation), QuarryDefOf.QRY_QuarriedGround);
+				}
+			}
+		}
 
 
     public override void Destroy(DestroyMode mode = DestroyMode.Vanish) {
@@ -184,70 +224,48 @@ namespace Quarry {
 		}
 
 
-    private void SetupFirstPass(CellRect rect) {
-      foreach (IntVec3 c in rect) {
-        // What type of rock are we over?
-        string rockType = c.GetTerrain(Map).label.Split(' ').Last().CapitalizeFirst();
-        if (QuarryUtility.IsValidQuarryRock(rockType)) {
-          rockTypesUnder.Add(rockType);
+		private void MakeThingDefListsFrom(List<string> stringList) {
+			chunksUnder = new List<ThingDef>();
+			blocksUnder = new List<ThingDef>();
+			foreach (string str in stringList) {
+				if (QuarryUtility.IsValidQuarryChunk(str, out ThingDef chunk)) {
+					chunksUnder.Add(chunk);
 				}
-        // Change the terrain here to be quarried stone wall
-        Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGroundWall);
-      }
-			if (rockTypesUnder.Count <= 0) {
-				rockTypesUnder = RockTypesFromMap();
+				if (QuarryUtility.IsValidQuarryBlocks(str, out ThingDef blocks)) {
+					blocksUnder.Add(blocks);
+				}
 			}
 		}
 
 
-    private void SetupSecondPass(CellRect rect) {
-      foreach (IntVec3 c in rect.ContractedBy(WallThickness)) {
-        Map.terrainGrid.SetTerrain(c, QuarryDefOf.QRY_QuarriedGround);
-      }
-    }
-
-
-    private void SetupThirdPass(CellRect rect) {
-			foreach (IntVec3 offset in LadderOffsets) {
-				Map.terrainGrid.SetTerrain(Position + offset.RotatedBy(Rotation), QuarryDefOf.QRY_QuarriedGround);
+		private void SpawnFilth(IntVec3 c) {
+			List<Thing> thingsInCell = new List<Thing>();
+			// Skip this cell if it is occupied by a placed object
+			// This is to avoid save compression errors
+			thingsInCell = Map.thingGrid.ThingsListAtFast(c);
+			for (int t = 0; t < thingsInCell.Count; t++) {
+				if (thingsInCell[t].def.saveCompressible) {
+					return;
+				}
 			}
-      foreach (IntVec3 c in rect) {
-        List<Thing> thingsInCell = new List<Thing>();
-        bool usableCell = true;
-        // Skip this cell if it is occupied by a placed object
-        // This is to avoid save compression errors
-        thingsInCell = Map.thingGrid.ThingsListAtFast(c);
-        for (int t = 0; t < thingsInCell.Count; t++) {
-          if (thingsInCell[t].def.saveCompressible) {
-            usableCell = false;
-            break;
-          }
-        }
 
-        if (usableCell) {
-          int filthAmount = Rand.RangeInclusive(1, 100);
-          // Check for dirt filth
-          if (filthAmount > 20 && filthAmount <= 40) {
-            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c, Map);
-          }
-          // Check for rock rubble
-          else if (filthAmount > 40) {
-            GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, Map);
-            // Check for chunks
-            if (filthAmount > 80) {
-							string str = "Chunk" + RockTypesUnder.RandomElement();
-							ThingDef chunk = QuarrySettings.database.Find(t => t.defName == str);
-							if (chunk != null) {
-								GenSpawn.Spawn(ThingMaker.MakeThing(chunk), c, Map);
-							}
-							else {
-								Log.Error(str);
-							}
-            }
-          }
-        }
-      }
-    }
+			int filthAmount = Rand.RangeInclusive(1, 100);
+			// If this cell isn't filthy enough, skip it
+			if (filthAmount <= 20) {
+				return;
+			}
+			// Check for dirt filth
+			if (filthAmount <= 40) {
+				GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.FilthDirt), c, Map);
+			}
+			else {
+				GenSpawn.Spawn(ThingMaker.MakeThing(ThingDefOf.RockRubble), c, Map);
+				// Check for chunks
+				if (filthAmount > 80) {
+					GenSpawn.Spawn(ThingMaker.MakeThing(ChunksUnder.RandomElement()), c, Map);
+				}
+			}
+		}
 
 
     public ThingDef GiveResources(ResourceRequest req, out MoteType mote, out bool singleSpawn, out bool eventTriggered) {
@@ -275,9 +293,9 @@ namespace Quarry {
 
       // Check for blocks first to prevent spawning chunks (these would just be cut into blocks)
       if (req == ResourceRequest.Blocks) {
-        if (!junkMined) {
-          singleSpawn = false;
-          return QuarrySettings.database.Find(t => t.defName == "Blocks" + RockTypesUnder.RandomElement());
+				if (!junkMined) {
+					singleSpawn = false;
+					return BlocksUnder.RandomElement();
         }
         // The rock didn't break into a usable size, spawn rubble
         mote = MoteType.Failure;
@@ -287,7 +305,7 @@ namespace Quarry {
       // Try to give junk before resources. This simulates only mining chunks or useless rubble
       if (junkMined) {
         if (Rand.Chance(QuarrySettings.chunkChance / 100f)) {
-          return QuarrySettings.database.Find(t => t.defName == "Chunk" + RockTypesUnder.RandomElement());
+          return ChunksUnder.RandomElement();
         }
         else {
           mote = MoteType.Failure;

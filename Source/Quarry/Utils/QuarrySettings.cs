@@ -43,7 +43,7 @@ namespace Quarry {
 					}
 					else if (!warning){
 						warning = true;
-						Log.Warning($"{Static.Quarry}:: Found 1 or more null entries in ore dictionary. This is most likely due to an uninstalled mod. Removing entries from list.");
+						Log.Warning("Quarry:: Found 1 or more null entries in ore dictionary. This is most likely due to an uninstalled mod. Removing entries from list.");
 					}
 				}
 				oreDictionary = dict;
