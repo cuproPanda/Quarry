@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Buildings\Building_Platform.cs" />
     <Compile Include="Buildings\Building_MiniQuarry.cs" />
+    <Compile Include="Static\Extensions.cs" />
     <Compile Include="Orders\Designator_ReclaimSoil.cs" />
     <Compile Include="AI\JobDriver_MineQuarry.cs" />
     <Compile Include="Static\QuarryDefOf.cs" />

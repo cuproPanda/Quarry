@@ -109,7 +109,7 @@ namespace Quarry {
 						ResetTicksToPickHit();
 					}
 				},
-				defaultDuration = (int)(3000 / pawn.GetStatValue(StatDefOf.MiningSpeed, true)),
+				defaultDuration = (int)Mathf.Clamp(3000 / pawn.GetStatValue(StatDefOf.MiningSpeed, true), 500, 10000),
 				defaultCompleteMode = ToilCompleteMode.Delay,
 				handlingFacing = true
 			}.WithProgressBarToilDelay(TargetIndex.B, false, -0.5f);

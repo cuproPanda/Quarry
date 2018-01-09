@@ -18,6 +18,10 @@ namespace Quarry {
         return null;
       }
 
+			if (!quarry.Unowned && !quarry.AssignedPawns.Contains(pawn)) {
+				return null;
+			}
+
       // Find a cell within the middle of the quarry to mine at
       IntVec3 cell = IntVec3.Invalid;
       CellRect rect = quarry.OccupiedRect().ContractedBy(quarry.WallThickness);

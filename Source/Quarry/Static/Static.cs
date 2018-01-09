@@ -61,17 +61,8 @@ namespace Quarry {
     public static string InspectQuarryPercent = "QRY_InspectQuarryPercent".Translate();
     public static string SettingsDepletionPercent = "QRY_SettingsDepletionPercent".Translate();
 		public static string MessageMustDesignateQuarriedGround = "QRY_MessageMustDesignateQuarriedGround".Translate();
-
-
-		public static string ToStringDecimal(this float f) {
-			string result;
-			if (Mathf.Abs(f) < 1f) {
-				result = Math.Round(f, 2).ToString("0.##");
-			}
-			else {
-				result = Math.Round(f, 1).ToString("0.#");
-			}
-			return result;
-		}
+		public static string CommandBedSetOwnerLabel = "CommandBedSetOwnerLabel".Translate();
+		public static string CommandSetOwnerDesc = "QRY_CommandSetOwnerDesc".Translate();
+		public static string ReportGizmoLackingResearch = "QRY_ReportGizmoLackingResearch".Translate();
 	}
 }

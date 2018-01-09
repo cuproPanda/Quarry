@@ -4,12 +4,15 @@ using System.Linq;
 
 using RimWorld;
 using Verse;
+using UnityEngine;
 
 namespace Quarry {
 
   public static class OreDictionary {
 
-    private static Random rand = new Random();
+		public const int MaxWeight = 1000;
+
+    private static System.Random rand = new System.Random();
 
 		private static SimpleCurve commonalityCurve = new SimpleCurve {
 			{ new CurvePoint(0.0f, 10f) },
@@ -40,8 +43,17 @@ namespace Quarry {
 				oreDictionary.Add(new ThingCountExposable(ore.building.mineableThing, ValueForMineableOre(ore)));
 			}
 
+			// Get the rarest ore in the list
+			int num = MaxWeight;
+			for (int i = 0; i < oreDictionary.Count; i++) {
+				if (oreDictionary[i].count < num) {
+					num = oreDictionary[i].count;
+				}
+			}
+			num += num / 2;
+
 			// Manually add components
-			oreDictionary.Add(new ThingCountExposable(ThingDefOf.Component, 7));
+			oreDictionary.Add(new ThingCountExposable(ThingDefOf.Component, num));
 
 			// Assign this dictionary for the mod to use
 			QuarrySettings.oreDictionary = oreDictionary;
@@ -53,9 +65,11 @@ namespace Quarry {
 				Log.Error($"{Static.Quarry}:: Unable to process def {def.LabelCap} as a mineable resource rock.");
 				return 0;
 			}
-			return (int)(((((def.building.mineableThing.deepCommonality < 1.5f) ? def.building.mineableThing.deepCommonality : 1.5f) 
-				* (def.building.mineableScatterCommonality * commonalityCurve.Evaluate(def.building.mineableScatterCommonality))) * 50) 
-				/ ((def.building.mineableThing.BaseMarketValue < 2f) ? 2f : (def.building.mineableThing.BaseMarketValue / 5f)));
+			float valDeep = Mathf.Clamp(def.building.mineableThing.deepCommonality, 0f, 1.5f);
+			float valScatter = def.building.mineableScatterCommonality * commonalityCurve.Evaluate(def.building.mineableScatterCommonality);
+			float valMarket = Math.Max(def.building.mineableThing.BaseMarketValue / 5f, 2f);
+
+			return (int)((valDeep * valScatter * 50f) / valMarket);
 		}
 
 
