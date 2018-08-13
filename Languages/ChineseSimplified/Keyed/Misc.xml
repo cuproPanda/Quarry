@@ -4,7 +4,7 @@
   <QRY_Quarry>采石场 Quarry</QRY_Quarry>
   <QRY_SettingsDepletionPercent>一个采石场可以开采的次数</QRY_SettingsDepletionPercent>
   <QRY_SettingsJunkChance>失败几率(包括产出石块): &lt;b&gt;&lt;color=orange&gt;{0}%&lt;/color&gt;&lt;/b&gt;</QRY_SettingsJunkChance>
-  <QRY_SettingsChunkChance>产出垃圾的几率: &lt;b&gt;&lt;color=orange&gt;{0}%&lt;/color&gt;&lt;/b&gt;</QRY_SettingsChunkChance>
+  <QRY_SettingsChunkChance>产出石块的几率: &lt;b&gt;&lt;color=orange&gt;{0}%&lt;/color&gt;&lt;/b&gt;</QRY_SettingsChunkChance>
   <QRY_DepletionLabel>&lt;b&gt;&lt;color=orange&gt;{0}&lt;/color&gt;&lt;/b&gt; 次开矿后采矿场将枯竭</QRY_DepletionLabel>
   <QRY_DictionaryLabel>可采到的东西及几率</QRY_DictionaryLabel>
 
